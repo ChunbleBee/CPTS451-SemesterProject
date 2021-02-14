@@ -1,0 +1,10 @@
+﻿WPF app has been created. Will be implemented following the video posted under "Term Project" on the Canvas course 
+website.
+
+Title name has been changed from "MainTitle" to "Yelp App" in the XAML code. Height left at 450 and 
+width adjusted from 800 to 600 as per video.
+
+Added two labels, two comboboxes (drop-down boxes) and a data grid to match Sakire's Video. Editted contents of labels 
+to display State and City. Editted property name to better reflect labels, comboboxes, etc. Fontsize of stateLabel and 
+cityLabel adjusted from 12 to 14.
+
