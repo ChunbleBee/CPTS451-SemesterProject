@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Npgsql;
 
 namespace CPTS451_TrmPrjWPFv0._1
 {
@@ -33,12 +34,52 @@ namespace CPTS451_TrmPrjWPFv0._1
             addState();
         }
 
+        // not a great way of building a connection. unsafe to show user name and password.
+        private string buildConnectionString()
+        {
+            // need to update this for everyone's personal machines
+            //                  ---------------------------------------------------------------------
+            //                                       |                                              |
+            //                                       v                                              v
+            return "Host = localhost, Username = postgres, Database = milestone1db, password=[INSERT YOUR PASSWORD HERE]";
+        }
+
         private void addState()
         {
-            stateListComboBox.Items.Add("WA");
-            stateListComboBox.Items.Add("CA");
-            stateListComboBox.Items.Add("ID");
-            stateListComboBox.Items.Add("NV");
+            //stateListComboBox.Items.Add("WA");
+            //stateListComboBox.Items.Add("CA");
+            //stateListComboBox.Items.Add("ID");
+            //stateListComboBox.Items.Add("NV");
+            using (var connection = new NpgsqlConnection(buildConnectionString()))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = connection;
+                    cmd.CommandText = "SELECT distinct state FROM business ORDER BY state";
+                    try
+                    {
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            stateListComboBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                    catch (NpgsqlException er)
+                    {
+                        // Sakire gives us two options on handling catched errors. I prefer option 2.
+                        // Option 1.
+                        //Console.WriteLine(er.Message.ToString());
+
+                        // Option 2.
+                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
         }
 
         private void addColumns2Grid()
@@ -66,5 +107,157 @@ namespace CPTS451_TrmPrjWPFv0._1
             businessGridDataGrid.Items.Add(new Business() { name = "business-3", state = "NV", city = "Las Vegas" });
 
         }
+
+        private void executeQuery(string sqlstr, Action<NpgsqlDataReader> myf)
+        {
+            using (var connection = new NpgsqlConnection(buildConnectionString()))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = connection;
+                    cmd.CommandText = sqlstr;
+
+                    //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+                    try
+                    {
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            myf(reader);
+                        }
+                    }
+                    catch (NpgsqlException er)
+                    {
+                        // Sakire gives us two options on handling catched errors. I prefer option 2.
+                        // Option 1.
+                        //Console.WriteLine(er.Message.ToString());
+
+                        // Option 2.
+                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+        }
+
+        private void addCity(NpgsqlDataReader R)
+        {
+            cityListComboBox.Items.Add(R.GetString(0));
+        }
+
+        private void StateListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            cityListComboBox.Items.Clear();
+            if (cityListComboBox.SelectedIndex > -1)
+            {
+               string sqlstr = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
+                        //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+               executeQuery(sqlstr, addCity);
+            }
+
+        }
+
+        private void addGridRow(NpgsqlDataReader R)
+        {
+            businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
+
+        }
+
+        private void CityListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            businessGridDataGrid.Items.Clear();
+            if (stateListComboBox.SelectedIndex > -1)
+            {
+                string sqlstr = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY name;";
+                executeQuery(sqlstr, addGridRow);
+                
+            }
+        }
+
+        //private void CityListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    businessGridDataGrid.Items.Clear();
+        //    if (stateListComboBox.SelectedIndex > -1)
+        //    {
+
+        //        using (var connection = new NpgsqlConnection(buildConnectionString()))
+        //        {
+        //            connection.Open();
+        //            using (var cmd = new NpgsqlCommand())
+        //            {
+        //                cmd.Connection = connection;
+        //                cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY name;";
+
+        //                try
+        //                {
+        //                    var reader = cmd.ExecuteReader();
+        //                    while (reader.Read())
+        //                    {
+        //                        //stateListComboBox.Items.Add(reader.GetString(0));
+        //                        businessGridDataGrid.Items.Add(new Business() { name = reader.GetString(0), state = reader.GetString(1), city = reader.GetString(2)});
+        //                    }
+        //                }
+        //                catch (NpgsqlException er)
+        //                {
+        //                    // Sakire gives us two options on handling catched errors. I prefer option 2.
+        //                    // Option 1.
+        //                    //Console.WriteLine(er.Message.ToString());
+
+        //                    // Option 2.
+        //                    System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+        //                }
+        //                finally
+        //                {
+        //                    connection.Close();
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        //private void StateListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    cityListComboBox.Items.Clear();
+        //    if (cityListComboBox.SelectedIndex > -1)
+        //    {
+
+        //        using (var connection = new NpgsqlConnection(buildConnectionString()))
+        //        {
+        //            connection.Open();
+        //            using (var cmd = new NpgsqlCommand())
+        //            {
+        //                cmd.Connection = connection;
+        //                cmd.CommandText = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
+
+        //                //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+        //                try
+        //                {
+        //                    var reader = cmd.ExecuteReader();
+        //                    while (reader.Read())
+        //                    {
+        //                        cityListComboBox.Items.Add(reader.GetString(0));
+        //                    }
+        //                }
+        //                catch (NpgsqlException er)
+        //                {
+        //                    // Sakire gives us two options on handling catched errors. I prefer option 2.
+        //                    // Option 1.
+        //                    //Console.WriteLine(er.Message.ToString());
+
+        //                    // Option 2.
+        //                    System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+        //                }
+        //                finally
+        //                {
+        //                    connection.Close();
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
