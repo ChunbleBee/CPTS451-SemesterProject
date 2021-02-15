@@ -8,3 +8,7 @@ Added two labels, two comboboxes (drop-down boxes) and a data grid to match Saki
 to display State and City. Editted property name to better reflect labels, comboboxes, etc. Fontsize of stateLabel and 
 cityLabel adjusted from 12 to 14.
 
+Function "AddState" created. Populates stateListComboBox with 4 initial states {WA, CA, ID, NV}.
+
+Function "AddColumns2Grid" created. Populated with sample columns, headers and rows.
+Created binding for the columns in function "addColumns2Grid".
