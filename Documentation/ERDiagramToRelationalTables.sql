@@ -1,16 +1,33 @@
+/***********************************************************/
+/*------------------------- USERS -------------------------*/
+/***********************************************************/
 /* User Table */
 CREATE TABLE Users
 (
     UserID          TEXT NOT NULL,
-    CreationDate    DATE,
+    CreationDate    DATETIME,
     UserName        TEXT,
     FansRating      INTEGER,
     FunnyRating     INTEGER,
     CoolRating      INTEGER,
     AvgStarRating   DECIMAL (2, 1),
     PRIMARY KEY (UserID)
-)
+);
 
+/* Link table for creating friends */
+CREATE TABLE Friends
+(
+    User01  TEXT NOT NULL,
+    User02  TEXT NOT NULL,
+    FOREIGN KEY User01 REFERENCES Users(User01),
+    FOREIGN KEY User02 REFERENCES Users(User02),
+    PRIMARY KEY (User01, User02)
+);
+
+
+/***********************************************************/
+/*----------------------- BUSINESSES ----------------------*/
+/***********************************************************/
 /* Businesses Table */
 CREATE TABLE Businesses
 (
@@ -20,40 +37,101 @@ CREATE TABLE Businesses
     ReviewCount     INTEGER,
     StarRating      DECIMAL (2, 1),
     Categories      TEXT [],
-    BusinessAddress FOREIGN KEY REFERENCES Addresses(BusinessAddress)
     PRIMARY KEY (BusinessID)
-)
+);
 
-/**/
+/* Business Address Table */
 CREATE TABLE Addresses
 (
+    BusinessID  TEXT NOT NULL,
     Longitude   DECIMAL (9, 6),
     Latitude    DECIMAL (8, 6),
-)
+    Street      TEXT,
+    City        TEXT,
+    USState     TEXT,
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    PRIMARY KEY (BusinessID)
+);
 
+CREATE TABLE BusinessHours
+(
+    BusinessID      TEXT NOT NULL,
+    OpeningTimes    TIME [],
+    ClosingTimes    TIME [],
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    PRIMARY KEY (BusinessID)
+);
+
+/* Basic Business Attributes Table */
+CREATE TABLE BusinessAttributes
+(
+    BusinessID          TEXT NOT NULL,
+    HasTV               BOOLEAN,
+    HasWifi             BOOLEAN,
+    WheelchairAccess    BOOLEAN,
+    Parking             BOOLEAN [],
+    PaymentMethods      BOOLEAN [],
+    PriceRange          INTEGER,
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    PRIMARY KEY (BusinessID)
+);
+
+CREATE TABLE Restaurants
+(
+    BusinessID          TEXT NOT NULL,
+    TakesReservations   BOOLEAN,
+    TakeOut             BOOLEAN,
+    TableService        BOOLEAN,
+    KidFriendly         BOOLEAN,
+    NoiseLevel          INTEGER,
+    Ambiences           TEXT [],
+    BestNights          BOOLEAN [7],
+    MealTimes           BOOLEAN [],
+    Alcohol             TEXT,
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID)
+    PRIMARY KEY (BusinessID)
+);
+
+CREATE TABLE MusicInfo
+(
+    BusinessID          TEXT NOT NULL,
+    IsDancingFriendly   BOOLEAN,
+    HasDJ               BOOLEAN,
+    HasVJ               BOOLEAN,
+    HasLivePerformances BOOLEAN,
+    HasKaraoke          BOOLEAN,
+    HasBackgroundMusic  BOOLEAN,
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    PRIMARY KEY (BusinessID)
+);
+
+
+/***********************************************************/
+/*------------------------ REVIEWS ------------------------*/
+/***********************************************************/
 /* Reviews Table */
 CREATE TABLE Reviews
 (
-    UserID          FOREIGN KEY REFERENCES Users(UserID),
-    BusinessID      FOREIGN KEY REFERENCES Businesses(BusinessID),
+    UserID          TEXT NOT NULL,
+    BusinessID      TEXT NOT NULL,
     ReviewTest      TEXT,
     Likes           INTEGER,
-    CreationDate    DATE,
+    CreationDate    DATETIME,
+    FOREIGN KEY REFERENCES Businesses(BusinessID),
+    FOREIGN KEY REFERENCES Users(UserID),
     PRIMARY KEY (UserID, BusinessID)
-)
+);
 
+
+/***********************************************************/
+/*-------------------------- MISC -------------------------*/
+/***********************************************************/
 /* Check Ins Table */
 CREATE TABLE CheckIns
 (
-    BusinessID  FOREIGN KEY REFERENCES Businesses(BusinessID),
-    CheckInDate DATE,
+    BusinessID  TEXT,
+    CheckInDate DATETIME,
+    FOREIGN KEY REFERENCES Businesses(BusinessID),
     PRIMARY KEY (BusinessID)
-)
+);
 
-/* Link table for creating friends */
-CREATE TABLE Friends
-(
-    User01 FOREIGN KEY REFERENCES Users(User01)
-    User02 FOREIGN KEY REFERENCES Users(User02)
-    PRIMARY KEY (User01, User02)
-)
