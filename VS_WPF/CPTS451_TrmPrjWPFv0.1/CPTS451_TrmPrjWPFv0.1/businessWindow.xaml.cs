@@ -20,12 +20,12 @@ namespace CPTS451_TrmPrjWPFv0._1
     /// </summary>
     public partial class businessWindow : Window
     {
-        private string bid = "";
+        private string businessid = "";
 
         public businessWindow(string bid)
         {
             InitializeComponent();
-            this.bid = String.Copy(bid);
+            this.businessid = String.Copy(bid);
             loadBusinessDetails();
             loadBusinessNumbers();
         }
@@ -36,7 +36,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= th@darncat8";
+            return "Host = localhost; Username = postgres; Database = milestone1db; password= [ENTER YOUR PASSWORD HERE]";
         }
 
         private void executeQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -86,15 +86,15 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void loadBusinessNumbers()
         {
-            string sqlstr1 = "SELECT count(*) from business WHERE state = (SELECT state FROM business WHERE businessid = '" + this.bid + "');";
+            string sqlstr1 = "SELECT count(*) from business WHERE state = (SELECT state FROM business WHERE businessid = '" + this.businessid + "');";
             executeQuery(sqlstr1, setNumInState);
-            string sqlstr2 = "SELECT count(*) from business WHERE city = (SELECT city FROM business WHERE businessid = '" + this.bid+"');";
+            string sqlstr2 = "SELECT count(*) from business WHERE city = (SELECT city FROM business WHERE businessid = '" + this.businessid+"');";
             executeQuery(sqlstr2, setNumInCity);
         }
 
         private void loadBusinessDetails()
         {
-            string sqlstr = "SELECT businessname, state, city FROM business WHERE businessid ' '" + this.bid + "';";
+            string sqlstr = "SELECT businessname, state, city FROM business WHERE businessid = '" + this.businessid + "';";
             executeQuery(sqlstr, setBusinessDetails);
         }
 
