@@ -41,7 +41,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost, Username = postgres, Database = milestone1db, password=[INSERT YOUR PASSWORD HERE]";
+            return "Host = localhost; Username = postgres; Database = milestone1db; password= [insert password]";
         }
 
         private void addState()

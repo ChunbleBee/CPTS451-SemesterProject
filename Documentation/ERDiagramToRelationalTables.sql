@@ -5,7 +5,7 @@
 CREATE TABLE Users
 (
     UserID          TEXT NOT NULL,
-    CreationDate    DATETIME,
+    CreationDate    TIMESTAMP,
     UserName        TEXT,
     FansRating      INTEGER,
     FunnyRating     INTEGER,
@@ -19,8 +19,8 @@ CREATE TABLE Friends
 (
     User01  TEXT NOT NULL,
     User02  TEXT NOT NULL,
-    FOREIGN KEY User01 REFERENCES Users(User01),
-    FOREIGN KEY User02 REFERENCES Users(User02),
+    FOREIGN KEY (User01) REFERENCES Users(UserID),
+    FOREIGN KEY (User02) REFERENCES Users(UserID),
     PRIMARY KEY (User01, User02)
 );
 
@@ -29,10 +29,12 @@ CREATE TABLE Friends
 /*----------------------- BUSINESSES ----------------------*/
 /***********************************************************/
 /* Businesses Table */
-CREATE TABLE Businesses
+CREATE TABLE Business
 (
     BusinessID      TEXT NOT NULL,
     BusinessName    TEXT,
+    State	    TEXT,
+    City	    TEXT,
     IsOpen          BOOLEAN,
     ReviewCount     INTEGER,
     StarRating      DECIMAL (2, 1),
@@ -49,7 +51,7 @@ CREATE TABLE Addresses
     Street      TEXT,
     City        TEXT,
     USState     TEXT,
-    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -58,7 +60,7 @@ CREATE TABLE BusinessHours
     BusinessID      TEXT NOT NULL,
     OpeningTimes    TIME [],
     ClosingTimes    TIME [],
-    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -72,7 +74,7 @@ CREATE TABLE BusinessAttributes
     Parking             BOOLEAN [],
     PaymentMethods      BOOLEAN [],
     PriceRange          INTEGER,
-    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -88,7 +90,7 @@ CREATE TABLE Restaurants
     BestNights          BOOLEAN [7],
     MealTimes           BOOLEAN [],
     Alcohol             TEXT,
-    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID)
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -101,7 +103,7 @@ CREATE TABLE MusicInfo
     HasLivePerformances BOOLEAN,
     HasKaraoke          BOOLEAN,
     HasBackgroundMusic  BOOLEAN,
-    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -116,9 +118,9 @@ CREATE TABLE Reviews
     BusinessID      TEXT NOT NULL,
     ReviewTest      TEXT,
     Likes           INTEGER,
-    CreationDate    DATETIME,
-    FOREIGN KEY REFERENCES Businesses(BusinessID),
-    FOREIGN KEY REFERENCES Users(UserID),
+    CreationDate    TIMESTAMP,
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
     PRIMARY KEY (UserID, BusinessID)
 );
 
@@ -130,8 +132,8 @@ CREATE TABLE Reviews
 CREATE TABLE CheckIns
 (
     BusinessID  TEXT,
-    CheckInDate DATETIME,
-    FOREIGN KEY REFERENCES Businesses(BusinessID),
+    CheckInDate TIMESTAMP,
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
