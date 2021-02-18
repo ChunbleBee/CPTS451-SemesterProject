@@ -71,7 +71,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             businessNameTextBox.Text = R.GetString(0);
             stateNameTextBox.Text = R.GetString(1);
             cityNameTextBox.Text = R.GetString(2);
-            // does not need bid.
+            // does not need businessid.
         }
 
         void setNumInState(NpgsqlDataReader R)

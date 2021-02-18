@@ -23,8 +23,8 @@ namespace CPTS451_TrmPrjWPFv0._1
     {
         public partial class Business
         {
-            public string bid { get; set; } // for querying businesses in a state/city
-            public string name { get; set; }
+            public string businessid { get; set; } // for querying businesses in a state/city
+            public string businessname { get; set; }
             public string state { get; set; }
             public string city { get; set;  }
         }
@@ -36,7 +36,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             addColumns2Grid(); // THIS IS WHERE WE CALL ADDCOLUMNS2GRID!
         }
 
-        // not a great way of building a connection. unsafe to show user name and password.
+        // not a great way of building a connection. unsafe to show user businessname and password.
         private string buildConnectionString()
         {
             // need to update this for everyone's personal machines
@@ -111,10 +111,10 @@ namespace CPTS451_TrmPrjWPFv0._1
             col4.Width = 0;
             businessGridDataGrid.Columns.Add(col4);
 
-            //businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
-            /*businessGridDataGrid.Items.Add(new Business() { name = "business-1", state = "WA", city = "Pullman" });
-            businessGridDataGrid.Items.Add(new Business() { name = "business-2", state = "CA", city = "Pasadena" });
-            businessGridDataGrid.Items.Add(new Business() { name = "business-3", state = "NV", city = "Las Vegas" });
+            //businessGridDataGrid.Items.Add(new Business() { businessname = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
+            /*businessGridDataGrid.Items.Add(new Business() { businessname = "business-1", state = "WA", city = "Pullman" });
+            businessGridDataGrid.Items.Add(new Business() { businessname = "business-2", state = "CA", city = "Pasadena" });
+            businessGridDataGrid.Items.Add(new Business() { businessname = "business-3", state = "NV", city = "Las Vegas" });
 */
         }
 
@@ -128,7 +128,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                     cmd.Connection = connection;
                     cmd.CommandText = sqlstr;
 
-                    //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+                    //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
                     try
                     {
                         var reader = cmd.ExecuteReader();
@@ -165,7 +165,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             if (cityListComboBox.SelectedIndex == -1)
             {
                string sqlstr = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
-                        //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+                        //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
                executeQuery(sqlstr, addCity);
             }
 
@@ -173,7 +173,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void addGridRow(NpgsqlDataReader R)
         {
-            businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2), bid = R.GetString(3) });
+            businessGridDataGrid.Items.Add(new Business() { businessname = R.GetString(0), state = R.GetString(1), city = R.GetString(2), businessid = R.GetString(3) });
 
         }
 
@@ -196,10 +196,10 @@ namespace CPTS451_TrmPrjWPFv0._1
             {
                 // grab the businessid string.
                 Business B = businessGridDataGrid.Items[businessGridDataGrid.SelectedIndex] as Business;
-                if((B.bid != null) && (B.bid.ToString().CompareTo("") != 0))
+                if((B.businessid != null) && (B.businessid.ToString().CompareTo("") != 0))
                 {
                     // create new instance of business window.
-                    businessWindow businessWindow = new businessWindow(B.bid.ToString());
+                    businessWindow businessWindow = new businessWindow(B.businessid.ToString());
                     businessWindow.Show(); // show the new window
                 }
             }
@@ -217,7 +217,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         //            using (var cmd = new NpgsqlCommand())
         //            {
         //                cmd.Connection = connection;
-        //                cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY name;";
+        //                cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
 
         //                try
         //                {
@@ -225,7 +225,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         //                    while (reader.Read())
         //                    {
         //                        //stateListComboBox.Items.Add(reader.GetString(0));
-        //                        businessGridDataGrid.Items.Add(new Business() { name = reader.GetString(0), state = reader.GetString(1), city = reader.GetString(2)});
+        //                        businessGridDataGrid.Items.Add(new Business() { businessname = reader.GetString(0), state = reader.GetString(1), city = reader.GetString(2)});
         //                    }
         //                }
         //                catch (NpgsqlException er)
@@ -260,7 +260,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         //                cmd.Connection = connection;
         //                cmd.CommandText = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
 
-        //                //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+        //                //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
         //                try
         //                {
         //                    var reader = cmd.ExecuteReader();
