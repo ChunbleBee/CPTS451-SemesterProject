@@ -1,0 +1,23 @@
+﻿WPF app has been created. Will be implemented following the video posted under "Term Project" on the Canvas course 
+website.
+
+Title name has been changed from "MainTitle" to "Yelp App" in the XAML code. Height left at 450 and 
+width adjusted from 800 to 600 as per video.
+
+Added two labels, two comboboxes (drop-down boxes) and a data grid to match Sakire's Video. Editted contents of labels 
+to display State and City. Editted property name to better reflect labels, comboboxes, etc. Fontsize of stateLabel and 
+cityLabel adjusted from 12 to 14.
+
+Function "AddState" created. Populates stateListComboBox with 4 initial states {WA, CA, ID, NV}.
+
+Function "AddColumns2Grid" created. Populated with sample columns, headers and rows.
+Created binding for the columns in function "addColumns2Grid".
+
+Alot happened... created "SelectionChanged" properties for the cityListComboBox and stateListComboBox which allows for
+when the state selected is switched, the city selection will be updated. When the city is selected, it updates the main 
+data grid businessDataGrid.
+
+Sakire is now about to show a way to automate the querying process.
+Updated code with automated Querying for cityListComboBoxSelectionChanged and stateListComboBoxSelectionChanged.
+
+Time in Video ~58 minutes. Sakire is talking about adding new windows but it is not needed for Milestone 1.
