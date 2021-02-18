@@ -23,6 +23,7 @@ namespace CPTS451_TrmPrjWPFv0._1
     {
         public partial class Business
         {
+            public string bid { get; set; } // for querying businesses in a state/city
             public string name { get; set; }
             public string state { get; set; }
             public string city { get; set;  }
@@ -32,6 +33,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             InitializeComponent();
             addState();
+            addColumns2Grid(); // THIS IS WHERE WE CALL ADDCOLUMNS2GRID!
         }
 
         // not a great way of building a connection. unsafe to show user name and password.
@@ -82,7 +84,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
-        private void addColumns2Grid(NpgsqlDataReader R)
+        private void addColumns2Grid()
         {
             DataGridTextColumn col1 = new DataGridTextColumn();
             col1.Binding = new Binding("businessname");
@@ -102,7 +104,14 @@ namespace CPTS451_TrmPrjWPFv0._1
             col3.Width = 150;
             businessGridDataGrid.Columns.Add(col3);
 
-            businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
+            // new column of width 0 and no header to hide the info from users.
+            DataGridTextColumn col4 = new DataGridTextColumn();
+            col4.Binding = new Binding("businessid");
+            col4.Header = "";
+            col4.Width = 0;
+            businessGridDataGrid.Columns.Add(col4);
+
+            //businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
             /*businessGridDataGrid.Items.Add(new Business() { name = "business-1", state = "WA", city = "Pullman" });
             businessGridDataGrid.Items.Add(new Business() { name = "business-2", state = "CA", city = "Pasadena" });
             businessGridDataGrid.Items.Add(new Business() { name = "business-3", state = "NV", city = "Las Vegas" });
@@ -164,7 +173,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void addGridRow(NpgsqlDataReader R)
         {
-            businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
+            businessGridDataGrid.Items.Add(new Business() { name = R.GetString(0), state = R.GetString(1), city = R.GetString(2), bid = R.GetString(3) });
 
         }
 
@@ -173,10 +182,26 @@ namespace CPTS451_TrmPrjWPFv0._1
             businessGridDataGrid.Items.Clear();
             if (stateListComboBox.SelectedIndex > -1)
             {
-                string sqlstr = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
-                // executeQuery(sqlstr, addGridRow);
-                executeQuery(sqlstr, addColumns2Grid);
+                string sqlstr = "SELECT businessname, state, city, businessid FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
+                executeQuery(sqlstr, addGridRow);
+                //executeQuery(sqlstr, addColumns2Grid); // revert changes.
 
+            }
+        }
+
+        // used to open the new businessWindow from MainWindow
+        private void BusinessGridDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (businessGridDataGrid.SelectedIndex > -1)
+            {
+                // grab the businessid string.
+                Business B = businessGridDataGrid.Items[businessGridDataGrid.SelectedIndex] as Business;
+                if((B.bid != null) && (B.bid.ToString().CompareTo("") != 0))
+                {
+                    // create new instance of business window.
+                    businessWindow businessWindow = new businessWindow(B.bid.ToString());
+                    businessWindow.Show(); // show the new window
+                }
             }
         }
 
