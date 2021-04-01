@@ -7,10 +7,14 @@ CREATE TABLE Users
     UserID          TEXT NOT NULL,
     CreationDate    TIMESTAMP,
     UserName        TEXT,
+    TotalLikes      INTEGER NOT NULL DEFAULT (0),
+    TipCount        INTEGER NOT NULL DEFAULT (0),
     FansRating      INTEGER,
     FunnyRating     INTEGER,
     CoolRating      INTEGER,
     AvgStarRating   DECIMAL (2, 1),
+    Latitude        DECIMAL (8, 6),
+    Longitude       DECIMAL (9, 6),
     PRIMARY KEY (UserID)
 );
 
@@ -38,6 +42,8 @@ CREATE TABLE Business
     IsOpen          BOOLEAN,
     ReviewCount     INTEGER,
     StarRating      DECIMAL (2, 1),
+    CheckIns        INTEGER NOT NULL DEFAULT (0),
+    Tips            INTEGER NOT NULL DEFAULT (0),
     Categories      TEXT [],
     PRIMARY KEY (BusinessID)
 );
