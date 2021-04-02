@@ -41,7 +41,11 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
+<<<<<<< Updated upstream
             return "Host = localhost, Username = postgres, Database = milestone1db, password=[INSERT YOUR PASSWORD HERE]";
+=======
+            return "Host = localhost; Username = postgres; Database = milestone1db; password= z";
+>>>>>>> Stashed changes
         }
 
         private void addState()
@@ -176,6 +180,16 @@ namespace CPTS451_TrmPrjWPFv0._1
                 executeQuery(sqlstr, addGridRow);
                 
             }
+        }
+
+        private void addZip(NpgsqlConnectionStringBuilder R)
+        {
+            //zipListBox.Items.Add();
+        }
+
+        private void addBusiCategroies(NpgsqlConnectionStringBuilder R)
+        {
+            //businessCatListBox.Items.Add();
         }
 
         //private void CityListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
