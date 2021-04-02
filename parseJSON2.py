@@ -28,7 +28,9 @@ def insert2BusinessTable():
         temp += "'" + lines.business_id[i] + "', '" + lines.name[i] + "', '" + lines.state[i] + "', " + \
                 str([True, False][lines.is_open[i]]) + ", " + str(lines.review_count[i]) + ", " + str(lines.stars[i]) + ", 0, 0, NULL )"
         try:
-            cur.execute(insertString+temp)
+            fullString = insertString+temp
+            print(fullString)
+            cur.execute(fullString)
         except Exception as e:
             print("Insert to businessTABLE failed!", e)
         conn.commit()
@@ -48,8 +50,9 @@ def insert2UsersTable():
     cur = conn.cursor()
     for i in range(len(lines)):
         temp = valString
-        # temp += "'" + lines.business_id[i] + "', '" + lines.name[i] + "', '" + lines.state[i] + "', " + \
-                str([True, False][lines.is_open[i]]) + ", " + str(lines.review_count[i]) + ", " + str(lines.stars[i]) + ", 0, 0, NULL )"
+        temp += "'" + lines.user_id[i] + "', " + lines.yelping_since[i] + ", '" + lines.name[i] + "', " + \
+                "0, " + str(lines.tipcount[i]) + ", " + str(lines.fans[i]) + ", " + str(lines.funny[i]) + \
+                ", " + str(lines.cool[i]) + ", " + str(lines.average_stars[i]) + ", " + "NULL, NULL )"
         try:
             cur.execute(insertString+temp)
         except Exception as e:
@@ -61,7 +64,7 @@ def insert2UsersTable():
 
 
 if __name__ == "__main__":
-    # insert2BusinessTable()
+    insert2BusinessTable()
     insert2UsersTable()
 
 
