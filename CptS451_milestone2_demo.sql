@@ -5,7 +5,7 @@ Business
 Users
 Tips
 Friends
-checkin
+CheckIn
 businesscategory
 BusinessAttributes
 BusinessHours
@@ -44,7 +44,7 @@ FROM  Tips;
 SELECT COUNT(*) 
 FROM  Friends;
 SELECT COUNT(*) 
-FROM  checkin;
+FROM  CheckIn;
 SELECT COUNT(*) 
 FROM  businesscategory;
 SELECT COUNT(*) 
@@ -54,7 +54,7 @@ FROM  BusinessHours;
 
 
 
---2. Run the following queries on your business table, checkin table and review table. Make sure to change the attribute names based on your schema. 
+--2. Run the following queries on your business table, CheckIn table and review table. Make sure to change the attribute names based on your schema. 
 
 SELECT zipcode, COUNT(distinct C.category)
 FROM Business as B, businesscategory as C
@@ -77,11 +77,11 @@ WHERE Users.UserID = Friends.UserID AND
 GROUP BY Users.UserID;
 
 
---3. Run the following queries on your business table, checkin table and tips table. Make sure to change the attribute names based on your schema. 
+--3. Run the following queries on your business table, CheckIn table and tips table. Make sure to change the attribute names based on your schema. 
 
 
-SELECT BusinessID, name, city, numtips, numCheckins
-FROM Business 
+SELECT BusinessID, BusinessName, City, numtips, numCheckins
+FROM Business
 WHERE BusinessID ='K8M3OeFCcAnxuxtTc0BQrQ';
 
 SELECT UserID, name, tipcount, totallikes
@@ -91,7 +91,7 @@ WHERE UserID = 'NxtYkOpXHSy7LWRKJf3z0w';
 -----------
 
 SELECT COUNT(*) 
-FROM checkin
+FROM CheckIn
 WHERE BusinessID ='K8M3OeFCcAnxuxtTc0BQrQ';
 
 SELECT count(*)
@@ -106,7 +106,7 @@ SELECT BusinessID,name, city, numCheckins, numtips
 FROM Business 
 WHERE BusinessID ='hDD6-yk1yuuRIvfdtHsISg';
 
-INSERT INTO checkin (BusinessID, checkinyear,checkinmonth, checkinday,checkintime)
+INSERT INTO CheckIn (BusinessID, checkinyear,checkinmonth, checkinday,checkintime)
 VALUES ('hDD6-yk1yuuRIvfdtHsISg','2021','04','02','15:00');
 
 
