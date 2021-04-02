@@ -7,13 +7,6 @@
         mc:Ignorable="d"
         Title="Yelp App" Height="450" Width="600">
     <Grid>
-
-        //<Label x:Name="stateLabel" Content="State" HorizontalAlignment="Left" Margin="150,35,0,0" VerticalAlignment="Top" FontSize="14"/>
-        //<Label x:Name="cityLabel" Content="City" HorizontalAlignment="Left" Margin="150,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.859,0.621" Height="41" Width="39" FontSize="14"/>
-        //<ComboBox x:Name="stateListComboBox" HorizontalAlignment="Left" Margin="213,35,0,0" VerticalAlignment="Top" Width="354" Height="26" SelectionChanged="StateListComboBox_SelectionChanged"/>
-        //<ComboBox x:Name="cityListComboBox" HorizontalAlignment="Left" Margin="213,84,0,0" VerticalAlignment="Top" Width="354" Height="31" SelectionChanged="CityListComboBox_SelectionChanged"/>
-        //<DataGrid x:Name="businessGridDataGrid" HorizontalAlignment="Left" Height="264" Margin="20,146,0,0" VerticalAlignment="Top" Width="547"/>
-
         <Label x:Name="stateLabel" Content="State" HorizontalAlignment="Left" Margin="20,35,0,0" VerticalAlignment="Top" FontSize="14"/>
         <Label x:Name="cityLabel" Content="City" HorizontalAlignment="Left" Margin="20,74,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.859,0.621" Height="41" Width="39" FontSize="14"/>
         <ComboBox x:Name="stateListComboBox" HorizontalAlignment="Left" Margin="92,35,0,0" VerticalAlignment="Top" Width="354" Height="26" SelectionChanged="StateListComboBox_SelectionChanged"/>
@@ -23,7 +16,5 @@
         <ListBox x:Name="zipListBox" HorizontalAlignment="Left" Height="55" Margin="92,120,0,0" VerticalAlignment="Top" Width="135"/>
         <Label x:Name="businessCatLabel" Content="Business Categories" HorizontalAlignment="Left" Margin="253,121,0,0" VerticalAlignment="Top"/>
         <ListBox x:Name="businessCatListBox" HorizontalAlignment="Left" Height="54" Margin="373,121,0,0" VerticalAlignment="Top" Width="194"/>
-
-
     </Grid>
 </Window>
