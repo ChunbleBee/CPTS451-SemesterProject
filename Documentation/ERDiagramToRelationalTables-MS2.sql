@@ -5,7 +5,7 @@
 CREATE TABLE Users
 (
     UserID          TEXT NOT NULL,
-    CreationDate    TIMESTAMP,
+    CreationDate    TEXT,
     UserName        TEXT,
     TotalLikes      INTEGER NOT NULL DEFAULT (0),
     TipCount        INTEGER NOT NULL DEFAULT (0),
