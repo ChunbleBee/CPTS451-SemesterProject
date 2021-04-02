@@ -143,3 +143,15 @@ CREATE TABLE CheckIns
     PRIMARY KEY (BusinessID)
 );
 
+/* Tips Table */
+CREATE TABLE Tips
+(
+    BusinessID  TEXT,
+	UserID TEXT,
+    Date TIMESTAMP,
+	Likes INTEGER,
+	Text TEXT,
+    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
+	FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    PRIMARY KEY (BusinessID)
+);
