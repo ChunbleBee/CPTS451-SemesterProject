@@ -19,6 +19,7 @@ business = pd.read_json('./Project/YelpData/yelp_business.JSON', lines=True)
 check = pd.read_json('./Project/YelpData/yelp_checkin.JSON', lines=True)
 tips = pd.read_json('./Project/YelpData/yelp_tip.JSON', lines=True)
 
+
 def insert2BusinessTable(lines):
     insertString = "INSERT INTO business (businessID, businessname, state, city, isOpen, reviewCount, starrating, numCheckins, numTips, categories)"
     valString = " VALUES ( "
@@ -133,25 +134,26 @@ def insert2UsersTable(lines):
 
 
 def insert2CheckinsTable(lines):
-    insertString = "INSERT INTO checkins (businessID, CheckInDate)"
-    valString = " VALUES ( "
-    try:
-        conn = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
-    except Exception as e:
-        print('Unable to connect to the database!')
-    cur = conn.cursor()
-    for i in range(len(lines)):
-        temp = valString
-        temp += "'" + lines.business_id[i] + "', " + lines.yelping_since[i] + ", '" + lines.name[i] + "', " + \
-                "0, " + str(lines.tipcount[i]) + ", " + str(lines.fans[i]) + ", " + str(lines.funny[i]) + \
-                ", " + str(lines.cool[i]) + ", " + str(lines.average_stars[i]) + ", " + "NULL, NULL )"
-        try:
-            cur.execute(insertString+temp)
-        except Exception as e:
-            print("Insert to businessTABLE failed!", e)
-        conn.commit()
-    cur.close()
-    conn.close()
+    # insertString = "INSERT INTO checkins (businessID, CheckInDate)"
+    # valString = " VALUES ( "
+    # try:
+    #     conn = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+    # except Exception as e:
+    #     print('Unable to connect to the database!')
+    # cur = conn.cursor()
+    # for i in range(len(lines)):
+    #     temp = valString
+    #     temp += "'" + lines.business_id[i] + "', " + lines.yelping_since[i] + ", '" + lines.name[i] + "', " + \
+    #             "0, " + str(lines.tipcount[i]) + ", " + str(lines.fans[i]) + ", " + str(lines.funny[i]) + \
+    #             ", " + str(lines.cool[i]) + ", " + str(lines.average_stars[i]) + ", " + "NULL, NULL )"
+    #     try:
+    #         cur.execute(insertString+temp)
+    #     except Exception as e:
+    #         print("Insert to businessTABLE failed!", e)
+    #     conn.commit()
+    # cur.close()
+    # conn.close()
+    pass
 
 
 def insert2TipsTable(lines):

@@ -28,6 +28,16 @@ CREATE TABLE Friends
     PRIMARY KEY (User01, User02)
 );
 
+-- Alternate Design
+CREATE TABLE Friends
+(
+    UserID  TEXT NOT NULL,
+    FriendID  TEXT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (FriendID) REFERENCES Users(UserID),
+    PRIMARY KEY (UserID, FriendID)
+);
+
 
 /***********************************************************/
 /*----------------------- BUSINESSES ----------------------*/
