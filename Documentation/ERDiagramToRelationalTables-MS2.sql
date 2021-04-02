@@ -42,8 +42,8 @@ CREATE TABLE Business
     IsOpen          BOOLEAN,
     ReviewCount     INTEGER,
     StarRating      DECIMAL (2, 1),
-    CheckIns        INTEGER NOT NULL DEFAULT (0),
-    Tips            INTEGER NOT NULL DEFAULT (0),
+    NumCheckIns        INTEGER NOT NULL DEFAULT (0),
+    NumTips            INTEGER NOT NULL DEFAULT (0),
     Categories      TEXT [],
     PRIMARY KEY (BusinessID)
 );
