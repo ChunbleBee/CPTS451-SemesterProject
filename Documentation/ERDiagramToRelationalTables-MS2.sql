@@ -140,18 +140,18 @@ CREATE TABLE CheckIns
     BusinessID  TEXT,
     CheckInDate TIMESTAMP,
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (BusinessID, CheckInDate)
 );
 
 /* Tips Table */
 CREATE TABLE Tips
 (
     BusinessID  TEXT,
-	UserID TEXT,
-    Date TIMESTAMP,
-	Likes INTEGER,
-	Text TEXT,
+	UserID      TEXT,
+    Date        TIMESTAMP,
+	Likes       INTEGER,
+	Text        TEXT,
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
 	FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (BusinessID, UserID, Date)
 );
