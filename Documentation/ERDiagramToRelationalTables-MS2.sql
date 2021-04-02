@@ -64,8 +64,9 @@ CREATE TABLE Addresses
 CREATE TABLE BusinessHours
 (
     BusinessID      TEXT NOT NULL,
-    OpeningTimes    TIME [],
-    ClosingTimes    TIME [],
+    Days            TEXT [],
+    OpeningTimes    TEXT [],
+    ClosingTimes    TEXT [],
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
