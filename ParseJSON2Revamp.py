@@ -12,13 +12,21 @@ def int2BoolStr(value):
     else:
         return 'true'
 
+# schema = open("./TAZE_schema_MS2.sql")
+# triggers = open("./TAZE_trigger.sql")
+# update = open("./TAZE_UPDATE.sql")
+# users = open("./Project/YelpData/yelp_user.JSON", "r")
+# businesses = open("./Project/YelpData/yelp_business.JSON", "r")
+# checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
+# tips = open('./Project/YelpData/yelp_tip.JSON', "r")
+
 schema = open("./TAZE_schema_MS2.sql")
 triggers = open("./TAZE_trigger.sql")
 update = open("./TAZE_UPDATE.sql")
 users = open("./Project/YelpData/yelp_user.JSON", "r")
-businesses = open("./Project/YelpData/yelp_business.JSON", "r")
-checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
-tips = open('./Project/YelpData/yelp_tip.JSON', "r")
+businesses = open("./Project/YelpData/yelpBusinessSubset.JSON", "r")
+checkins = open('./Project/YelpData/yelpCheckinSubset.JSON', "r")
+tips = open('./Project/YelpData/yelpTipSubset.JSON', "r")
 
 def DestroyPreviousDatabase():
     try:
@@ -387,20 +395,20 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     print("#\t\tStarting Category Parse\t\t#")
     print("------------------------------------------------")
-    BusinessCategoriesInsert(businesses)
-    businesses.seek(0)
+    # BusinessCategoriesInsert(businesses)
+    # businesses.seek(0)
 
     print("------------------------------------------------")
     print("#\t\tStarting Attribute Parse\t\t#")
     print("------------------------------------------------")
-    BusinessAttributesInsert(businesses)
-    businesses.seek(0)
+    # BusinessAttributesInsert(businesses)
+    # businesses.seek(0)
 
     print("------------------------------------------------")
     print("#\t\tStarting Hours Parse\t\t#")
     print("------------------------------------------------")
-    BusinessHoursInsert(businesses)
-    businesses.seek(0)
+    # BusinessHoursInsert(businesses)
+    # businesses.seek(0)
 
     print("------------------------------------------------")
     print("#\t\tStarting Users Parse\t\t#")
@@ -411,8 +419,8 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     print("#\t\tStarting Friends Parse\t\t#")
     print("------------------------------------------------")
-    FriendsTableInsert(users)
-    users.seek(0)
+    # FriendsTableInsert(users)
+    # users.seek(0)
 
     print("------------------------------------------------")
     print("#\t\tStarting Tips Parse\t\t#")
