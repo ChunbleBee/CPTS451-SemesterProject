@@ -57,7 +57,8 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void saveTip()
         {
-
+            string sqlstr = "INSERT INTO tips VALUES('" + this.businessID + "', '" + tipTextBox.Text + "', '" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "');";
+            this.executeQuery(sqlstr, addTip);
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)

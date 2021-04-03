@@ -166,11 +166,14 @@ namespace CPTS451_TrmPrjWPFv0._1
         private void StateListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             cityListComboBox.Items.Clear();
+            zipListBox.Items.Clear();
             if (cityListComboBox.SelectedIndex == -1)
             {
                 string sqlstr = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
                 //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
                 executeQuery(sqlstr, addCity);
+                string sqlstr2 = "SELECT distinct zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city IN ('" + cityListComboBox.SelectedItem.ToString() + "') ORDER BY zip";
+                executeQuery(sqlstr2, addZip);
             }
 
         }
@@ -185,23 +188,31 @@ namespace CPTS451_TrmPrjWPFv0._1
         private void CityListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             businessGridDataGrid.Items.Clear();
+            zipListBox.Items.Clear();
+            businessCatListBox.Items.Clear();
             if (stateListComboBox.SelectedIndex > -1)
             {
                 string sqlstr = "SELECT businessname, state, city, businessid FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
                 executeQuery(sqlstr, addGridRow);
                 //executeQuery(sqlstr, addColumns2Grid); // revert changes.
-
+                string sqlstr2 = "SELECT distinct zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city IN ('" + cityListComboBox.SelectedItem.ToString() + "') ORDER BY zip";
+                executeQuery(sqlstr2, addZip);
+                string sqlstr3 = "SELECT distinct category FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city IN ('" + cityListComboBox.SelectedItem.ToString() + "') ORDER BY zip";
+                executeQuery(sqlstr3, addBusiCategroies);
             }
+
+            
+
         }
 
-        private void addZip(NpgsqlConnectionStringBuilder R)
+        private void addZip(NpgsqlDataReader R)
         {
-            //zipListBox.Items.Add();
+            zipListBox.Items.Add(R.GetString(0));
         }
 
-        private void addBusiCategroies(NpgsqlConnectionStringBuilder R)
+        private void addBusiCategroies(NpgsqlDataReader R)
         {
-            //businessCatListBox.Items.Add();
+            businessCatListBox.Items.Add(R.GetString(0));
         }
 
         private void BusinessGridDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
