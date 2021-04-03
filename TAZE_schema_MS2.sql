@@ -5,14 +5,14 @@
 CREATE TABLE Users
 (
     UserID          TEXT NOT NULL,
-    CreationDate    TEXT,
+    CreationDate    TIMESTAMP NOT NULL DEFAULT NOW(),
     UserName        TEXT,
     TotalLikes      INTEGER NOT NULL DEFAULT (0),
     TipCount        INTEGER NOT NULL DEFAULT (0),
     FansRating      INTEGER,
     FunnyRating     INTEGER,
     CoolRating      INTEGER,
-    AvgStarRating   DECIMAL (2, 1),
+    AvgStarRating   DECIMAL (3, 2),
     Latitude        DECIMAL (8, 6),
     Longitude       DECIMAL (9, 6),
     PRIMARY KEY (UserID)
@@ -41,8 +41,8 @@ CREATE TABLE Businesses
     City            TEXT,
     State           TEXT,
     ZipCode         INTEGER,
-    Longitude       DECIMAL (9, 6),
     Latitude        DECIMAL (8, 6),
+    Longitude       DECIMAL (9, 6),
     IsOpen          BOOLEAN,
     ReviewCount     INTEGER NOT NULL DEFAULT 0,
     StarRating      DECIMAL (2, 1) NOT NULL DEFAULT 0.0,
@@ -54,9 +54,9 @@ CREATE TABLE Businesses
 CREATE TABLE BusinessHours
 (
     BusinessID      TEXT NOT NULL,
-    Days            TEXT [],
-    OpeningTimes    TEXT [],
-    ClosingTimes    TEXT [],
+    /*Opening & closing time of 0:0 indicates closed on that day*/
+    OpeningTimes    TIME [],
+    ClosingTimes    TIME [],
     FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
     PRIMARY KEY (BusinessID)
 );

@@ -6,7 +6,6 @@ import pandas as pd
 def cleanStr4SQL(s):
     return s.replace("'", "`").replace("\n", " ")
 
-
 def int2BoolStr(value):
     if value == 0:
         return 'false'
@@ -14,6 +13,8 @@ def int2BoolStr(value):
         return 'true'
 
 schema = open("./TAZE_schema_MS2.sql")
+triggers = open("./TAZE_trigger.sql")
+update = open("./TAZE_UPDATE.sql")
 users = open("./Project/YelpData/yelp_user.JSON", "r")
 businesses = open("./Project/YelpData/yelp_business.JSON", "r")
 checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
@@ -126,7 +127,7 @@ def BusinessCategoriesInsert(fin):
             try:
                 cursor.execute(commitval)
             except Exception as ex:
-                print("Insert into Business table failed with error: ", ex)
+                print("Insert into BusinessCategories table failed with error: ", ex)
                 return
             print("\tSUCCESS\n")
             db.commit()
@@ -184,10 +185,127 @@ def BusinessAttributesInsert(fin):
             try:
                 cursor.execute(commitval)
             except Exception as ex:
-                print("Insert into Business table failed with error: ", ex)
+                print("Insert into BusinessAttributes table failed with error: ", ex)
                 return
             print("\tSUCCESS\n")
             db.commit()
+    cursor.close()
+    db.close()
+
+def BusinessHoursInsert(fin):
+    try:
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+    except Exception as ex:
+        print("Connection to database failed with error: ", ex)
+        return
+
+    cursor = db.cursor()
+
+    for line in fin.readlines():
+        business = json.loads(line)
+        print("Attempting to push: ", business["business_id"], business["hours"])
+
+        insertString = "INSERT INTO BusinessHours (BusinessID, OpeningTimes, ClosingTimes)"
+        arrString = "ARRAY["
+        openingTimes = ""
+        closingTimes = ""
+
+        valString = " VALUES ( "
+        valString += "'" + business["business_id"] + "', "
+
+        for days, hours in business["hours"].items():
+            times = hours.split('-')
+            opening = times[0]
+            if (opening[-2] == ':'):
+                opening += '0'
+            closing = times[1]
+            if (closing[-2] == ':'):
+                closing += '0'
+            openingTimes += "'" + opening + ":00'::TIME, "
+            closingTimes += "'" + closing + ":00'::TIME, "
+
+        openingTimes = arrString + openingTimes[:-2] + "]"
+        closingTimes = arrString + closingTimes[:-2] + "]"
+        if (openingTimes != "ARRAY[]" and closingTimes != "ARRAY[]"):
+            valString += openingTimes + "," + closingTimes + ")"
+            commitval = insertString + valString
+            print("\tCommit val: ", commitval)
+            try:
+                cursor.execute(commitval)
+            except Exception as ex:
+                print("Insert into BusinessHours table failed with error: ", ex)
+                return
+            print("\tSUCCESS\n")
+            db.commit()
+        else:
+            print("\tNO KNOWN HOURS, SKIPPING")
+    cursor.close()
+    db.close()
+
+def UserTableInsert(fin):
+    try:
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+    except Exception as ex:
+        print("Connection to database failed with error: ", ex)
+        return
+
+    cursor = db.cursor()
+
+    for line in fin.readlines():
+        user = json.loads(line)
+        print("Attempting to push: ", line)
+
+        insertString = (
+            "INSERT INTO Users" +
+            " (UserID, CreationDate, UserName, " +
+            "FansRating, FunnyRating, CoolRating, AvgStarRating)"
+        )
+        valString = " VALUES ( "
+        valString += "'" + user["user_id"] + "', "
+        valString += "'" + user["yelping_since"] + "'::TIMESTAMP, "
+        valString += "'" + cleanStr4SQL(user["name"]) + "', "
+        valString += str(user["fans"]) + ", "
+        valString += str(user["funny"]) + ", "
+        valString += str(user["cool"]) + ", "
+        valString += str(user["average_stars"]) + ")"
+        commitval = insertString + valString
+        print("\tCommit val: ", commitval)
+        try:
+            cursor.execute(commitval)
+        except Exception as ex:
+            print("Insert into Users table failed with error: ", ex)
+            return
+        print("\tSUCCESS\n")
+        db.commit()
+    cursor.close()
+    db.close()
+
+def FriendsTableInsert(fin):
+    try:
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+    except Exception as ex:
+        print("Connection to database failed with error: ", ex)
+        return
+
+    cursor = db.cursor()
+
+    for line in fin.readlines():
+        user = json.loads(line)
+        print("Attempting to push: ", user["user_id"], user["friends"])
+
+        insertString = "INSERT INTO Friends (User01, User02)"
+        valString = " VALUES ( "
+        valString += "'" + user["user_id"] + "', "
+        for friend in user["friends"]:
+            commitval = valString + "'" + friend + "');"
+            print("\tCommit val: ", commitval)
+            try:
+                cursor.execute(commitval)
+            except Exception as ex:
+                print("Insert into Business table failed with error: ", ex)
+                return
+            print("\tSUCCESS\n")
+        db.commit()
     cursor.close()
     db.close()
 
@@ -197,6 +315,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
+    BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")
@@ -204,14 +323,37 @@ if __name__ == "__main__":
     BusinessTableInsert(businesses)
     businesses.seek(0)
 
-    print("------------------------------------------------")
-    print("#\t\tStarting Category Parse\t\t#")
-    print("------------------------------------------------")
-    BusinessCategoriesInsert(businesses)
-    businesses.seek(0)
+    # print("------------------------------------------------")
+    # print("#\t\tStarting Category Parse\t\t#")
+    # print("------------------------------------------------")
+    # BusinessCategoriesInsert(businesses)
+    # businesses.seek(0)
+
+    # print("------------------------------------------------")
+    # print("#\t\tStarting Attribute Parse\t\t#")
+    # print("------------------------------------------------")
+    # BusinessAttributesInsert(businesses)
+    # businesses.seek(0)
+
+    # print("------------------------------------------------")
+    # print("#\t\tStarting Hours Parse\t\t#")
+    # print("------------------------------------------------")
+    # BusinessHoursInsert(businesses)
+    # businesses.seek(0)
 
     print("------------------------------------------------")
-    print("#\t\tStarting Attribute Parse\t\t#")
+    print("#\t\tStarting Users Parse\t\t#")
     print("------------------------------------------------")
-    BusinessAttributesInsert(businesses)
-    businesses.seek(0)
+    UserTableInsert(users)
+    users.seek(0)
+
+    print("------------------------------------------------")
+    print("#\t\tStarting Friends Parse\t\t#")
+    print("------------------------------------------------")
+    FriendsTableInsert(users)
+    users.seek(0)
+
+    print("------------------------------------------------")
+    print("#\t\tUpdate Database Derived Collumns\t\t#")
+    print("------------------------------------------------")
+    BuildDatabase(update)
