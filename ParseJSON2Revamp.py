@@ -25,16 +25,15 @@ def DestroyPreviousDatabase():
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
     
     cursor = db.cursor()
-    cursor.execute("GRANT ALL ON SCHEMA public TO postgres;")
-    db.commit()
-    cursor.execute("GRANT ALL ON SCHEMA public TO public;")
-    db.commit()
-    cursor.execute("DROP SCHEMA public CASCADE;")
-    db.commit()
-    cursor.execute("CREATE SCHEMA public;")
+    cursor.execute(
+        "GRANT ALL ON SCHEMA public TO postgres;" +
+        "GRANT ALL ON SCHEMA public TO public;" +
+        "DROP SCHEMA public CASCADE;" +
+        "CREATE SCHEMA public;"
+    )
     db.commit()
 
 def BuildDatabase(schema):
@@ -42,13 +41,14 @@ def BuildDatabase(schema):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
     cursor = db.cursor()
     commitval = ""
 
     for line in schema.readlines():
         commitval += line.replace("\n", "")
         if ";" in line:
+            commitval = cleanStr4SQL(commitval)
             cursor.execute(commitval)
             db.commit()
             commitval = ""
@@ -60,12 +60,12 @@ def BusinessTableInsert(fin):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
 
     cursor = db.cursor()
 
     for line in fin.readlines():
-        print("Attempting to push: ", line)
+        # print("Attempting to push: ", line)
         business = json.loads(line)
 
         insertString = ("INSERT INTO Businesses (BusinessID," +
@@ -94,8 +94,8 @@ def BusinessTableInsert(fin):
             cursor.execute(commitval)
         except Exception as ex:
             print("Insert into Business table failed with error: ", ex)
-            return
-        print("\tSUCCESS\n")
+            exit(-1)
+        # print("\tSUCCESS\n")
         db.commit()
     cursor.close()
     db.close()
@@ -105,20 +105,19 @@ def BusinessCategoriesInsert(fin):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
 
     cursor = db.cursor()
 
     for line in fin.readlines():
         business = json.loads(line)
-        print("Attempting to push: ", business["business_id"], business["categories"])
+        # print("Attempting to push: ", business["business_id"], business["categories"])
 
         insertString = ("INSERT INTO BusinessCategories (BusinessID, Category)")
         valString = " VALUES ('" + business["business_id"] + "', "
         
         for cat in business["categories"].split(","):
             cat = cleanStr4SQL(cat).strip()
-            print("\tcategory push: " + cat)
             temp = valString + "'" + cat + "')"
 
             commitval = insertString + temp
@@ -128,8 +127,8 @@ def BusinessCategoriesInsert(fin):
                 cursor.execute(commitval)
             except Exception as ex:
                 print("Insert into BusinessCategories table failed with error: ", ex)
-                return
-            print("\tSUCCESS\n")
+                exit(-1)
+            # print("\tSUCCESS\n")
             db.commit()
     cursor.close()
     db.close()
@@ -139,13 +138,13 @@ def BusinessAttributesInsert(fin):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
 
     cursor = db.cursor()
 
     for line in fin.readlines():
         business = json.loads(line)
-        print("Attempting to push: ", business["business_id"], business["attributes"])
+        # print("Attempting to push: ", business["business_id"], business["attributes"])
 
         insertStringSimple = "INSERT INTO BusinessAttributes (BusinessID, Attribute, Value)"
         insertStringExtended = "INSERT INTO BusinessAttributes (BusinessID, Attribute, SubTypes, Values)"
@@ -186,8 +185,8 @@ def BusinessAttributesInsert(fin):
                 cursor.execute(commitval)
             except Exception as ex:
                 print("Insert into BusinessAttributes table failed with error: ", ex)
-                return
-            print("\tSUCCESS\n")
+                exit(-1)
+            # print("\tSUCCESS\n")
             db.commit()
     cursor.close()
     db.close()
@@ -197,13 +196,13 @@ def BusinessHoursInsert(fin):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
 
     cursor = db.cursor()
 
     for line in fin.readlines():
         business = json.loads(line)
-        print("Attempting to push: ", business["business_id"], business["hours"])
+        # print("Attempting to push: ", business["business_id"], business["hours"])
 
         insertString = "INSERT INTO BusinessHours (BusinessID, OpeningTimes, ClosingTimes)"
         arrString = "ARRAY["
@@ -234,7 +233,7 @@ def BusinessHoursInsert(fin):
                 cursor.execute(commitval)
             except Exception as ex:
                 print("Insert into BusinessHours table failed with error: ", ex)
-                return
+                exit(-1)
             print("\tSUCCESS\n")
             db.commit()
         else:
@@ -247,13 +246,13 @@ def UserTableInsert(fin):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
 
     cursor = db.cursor()
 
     for line in fin.readlines():
         user = json.loads(line)
-        print("Attempting to push: ", line)
+        # print("Attempting to push: ", line)
 
         insertString = (
             "INSERT INTO Users" +
@@ -274,8 +273,8 @@ def UserTableInsert(fin):
             cursor.execute(commitval)
         except Exception as ex:
             print("Insert into Users table failed with error: ", ex)
-            return
-        print("\tSUCCESS\n")
+            exit(-1)
+        # print("\tSUCCESS\n")
         db.commit()
     cursor.close()
     db.close()
@@ -285,27 +284,89 @@ def FriendsTableInsert(fin):
         db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
-        return
+        exit(-1)
 
     cursor = db.cursor()
 
     for line in fin.readlines():
         user = json.loads(line)
-        print("Attempting to push: ", user["user_id"], user["friends"])
+        # print("Attempting to push: ", user["user_id"], user["friends"])
 
         insertString = "INSERT INTO Friends (User01, User02)"
         valString = " VALUES ( "
         valString += "'" + user["user_id"] + "', "
         for friend in user["friends"]:
-            commitval = valString + "'" + friend + "');"
+            commitval = insertString + valString + "'" + friend + "');"
             print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
             except Exception as ex:
                 print("Insert into Business table failed with error: ", ex)
-                return
-            print("\tSUCCESS\n")
+                exit(-1)
+            # print("\tSUCCESS\n")
         db.commit()
+    cursor.close()
+    db.close()
+
+def TipsTableInsert(fin):
+    try:
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+    except Exception as ex:
+        print("Connection to database failed with error: ", ex)
+        exit(-1)
+
+    cursor = db.cursor()
+
+    for line in fin.readlines():
+        tip = json.loads(line)
+        # print("Attempting to push: ", line)
+
+        insertString = "INSERT INTO Tips (BusinessID, UserID, Date, Likes, Text)"
+        valString = " VALUES ( "
+        valString += "'" + tip["business_id"] + "', "
+        valString += "'" + tip["user_id"] + "', "
+        valString += "'" + tip["date"] + "'::TIMESTAMP, "
+        valString += str(tip["likes"]) + ", "
+        valString += "'" + cleanStr4SQL(tip["user_id"]) + "');"
+
+        commitval = insertString + valString
+        print("\tCommit val: ", commitval)
+        try:
+            cursor.execute(commitval)
+        except Exception as ex:
+            print("Insert into Business table failed with error: ", ex)
+            exit(-1)
+        # print("\tSUCCESS\n")
+        db.commit()
+    cursor.close()
+    db.close()
+
+def CheckInsTableInsert(fin):
+    try:
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+    except Exception as ex:
+        print("Connection to database failed with error: ", ex)
+        exit(-1)
+
+    cursor = db.cursor()
+
+    for line in fin.readlines():
+        checkin = json.loads(line)
+        # print("Attempting to push: ", checkin["business_id"], checkin["date"])
+
+        insertString = "INSERT INTO CheckIns (BusinessID, CheckInDate)"
+        valString = " VALUES ( "
+        valString += "'" + checkin["business_id"] + "', "
+
+        for date in checkin["date"].split(','):
+            commitval = insertString + valString + "'" + date + "'::TIMESTAMP);"
+            print("\tCommit val: ", commitval)
+            try:
+                cursor.execute(commitval)
+                db.commit()
+            except Exception as ex:
+                print("Insert into CheckIns table failed with error: ", ex)
+            # print("\tSUCCESS\n")
     cursor.close()
     db.close()
 
@@ -315,7 +376,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
-    BuildDatabase(triggers)
+    # BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")
@@ -323,23 +384,23 @@ if __name__ == "__main__":
     BusinessTableInsert(businesses)
     businesses.seek(0)
 
-    # print("------------------------------------------------")
-    # print("#\t\tStarting Category Parse\t\t#")
-    # print("------------------------------------------------")
-    # BusinessCategoriesInsert(businesses)
-    # businesses.seek(0)
+    print("------------------------------------------------")
+    print("#\t\tStarting Category Parse\t\t#")
+    print("------------------------------------------------")
+    BusinessCategoriesInsert(businesses)
+    businesses.seek(0)
 
-    # print("------------------------------------------------")
-    # print("#\t\tStarting Attribute Parse\t\t#")
-    # print("------------------------------------------------")
-    # BusinessAttributesInsert(businesses)
-    # businesses.seek(0)
+    print("------------------------------------------------")
+    print("#\t\tStarting Attribute Parse\t\t#")
+    print("------------------------------------------------")
+    BusinessAttributesInsert(businesses)
+    businesses.seek(0)
 
-    # print("------------------------------------------------")
-    # print("#\t\tStarting Hours Parse\t\t#")
-    # print("------------------------------------------------")
-    # BusinessHoursInsert(businesses)
-    # businesses.seek(0)
+    print("------------------------------------------------")
+    print("#\t\tStarting Hours Parse\t\t#")
+    print("------------------------------------------------")
+    BusinessHoursInsert(businesses)
+    businesses.seek(0)
 
     print("------------------------------------------------")
     print("#\t\tStarting Users Parse\t\t#")
@@ -354,6 +415,20 @@ if __name__ == "__main__":
     users.seek(0)
 
     print("------------------------------------------------")
-    print("#\t\tUpdate Database Derived Collumns\t\t#")
+    print("#\t\tStarting Tips Parse\t\t#")
     print("------------------------------------------------")
-    BuildDatabase(update)
+    TipsTableInsert(tips)
+    tips.seek(0)
+
+    print("------------------------------------------------")
+    print("#\t\tStarting CheckIns Parse\t\t#")
+    print("------------------------------------------------")
+    CheckInsTableInsert(checkins)
+    checkins.seek(0)
+
+    # print("------------------------------------------------")
+    # print("#\t\tUpdate Database Derived Collumns\t\t#")
+    # print("------------------------------------------------")
+    # BuildDatabase(update)
+
+    print("...\n\nCompleted without errors!")

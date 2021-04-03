@@ -1,8 +1,8 @@
 CREATE OR REPLACE FUNCTION updateTipCount() RETURNS trigger AS '
 BEGIN
-  UPDATE users
-  SET tipCount = tipCount + 1
-  WHERE OLD.userID = NEW.userID
+  UPDATE Users
+  SET TipCount = TipCount + 1
+  WHERE OLD.UserID = NEW.UserID
   RETURN NEW;
 END
 ' LANGUAGE plpgsql;
@@ -14,9 +14,9 @@ EXECUTE PROCEDURE updateTipCount();
 
 CREATE OR REPLACE FUNCTION updatenumTips() RETURNS trigger AS '
 BEGIN
-  UPDATE business
-  SET numTips = numTips + 1
-  WHERE OLD.businessID = NEW.businessID
+  UPDATE Businesses
+  SET NumTips = NumTips + 1
+  WHERE OLD.BusinessID = NEW.BusinessID
   RETURN NEW;
 END
 ' LANGUAGE plpgsql;
@@ -28,9 +28,9 @@ EXECUTE PROCEDURE updatenumTips();
 
 CREATE OR REPLACE FUNCTION updatenumCheckins() RETURNS trigger AS '
 BEGIN
-  UPDATE users
-  SET numCheckins = numCheckins + 1
-  WHERE OLD.businessID = NEW.businessID
+  UPDATE Businesses
+  SET NumCheckIns = NumCheckIns + 1
+  WHERE OLD.BusinessID = NEW.BusinessID
   RETURN NEW;
 END
 ' LANGUAGE plpgsql;
@@ -42,9 +42,9 @@ EXECUTE PROCEDURE updatenumCheckins();
 
 CREATE OR REPLACE FUNCTION updatetotalLikes() RETURNS trigger AS '
 BEGIN
-  UPDATE users
-  SET totalLikes = (SELECT SUM(likes) FROM Tips WHERE users.userID=TiPs.UserID)
-  WHERE OLD.userID = NEW.userID
+  UPDATE Users
+  SET TotalLikes = (SELECT SUM(likes) FROM Tips WHERE Users.UserID=Tips.UserID)
+  WHERE OLD.UserID = NEW.UserID
   RETURN NEW;
 END
 ' LANGUAGE plpgsql;
