@@ -40,7 +40,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= z";
+            return "Host = localhost; Username = postgres; Database = milestone1db; password= ';'";
         }
 
         private void executeQuery(string sqlstr, Action<NpgsqlDataReader> myf)

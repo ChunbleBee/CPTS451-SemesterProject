@@ -25,7 +25,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private string businessName = "";
         private string businessID = "";
-        private string userID
+        private string userID;
         private string tip2Add = "";
         public AddTipWindow(string bName, string bid)
         {
@@ -42,7 +42,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= z";
+            return "Host = localhost; Username = postgres; Database = milestone1db; password= ';'";
         }
 
         private void executeQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -131,7 +131,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         }
         private void addTip(NpgsqlDataReader R)
         {
-            tipsDataGrid.Items.Add(R.GetString(0));
+        //    tipsDataGrid.Items.Add(R.GetString(0));
         }
     }
 }

@@ -46,7 +46,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
             //return "Host = localhost, Username = postgres, Database = milestone1db, password=[INSERT YOUR PASSWORD HERE]";
 
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= z";
+            return "Host = localhost; Username = postgres; Database = milestone1db; password=';'";
 
         }
 
@@ -115,6 +115,18 @@ namespace CPTS451_TrmPrjWPFv0._1
             col4.Width = 0;
             businessGridDataGrid.Columns.Add(col4);
 
+            DataGridTextColumn col5 = new DataGridTextColumn();
+            col5.Binding = new Binding("zip");
+            col5.Header = "Zip";
+            col5.Width = 150;
+            businessGridDataGrid.Columns.Add(col5);
+
+            DataGridTextColumn col6 = new DataGridTextColumn();
+            col6.Binding = new Binding("categories");
+            col6.Header = "Categories";
+            col6.Width = 150;
+            businessGridDataGrid.Columns.Add(col6);
+
             //businessGridDataGrid.Items.Add(new Business() { businessname = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
             /*businessGridDataGrid.Items.Add(new Business() { businessname = "business-1", state = "WA", city = "Pullman" });
             businessGridDataGrid.Items.Add(new Business() { businessname = "business-2", state = "CA", city = "Pasadena" });
@@ -172,7 +184,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                 string sqlstr = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
                 //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
                 executeQuery(sqlstr, addCity);
-                string sqlstr2 = "SELECT distinct zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city IN ('" + cityListComboBox.SelectedItem.ToString() + "') ORDER BY zip";
+                string sqlstr2 = "SELECT distinct zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY zip";
                 executeQuery(sqlstr2, addZip);
             }
 
