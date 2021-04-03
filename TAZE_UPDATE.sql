@@ -1,15 +1,15 @@
-UPDATE business
+UPDATE businesses
 SET numCheckins = 
     (SELECT COUNT(*) 
         FROM CheckIns
-        WHERE business.businessID = CheckIns.businessID
+        WHERE businesses.businessID = CheckIns.businessID
         GROUP BY businessID);
 
-UPDATE business
+UPDATE businesses
 SET numTips = 
     (SELECT COUNT(*) 
         FROM tips
-        WHERE business.businessID = tips.businessID
+        WHERE businesses.businessID = tips.businessID
         GROUP BY businessID);
 
 UPDATE users

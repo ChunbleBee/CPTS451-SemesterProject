@@ -22,7 +22,7 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 
 def DestroyPreviousDatabase():
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -38,7 +38,7 @@ def DestroyPreviousDatabase():
 
 def BuildDatabase(schema):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -57,7 +57,7 @@ def BuildDatabase(schema):
 
 def BusinessTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -102,7 +102,7 @@ def BusinessTableInsert(fin):
 
 def BusinessCategoriesInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -135,7 +135,7 @@ def BusinessCategoriesInsert(fin):
 
 def BusinessAttributesInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -193,7 +193,7 @@ def BusinessAttributesInsert(fin):
 
 def BusinessHoursInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -243,7 +243,7 @@ def BusinessHoursInsert(fin):
 
 def UserTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -281,7 +281,7 @@ def UserTableInsert(fin):
 
 def FriendsTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -310,7 +310,7 @@ def FriendsTableInsert(fin):
 
 def TipsTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -343,7 +343,7 @@ def TipsTableInsert(fin):
 
 def CheckInsTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
