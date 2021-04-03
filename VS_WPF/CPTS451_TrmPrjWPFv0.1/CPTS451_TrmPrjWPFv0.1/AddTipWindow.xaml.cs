@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Npgsql;
 
 namespace CPTS451_TrmPrjWPFv0._1
 {
@@ -22,6 +25,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private string businessName = "";
         private string businessID = "";
+        private string userID
         private string tip2Add = "";
         public AddTipWindow(string bName, string bid)
         {
@@ -30,6 +34,51 @@ namespace CPTS451_TrmPrjWPFv0._1
             this.businessID = String.Copy(bid); // businessID used for selecting the appropriate business to insert the tip for.
             this.businessNameTextBox.Text = this.businessName;
             this.businessNameTextBox.IsReadOnly = true;
+        }
+
+        private string buildConnectionString()
+        {
+            // need to update this for everyone's personal machines
+            //                  ---------------------------------------------------------------------
+            //                                       |                                              |
+            //                                       v                                              v
+            return "Host = localhost; Username = postgres; Database = milestone1db; password= z";
+        }
+
+        private void executeQuery(string sqlstr, Action<NpgsqlDataReader> myf)
+        {
+            using (var connection = new NpgsqlConnection(buildConnectionString()))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = connection;
+                    cmd.CommandText = sqlstr;
+
+                    //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+                    try
+                    {
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            myf(reader);
+                        }
+                    }
+                    catch (NpgsqlException er)
+                    {
+                        // Sakire gives us two options on handling catched errors. I prefer option 2.
+                        // Option 1.
+                        //Console.WriteLine(er.Message.ToString());
+
+                        // Option 2.
+                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
         }
 
         private bool checkTip()
@@ -57,7 +106,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void saveTip()
         {
-            string sqlstr = "INSERT INTO tips VALUES('" + this.businessID + "', '" + tipTextBox.Text + "', '" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "');";
+            string sqlstr = "INSERT INTO tips VALUES('" + this.businessID + "', '" +this.userID + "', '" + tipTextBox.Text + "', '" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "');";
             this.executeQuery(sqlstr, addTip);
         }
 
@@ -79,6 +128,10 @@ namespace CPTS451_TrmPrjWPFv0._1
 
             // close window
             this.Close();
+        }
+        private void addTip(NpgsqlDataReader R)
+        {
+            tipsDataGrid.Items.Add(R.GetString(0));
         }
     }
 }
