@@ -33,31 +33,21 @@ CREATE TABLE Friends
 /*----------------------- BUSINESSES ----------------------*/
 /***********************************************************/
 /* Businesses Table */
-CREATE TABLE Business
+CREATE TABLE Businesses
 (
     BusinessID      TEXT NOT NULL,
     BusinessName    TEXT,
-    State           TEXT,
+    Street          TEXT,
     City            TEXT,
+    State           TEXT,
     ZipCode         INTEGER,
+    Longitude       DECIMAL (9, 6),
+    Latitude        DECIMAL (8, 6),
     IsOpen          BOOLEAN,
     ReviewCount     INTEGER NOT NULL DEFAULT 0,
     StarRating      DECIMAL (2, 1) NOT NULL DEFAULT 0.0,
     NumCheckIns     INTEGER NOT NULL DEFAULT (0),
     NumTips         INTEGER NOT NULL DEFAULT (0),
-    PRIMARY KEY (BusinessID)
-);
-
-/* Business Address Table */
-CREATE TABLE Addresses
-(
-    BusinessID  TEXT NOT NULL,
-    Longitude   DECIMAL (9, 6),
-    Latitude    DECIMAL (8, 6),
-    Street      TEXT,
-    City        TEXT,
-    USState     TEXT,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -67,7 +57,7 @@ CREATE TABLE BusinessHours
     Days            TEXT [],
     OpeningTimes    TEXT [],
     ClosingTimes    TEXT [],
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
     PRIMARY KEY (BusinessID)
 );
 
@@ -75,43 +65,21 @@ CREATE TABLE BusinessHours
 CREATE TABLE BusinessAttributes
 (
     BusinessID          TEXT NOT NULL,
-    HasTV               BOOLEAN,
-    HasWifi             BOOLEAN,
-    WheelchairAccess    BOOLEAN,
-    Parking             BOOLEAN [],
-    PaymentMethods      BOOLEAN [],
-    PriceRange          INTEGER,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    Attribute           TEXT NOT NULL,
+    Value               TEXT,
+    SubTypes            TEXT[],
+    Values              TEXT[],
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    PRIMARY KEY (BusinessID, Attribute)
 );
 
-CREATE TABLE Restaurants
+/* BusinessCategories Table */
+CREATE TABLE BusinessCategories
 (
-    BusinessID          TEXT NOT NULL,
-    TakesReservations   BOOLEAN,
-    TakeOut             BOOLEAN,
-    TableService        BOOLEAN,
-    KidFriendly         BOOLEAN,
-    NoiseLevel          INTEGER,
-    Ambiences           TEXT [],
-    BestNights          BOOLEAN [7],
-    MealTimes           BOOLEAN [],
-    Alcohol             TEXT,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
-);
-
-CREATE TABLE MusicInfo
-(
-    BusinessID          TEXT NOT NULL,
-    IsDancingFriendly   BOOLEAN,
-    HasDJ               BOOLEAN,
-    HasVJ               BOOLEAN,
-    HasLivePerformances BOOLEAN,
-    HasKaraoke          BOOLEAN,
-    HasBackgroundMusic  BOOLEAN,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    BusinessID  TEXT NOT NULL,
+    Category    TEXT NOT NULL,
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
+    PRIMARY KEY (BusinessID, Category)
 );
 
 
@@ -126,7 +94,7 @@ CREATE TABLE Reviews
     ReviewTest      TEXT,
     Likes           INTEGER,
     CreationDate    TIMESTAMP,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     PRIMARY KEY (UserID, BusinessID)
 );
@@ -139,8 +107,8 @@ CREATE TABLE Reviews
 CREATE TABLE CheckIns
 (
     BusinessID  TEXT NOT NULL,
-    CheckInDate TIMESTAMP,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
+    CheckInDate TIMESTAMP NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
     PRIMARY KEY (BusinessID, CheckInDate)
 );
 
@@ -148,21 +116,11 @@ CREATE TABLE CheckIns
 CREATE TABLE Tips
 (
     BusinessID  TEXT NOT NULL,
-	UserID      TEXT,
-    Date        TIMESTAMP,
+	UserID      TEXT NOT NULL,
+    Date        TIMESTAMP NOT NULL DEFAULT NOW(),
 	Likes       INTEGER,
 	Text        TEXT,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
+    FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
 	FOREIGN KEY (UserID) REFERENCES Users(UserID),
     PRIMARY KEY (BusinessID, UserID, Date)
-);
-
-/* BusinessCategories Table */
-/* NO RAGRETZ */
-CREATE TABLE BusinessCategories
-(
-    BusinessID  TEXT NOT NULL,
-    Categories  TEXT [],
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
 );

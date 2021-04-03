@@ -1,20 +1,20 @@
 
 --GLOSSARY
 --table names
-Business
+Businesses
 Users
 Tips
 Friends
 CheckIn
-businesscategory
+BusinessCategory
 BusinessAttributes
 BusinessHours
 
 --some attribute names
-zipcode
+ZipCode
 BusinessID
-city  (business city)
-name   (business name)
+city  (Businesses city)
+name   (Businesses name)
 UserID
 friend_id
 numtips
@@ -24,7 +24,7 @@ UserID
 tipcount  (user)
 totallikes (user)
 
-tipdate
+Date
 Likes
 Likes  (tip)
 
@@ -36,7 +36,7 @@ checkintime
 
 --1.
 SELECT COUNT(*) 
-FROM  Business;
+FROM  Businesses;
 SELECT COUNT(*) 
 FROM  Users;
 SELECT COUNT(*) 
@@ -46,7 +46,7 @@ FROM  Friends;
 SELECT COUNT(*) 
 FROM  CheckIn;
 SELECT COUNT(*) 
-FROM  businesscategory;
+FROM  BusinessCategory;
 SELECT COUNT(*) 
 FROM  BusinessAttributes;
 SELECT COUNT(*) 
@@ -54,43 +54,43 @@ FROM  BusinessHours;
 
 
 
---2. Run the following queries on your business table, CheckIn table and review table. Make sure to change the attribute names based on your schema. 
+--2. Run the following queries on your Businesses table, CheckIn table and review table. Make sure to change the attribute names based on your schema. 
 
-SELECT zipcode, COUNT(distinct C.category)
-FROM Business as B, businesscategory as C
+SELECT ZipCode, COUNT(distinct C.Category)
+FROM Businesses as B, BusinessCategory as C
 WHERE B.BusinessID = C.BusinessID
-GROUP BY zipcode
-HAVING count(distinct C.category)>300
-ORDER BY zipcode;
+GROUP BY ZipCode
+HAVING count(distinct C.Category)>300
+ORDER BY ZipCode;
 
-SELECT zipcode, COUNT(distinct A.attribute)
-FROM Business as B, BusinessAttributes as A
+SELECT ZipCode, COUNT(distinct A.attribute)
+FROM Businesses as B, BusinessAttributes as A
 WHERE B.BusinessID = A.BusinessID
-GROUP BY zipcode
-HAVING count(distinct A.attribute) = 30;
+GROUP BY ZipCode
+HAVING count(distinct A.Attribute) = 30;
 
 
-SELECT Users.UserID, count(friend_id)
+SELECT Users.UserID, count(User02)
 FROM Users, Friends
-WHERE Users.UserID = Friends.UserID AND 
+WHERE Users.UserID = Friends.User01 AND 
       Users.UserID = 'NxtYkOpXHSy7LWRKJf3z0w'
 GROUP BY Users.UserID;
 
 
---3. Run the following queries on your business table, CheckIn table and tips table. Make sure to change the attribute names based on your schema. 
+--3. Run the following queries on your Businesses table, CheckIn table and tips table. Make sure to change the attribute names based on your schema. 
 
 
-SELECT BusinessID, BusinessName, City, numtips, numCheckins
-FROM Business
+SELECT BusinessID, BusinessName, City, NumTips, NumCheckIns
+FROM Businesses
 WHERE BusinessID ='K8M3OeFCcAnxuxtTc0BQrQ';
 
-SELECT UserID, name, tipcount, totallikes
+SELECT UserID, name, TipCount, TotalLikes
 FROM Users
 WHERE UserID = 'NxtYkOpXHSy7LWRKJf3z0w';
 
 -----------
 
-SELECT COUNT(*) 
+SELECT COUNT(*)
 FROM CheckIn
 WHERE BusinessID ='K8M3OeFCcAnxuxtTc0BQrQ';
 
@@ -102,8 +102,8 @@ WHERE  BusinessID = 'K8M3OeFCcAnxuxtTc0BQrQ';
 --4. 
 --Type the following statements. Make sure to change the attribute names based on your schema. 
 
-SELECT BusinessID,name, city, numCheckins, numtips
-FROM Business 
+SELECT BusinessID, BusinessName, City, NumCheckIns, NumTips
+FROM Businesses
 WHERE BusinessID ='hDD6-yk1yuuRIvfdtHsISg';
 
 INSERT INTO CheckIn (BusinessID, checkinyear,checkinmonth, checkinday,checkintime)
@@ -113,22 +113,22 @@ VALUES ('hDD6-yk1yuuRIvfdtHsISg','2021','04','02','15:00');
 --5.
 --Type the following statements. Make sure to change the attribute names based on your schema.  
 
-SELECT BusinessID,name, city, numCheckins, numtips
-FROM Business 
+SELECT BusinessID, BusinessName, City, NumCheckIns, NumTips
+FROM Businesses
 WHERE BusinessID ='hDD6-yk1yuuRIvfdtHsISg';
 
-SELECT UserID, name, tipcount, totallikes
+SELECT UserID, UserName, TipCount, TotalLikes
 FROM Users
 WHERE UserID = '3z1EttCePzDn9OZbudD5VA';
 
 
-INSERT INTO Tips (UserID, BusinessID, tipdate, Likes, Likes)  
-VALUES ('3z1EttCePzDn9OZbudD5VA','hDD6-yk1yuuRIvfdtHsISg', '2021-04-02 13:00','EVERYTHING IS AWESOME',0);
+INSERT INTO Tips (UserID, BusinessID, Date, Text, Likes)  
+VALUES ('3z1EttCePzDn9OZbudD5VA','hDD6-yk1yuuRIvfdtHsISg', '2021-04-02 13:00','EVERYTHING IS AWESOME', 0);
 
 UPDATE Tips 
 SET Likes = Likes+1
 WHERE UserID = '3z1EttCePzDn9OZbudD5VA' AND 
       BusinessID = 'hDD6-yk1yuuRIvfdtHsISg' AND 
-      tipdate ='2021-04-02 13:00';
+      Date ='2021-04-02 13:00';
 
       
