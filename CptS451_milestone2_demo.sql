@@ -44,9 +44,9 @@ FROM  Tips;
 SELECT COUNT(*) 
 FROM  Friends;
 SELECT COUNT(*) 
-FROM  CheckIn;
-SELECT COUNT(*) 
-FROM  BusinessCategory;
+FROM  CheckIns;
+SELECT COUNT(*)
+FROM  BusinessCategories;
 SELECT COUNT(*) 
 FROM  BusinessAttributes;
 SELECT COUNT(*) 
@@ -57,7 +57,7 @@ FROM  BusinessHours;
 --2. Run the following queries on your Businesses table, CheckIn table and review table. Make sure to change the attribute names based on your schema. 
 
 SELECT ZipCode, COUNT(distinct C.Category)
-FROM Businesses as B, BusinessCategory as C
+FROM Businesses as B, BusinessCategories as C
 WHERE B.BusinessID = C.BusinessID
 GROUP BY ZipCode
 HAVING count(distinct C.Category)>300
@@ -84,14 +84,14 @@ SELECT BusinessID, BusinessName, City, NumTips, NumCheckIns
 FROM Businesses
 WHERE BusinessID ='K8M3OeFCcAnxuxtTc0BQrQ';
 
-SELECT UserID, name, TipCount, TotalLikes
+SELECT UserID, username, TipCount, TotalLikes
 FROM Users
 WHERE UserID = 'NxtYkOpXHSy7LWRKJf3z0w';
 
 -----------
 
 SELECT COUNT(*)
-FROM CheckIn
+FROM CheckIns
 WHERE BusinessID ='K8M3OeFCcAnxuxtTc0BQrQ';
 
 SELECT count(*)
