@@ -107,7 +107,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         private void saveTip()
         {
             string sqlstr = "INSERT INTO tips VALUES('" + this.businessID + "', '" +this.userID + "', '" + tipTextBox.Text + "', '" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "');";
-            this.executeQuery(sqlstr, addTip);
+         //   this.executeQuery(sqlstr, addTip);
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
@@ -129,9 +129,9 @@ namespace CPTS451_TrmPrjWPFv0._1
             // close window
             this.Close();
         }
-        private void addTip(NpgsqlDataReader R)
-        {
-        //    tipsDataGrid.Items.Add(R.GetString(0));
-        }
+        //private void addTip(NpgsqlDataReader R)
+        //{
+        ////    tipsDataGrid.Items.Add(R.GetString(0));
+        //}
     }
 }
