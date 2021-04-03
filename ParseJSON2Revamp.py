@@ -16,9 +16,12 @@ schema = open("./TAZE_schema_MS2.sql")
 triggers = open("./TAZE_trigger.sql")
 update = open("./TAZE_UPDATE.sql")
 users = open("./Project/YelpData/yelp_user.JSON", "r")
-businesses = open("./Project/YelpData/yelp_business.JSON", "r")
-checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
-tips = open('./Project/YelpData/yelp_tip.JSON', "r")
+# businesses = open("./Project/YelpData/yelp_business.JSON", "r")
+# checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
+# tips = open('./Project/YelpData/yelp_tip.JSON', "r")
+checkins = open("./Project/YelpData/YelpCheckinSubset.json", "r")
+tips = open("./Project/YelpData/YelpTipSubset.json", "r")
+businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 # schema = open("./TAZE_schema_MS2.sql")
 # triggers = open("./TAZE_trigger.sql")
@@ -30,7 +33,7 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 
 def DestroyPreviousDatabase():
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -46,7 +49,7 @@ def DestroyPreviousDatabase():
 
 def BuildDatabase(schema):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -54,9 +57,9 @@ def BuildDatabase(schema):
     commitval = ""
 
     for line in schema.readlines():
-        commitval += line.replace("\n", "")
+        commitval += line.replace("\n", " ")
         if ";" in line:
-            commitval = cleanStr4SQL(commitval)
+            # commitval = cleanStr4SQL(commitval)
             cursor.execute(commitval)
             db.commit()
             commitval = ""
@@ -65,7 +68,7 @@ def BuildDatabase(schema):
 
 def BusinessTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -110,7 +113,7 @@ def BusinessTableInsert(fin):
 
 def BusinessCategoriesInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -143,7 +146,7 @@ def BusinessCategoriesInsert(fin):
 
 def BusinessAttributesInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -201,7 +204,7 @@ def BusinessAttributesInsert(fin):
 
 def BusinessHoursInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -251,7 +254,7 @@ def BusinessHoursInsert(fin):
 
 def UserTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -289,7 +292,7 @@ def UserTableInsert(fin):
 
 def FriendsTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -318,7 +321,7 @@ def FriendsTableInsert(fin):
 
 def TipsTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -351,7 +354,7 @@ def TipsTableInsert(fin):
 
 def CheckInsTableInsert(fin):
     try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
     except Exception as ex:
         print("Connection to database failed with error: ", ex)
         exit(-1)
@@ -384,7 +387,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
-    # BuildDatabase(triggers)
+    BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")
@@ -434,9 +437,9 @@ if __name__ == "__main__":
     CheckInsTableInsert(checkins)
     checkins.seek(0)
 
-    # print("------------------------------------------------")
-    # print("#\t\tUpdate Database Derived Collumns\t\t#")
-    # print("------------------------------------------------")
-    # BuildDatabase(update)
+    print("------------------------------------------------")
+    print("#\t\tUpdate Database Derived Collumns\t\t#")
+    print("------------------------------------------------")
+    BuildDatabase(update)
 
     print("...\n\nCompleted without errors!")
