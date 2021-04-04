@@ -23,27 +23,32 @@ namespace CPTS451_TrmPrjWPFv0._1
     {
         public partial class Business
         {
-            public string businessid { get; set; } // for querying businesses in a state/city
             public string businessname { get; set; }
             public string state { get; set; }
             public string city { get; set;  }
+            public string businessid { get; set; }
+            public string zip { get; set; }
         }
 
         public MainWindow()
         {
             InitializeComponent();
             addState();
-            addColumns2Grid(); // THIS IS WHERE WE CALL ADDCOLUMNS2GRID!
+            addColumns2Grid();
         }
 
-        // not a great way of building a connection. unsafe to show user businessname and password.
+        // not a great way of building a connection. unsafe to show user name and password.
         private string buildConnectionString()
         {
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= [ENTER YOUR PASSWORD HERE]";
+
+            //return "Host = localhost, Username = postgres, Database = milestone1db, password=[INSERT YOUR PASSWORD HERE]";
+
+            return "Host = localhost; Username = postgres; Database = milestone2db; password=';'";
+
         }
 
         private void addState()
@@ -111,6 +116,18 @@ namespace CPTS451_TrmPrjWPFv0._1
             col4.Width = 0;
             businessGridDataGrid.Columns.Add(col4);
 
+            DataGridTextColumn col5 = new DataGridTextColumn();
+            col5.Binding = new Binding("zip");
+            col5.Header = "Zip";
+            col5.Width = 150;
+            businessGridDataGrid.Columns.Add(col5);
+
+            //DataGridTextColumn col6 = new DataGridTextColumn();
+            //col6.Binding = new Binding("categories");
+            //col6.Header = "Categories";
+            //col6.Width = 150;
+            //businessGridDataGrid.Columns.Add(col6);
+
             //businessGridDataGrid.Items.Add(new Business() { businessname = R.GetString(0), state = R.GetString(1), city = R.GetString(2) });
             /*businessGridDataGrid.Items.Add(new Business() { businessname = "business-1", state = "WA", city = "Pullman" });
             businessGridDataGrid.Items.Add(new Business() { businessname = "business-2", state = "CA", city = "Pasadena" });
@@ -128,7 +145,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                     cmd.Connection = connection;
                     cmd.CommandText = sqlstr;
 
-                    //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+                    //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
                     try
                     {
                         var reader = cmd.ExecuteReader();
@@ -161,42 +178,69 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void StateListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            businessGridDataGrid.Items.Clear();
             cityListComboBox.Items.Clear();
+            zipListBox.Items.Clear();
+            businessCatListBox.Items.Clear();
             if (cityListComboBox.SelectedIndex == -1)
             {
-               string sqlstr = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
-                        //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
-               executeQuery(sqlstr, addCity);
+                string sqlstr = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
+                //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+                executeQuery(sqlstr, addCity);
+                string sqlstr2 = "SELECT distinct zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY zip";
+                executeQuery(sqlstr2, addZip);
+                string sqlstr3 = "SELECT DISTINCT catName FROM BusinessCategories, "
+                    + "(SELECT businessID FROM Business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "') AS temp WHERE temp.businessID = BusinessCategories.businessID;";
+                executeQuery(sqlstr3, addBusiCategroies);
             }
 
         }
 
+
         private void addGridRow(NpgsqlDataReader R)
         {
-            businessGridDataGrid.Items.Add(new Business() { businessname = R.GetString(0), state = R.GetString(1), city = R.GetString(2), businessid = R.GetString(3) });
+            businessGridDataGrid.Items.Add(new Business() { businessname = R.GetString(0), state = R.GetString(1), city = R.GetString(2), businessid = R.GetString(3), zip = R.GetString(4) });
 
         }
 
         private void CityListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             businessGridDataGrid.Items.Clear();
+            zipListBox.Items.Clear();
+            businessCatListBox.Items.Clear();
             if (stateListComboBox.SelectedIndex > -1)
             {
-                string sqlstr = "SELECT businessname, state, city, businessid FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
+                string sqlstr = "SELECT businessname, state, city, businessid, zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
                 executeQuery(sqlstr, addGridRow);
                 //executeQuery(sqlstr, addColumns2Grid); // revert changes.
-
+                string sqlstr2 = "SELECT distinct zip FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city IN ('" + cityListComboBox.SelectedItem.ToString() + "') ORDER BY zip";
+                executeQuery(sqlstr2, addZip);
+                string sqlstr3 = "SELECT DISTINCT catName FROM BusinessCategories, "
+                    + "(SELECT businessID FROM Business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "') AS temp WHERE temp.businessID = BusinessCategories.businessID;";
+                executeQuery(sqlstr3, addBusiCategroies);
             }
+
+            
+
         }
 
-        // used to open the new businessWindow from MainWindow
+        private void addZip(NpgsqlDataReader R)
+        {
+            zipListBox.Items.Add(R.GetString(0));
+        }
+
+        private void addBusiCategroies(NpgsqlDataReader R)
+        {
+            businessCatListBox.Items.Add(R.GetString(0));
+        }
+
         private void BusinessGridDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (businessGridDataGrid.SelectedIndex > -1)
             {
                 // grab the businessid string.
                 Business B = businessGridDataGrid.Items[businessGridDataGrid.SelectedIndex] as Business;
-                if((B.businessid != null) && (B.businessid.ToString().CompareTo("") != 0))
+                if ((B.businessid != null) && (B.businessid.ToString().CompareTo("") != 0))
                 {
                     // create new instance of business window.
                     businessWindow businessWindow = new businessWindow(B.businessid.ToString());
@@ -204,6 +248,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                 }
             }
         }
+
 
         //private void CityListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{
@@ -217,7 +262,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         //            using (var cmd = new NpgsqlCommand())
         //            {
         //                cmd.Connection = connection;
-        //                cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY businessname;";
+        //                cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "' ORDER BY name;";
 
         //                try
         //                {
@@ -225,7 +270,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         //                    while (reader.Read())
         //                    {
         //                        //stateListComboBox.Items.Add(reader.GetString(0));
-        //                        businessGridDataGrid.Items.Add(new Business() { businessname = reader.GetString(0), state = reader.GetString(1), city = reader.GetString(2)});
+        //                        businessGridDataGrid.Items.Add(new Business() { name = reader.GetString(0), state = reader.GetString(1), city = reader.GetString(2)});
         //                    }
         //                }
         //                catch (NpgsqlException er)
@@ -260,7 +305,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         //                cmd.Connection = connection;
         //                cmd.CommandText = "SELECT distinct city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' ORDER BY city";
 
-        //                //cmd.CommandText = "SELECT businessname, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
+        //                //cmd.CommandText = "SELECT name, state, city FROM business WHERE state = '" + stateListComboBox.SelectedItem.ToString() + "' AND city = '" + cityListComboBox.SelectedItem.ToString() + "ORDER BY city;";
         //                try
         //                {
         //                    var reader = cmd.ExecuteReader();

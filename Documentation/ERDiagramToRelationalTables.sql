@@ -35,93 +35,62 @@ CREATE TABLE Business
     BusinessName    TEXT,
     State           TEXT,
     City            TEXT,
+	Address         TEXT,
+	Zip             TEXT,
+	Longitude       FLOAT,
+	Latitude        FLOAT,
     IsOpen          BOOLEAN,
     ReviewCount     INTEGER,
     StarRating      DECIMAL (2, 1),
-    Categories      TEXT [],
+    numTips         INTEGER,
+	numCheckIns     INTEGER,
     PRIMARY KEY (BusinessID)
 );
 
 /* Business Address Table */
-CREATE TABLE Addresses
-(
-    BusinessID  TEXT NOT NULL,
-    Longitude   DECIMAL (9, 6),
-    Latitude    DECIMAL (8, 6),
-    Street      TEXT,
-    City        TEXT,
-    USState     TEXT,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
-);
 
 CREATE TABLE BusinessHours
 (
     BusinessID      TEXT NOT NULL,
-    OpeningTimes    TIME [],
-    ClosingTimes    TIME [],
+    timeOpen        TIME,
+    timeClose       TIME,
+	theDay          TEXT
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (theDay, BusinessID)
 );
 
 /* Basic Business Attributes Table */
 CREATE TABLE BusinessAttributes
 (
     BusinessID          TEXT NOT NULL,
-    HasTV               BOOLEAN,
-    HasWifi             BOOLEAN,
-    WheelchairAccess    BOOLEAN,
-    Parking             BOOLEAN [],
-    PaymentMethods      BOOLEAN [],
-    PriceRange          INTEGER,
+    attrName            TEXT,
+    attValue            TEXT,
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (attrName, BusinessID)
 );
 
-CREATE TABLE Restaurants
+CREATE TABLE BusinessCategories
 (
     BusinessID          TEXT NOT NULL,
-    TakesReservations   BOOLEAN,
-    TakeOut             BOOLEAN,
-    TableService        BOOLEAN,
-    KidFriendly         BOOLEAN,
-    NoiseLevel          INTEGER,
-    Ambiences           TEXT [],
-    BestNights          BOOLEAN [7],
-    MealTimes           BOOLEAN [],
-    Alcohol             TEXT,
+    catName             TEXT,
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (catName, BusinessID)
 );
-
-CREATE TABLE MusicInfo
-(
-    BusinessID          TEXT NOT NULL,
-    IsDancingFriendly   BOOLEAN,
-    HasDJ               BOOLEAN,
-    HasVJ               BOOLEAN,
-    HasLivePerformances BOOLEAN,
-    HasKaraoke          BOOLEAN,
-    HasBackgroundMusic  BOOLEAN,
-    FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
-);
-
 
 /***********************************************************/
 /*------------------------ REVIEWS ------------------------*/
 /***********************************************************/
 /* Reviews Table */
-CREATE TABLE Reviews
+CREATE TABLE Tips
 (
     UserID          TEXT NOT NULL,
     BusinessID      TEXT NOT NULL,
-    ReviewTest      TEXT,
+    ReviewText      TEXT,
     Likes           INTEGER,
     CreationDate    TIMESTAMP,
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    PRIMARY KEY (UserID, BusinessID)
+    PRIMARY KEY (UserID, CreationDate, BusinessID)
 );
 
 
@@ -134,6 +103,6 @@ CREATE TABLE CheckIns
     BusinessID  TEXT,
     CheckInDate TIMESTAMP,
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (CheckInDate, BusinessID)
 );
 

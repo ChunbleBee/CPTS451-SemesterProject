@@ -28,6 +28,17 @@ namespace CPTS451_TrmPrjWPFv0._1
             this.businessid = String.Copy(bid);
             loadBusinessDetails();
             loadBusinessNumbers();
+            addColumns2Grid();
+            loadTips();
+            this.businessNameTextBox.IsReadOnly = true;
+            this.stateNameTextBox.IsReadOnly = true;
+            this.cityNameTextBox.IsReadOnly = true;
+        }
+
+        public partial class Tip
+        {
+            public string userid { get; set; }
+            public string usertips { get; set; }
         }
 
         private string buildConnectionString()
@@ -36,7 +47,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= [ENTER YOUR PASSWORD HERE]";
+            return "Host = localhost; Username = postgres; Database = milestone2db; password= ';'";
         }
 
         private void executeQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -98,5 +109,52 @@ namespace CPTS451_TrmPrjWPFv0._1
             executeQuery(sqlstr, setBusinessDetails);
         }
 
+        private void addColumns2Grid()
+        {
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            col1.Binding = new Binding("userid");
+            col1.Header = "User ID";
+            col1.Width = 60;
+            tipsDataGrid.Columns.Add(col1);
+            //businessGridDataGrid.Columns.Add(col1);
+
+            DataGridTextColumn col2 = new DataGridTextColumn();
+            col2.Binding = new Binding("usertips");
+            col2.Header = "User Tips";
+            col2.Width = 260;
+            tipsDataGrid.Columns.Add(col2);
+        }
+
+        private void addGridRow(NpgsqlDataReader R)
+        {
+            tipsDataGrid.Items.Add(new Tip() { userid = R.GetString(1), usertips = R.GetString(2) });
+            // should we make a partial class "UserTips" which just holds a userID and a tip from the user?
+
+        }
+
+        private void loadUsers()
+        {
+            //string sqlstr = "SELECT businessname, state, city FROM business WHERE businessid = '" + this.businessid + "';";
+            //executeQuery(sqlstr, setBusinessDetails);
+        }
+
+        private void loadTips()
+        {
+            string sqlstr = "SELECT t.creationdate, u.username, t.reviewtext, t.likes " +
+                              "FROM Tips AS t, Users AS u " +
+                              "WHERE t.businessID = '" + this.businessid + "' AND u.userID=t.userID " +
+                              "ORDER BY u.username";
+            //string sqlstr = "SELECT businessname, state, city FROM business WHERE businessid = '" + this.businessid + "';";
+            executeQuery(sqlstr, addGridRow);
+        }
+
+
+
+        private void AddTipButton_Click(object sender, RoutedEventArgs e)
+        {
+            // here we need to open up a new AddTipWindow and populate it with the appropriate information.
+            AddTipWindow addTipWindow = new AddTipWindow(this.businessNameTextBox.Text.ToString(), this.businessid); // all we care about passing is the businessID of the currently selected business
+            addTipWindow.Show(); // show the new window
+        }
     }
 }

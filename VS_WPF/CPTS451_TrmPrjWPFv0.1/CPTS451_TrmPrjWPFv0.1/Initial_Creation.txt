@@ -21,24 +21,3 @@ Sakire is now about to show a way to automate the querying process.
 Updated code with automated Querying for cityListComboBoxSelectionChanged and stateListComboBoxSelectionChanged.
 
 Time in Video ~58 minutes. Sakire is talking about adding new windows but it is not needed for Milestone 1.
-
-2/18: Correction, new window is REQUIRED for MS1. Doing it now.
-
-Created new item (WPF) in the project. Added 7 labels and 3 textboxes. businessNameLabel, businessStateLabel, businessCityLabel, etc.
-
-Creating a selection changed property for the datagrid in the first "MAIN" window to display the new businessWindow with details of the business.
-
-Added new public string bid (buisnessID) to the partial class. Added new column to the datagrid of width 0 to store and 
-hide information from the users.
-
-Added private string bid to businessWindow constructor class. Set bid to be a copy of the string bid.
-
-Created new executeQuery in businessWindow class. No while loop on this executeQuery because business ID's are unique. Thus, 
-we need only query once.
-
-Created new functions, loadBusinessDetails and buildConnectionString (which is just copy/pasted from MainWindow.xaml.cs)
-Created function setBusinessDetails which uses a reader to grab the business name, state and city.
-Made a call to loadBusinessDetails in the intitialize function for businessWindow after bid has been set. 
-
-Created new functions setNumInState, setNumInCity which are called when loadBusinessNumbers is called. Set a call for loadBusinessNumbers 
-in the initializer method.
