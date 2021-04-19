@@ -29,6 +29,13 @@ namespace CPTS451_TrmPrjWPFv0._1
             public string city { get; set;  }
         }
 
+        public class User
+        {
+            public string ID { get; set; }
+            public string Name { get; set; }
+            public DateTime CreationDate { get; set; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +49,24 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                                       |                                              |
             //                                       v                                              v
             return "Host = localhost; Username = postgres; Database = milestone1db; password= [ENTER YOUR PASSWORD HERE]";
+        }
+
+        private void UserNameTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tbox = (TextBox)sender;
+            if (tbox.Equals("User Name"))
+            {
+                tbox.Text = "";
+            }
+        }
+
+        private void UserNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tbox = (TextBox)sender;
+            if (tbox.Equals(""))
+            {
+                tbox.Text = "User Name";
+            }
         }
     }
 }
