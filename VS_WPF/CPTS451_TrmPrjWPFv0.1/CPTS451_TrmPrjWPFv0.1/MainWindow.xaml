@@ -6,12 +6,56 @@
         xmlns:local="clr-namespace:CPTS451_TrmPrjWPFv0._1"
         mc:Ignorable="d"
         Title="Yelp App" Height="450" Width="600">
+    <Window.Resources>
+    </Window.Resources>
     <Grid>
-        <Label x:Name="stateLabel" Content="State" HorizontalAlignment="Left" Margin="150,35,0,0" VerticalAlignment="Top" FontSize="14"/>
-        <Label x:Name="cityLabel" Content="City" HorizontalAlignment="Left" Margin="150,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.859,0.621" Height="41" Width="39" FontSize="14"/>
-        <ComboBox x:Name="stateListComboBox" HorizontalAlignment="Left" Margin="213,35,0,0" VerticalAlignment="Top" Width="354" Height="26" SelectionChanged="StateListComboBox_SelectionChanged"/>
-        <ComboBox x:Name="cityListComboBox" HorizontalAlignment="Left" Margin="213,84,0,0" VerticalAlignment="Top" Width="354" Height="31" SelectionChanged="CityListComboBox_SelectionChanged"/>
-        <DataGrid x:Name="businessGridDataGrid" HorizontalAlignment="Left" Height="264" Margin="20,146,0,0" VerticalAlignment="Top" Width="547" SelectionChanged="BusinessGridDataGrid_SelectionChanged"/>
+        <TabControl x:Name="TabControl" HorizontalAlignment="Left" Height="420" VerticalAlignment="Top" Width="594" Margin="0,0,-0.4,0">
+            <TabItem Header="User Information">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="105*"/>
+                        <ColumnDefinition Width="8*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid x:Name="FriendsTipsGrid" HorizontalAlignment="Left" Height="351" Margin="16.8,31,0,0" VerticalAlignment="Top" Width="222" Grid.Column="2"/>
+                    <TextBlock x:Name="FriendTipsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Friend's Tips" VerticalAlignment="Top" Margin="168.2,10,0,0" Width="71" Grid.Column="2"/>
+                    <DataGrid x:Name="FriendsGrid" HorizontalAlignment="Left" Height="155" VerticalAlignment="Top" Width="341" Margin="10,227,0,0" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="UserNameTextBox" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="Enter User Name" VerticalAlignment="Top" Width="99" TextChanged="textBox_TextChanged" Margin="10,10,0,0"/>
+                    <TextBlock x:Name="FriendsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Friends" VerticalAlignment="Top" Margin="10,211,0,0" Width="158"/>
+                    <Button x:Name="UserNameButton" Content="Search" HorizontalAlignment="Left" VerticalAlignment="Top" Width="54" Margin="114,7,0,0" Height="19"/>
+                    <DataGrid x:Name="UserIDGrid" HorizontalAlignment="Left" Height="180" VerticalAlignment="Top" Width="158" Margin="10,31,0,0"/>
 
+                    <Rectangle Fill="LightGray" HorizontalAlignment="Left" Height="212" Stroke="Black" VerticalAlignment="Top" Width="178" Margin="173,10,0,0" Grid.ColumnSpan="3"/>
+                    <TextBlock x:Name="UserInfoNameTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Name:" VerticalAlignment="Top" Margin="180,13,0,0"/>
+                    <TextBox x:Name="UserInfoNameTextBox" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" Margin="219,13,0,0" Grid.ColumnSpan="3"/>
+                    <TextBlock x:Name="UserInfoStarsTextBlock" HorizontalAlignment="Left" Text="Stars:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="180,34,0,0"/>
+                    <TextBox x:Name="UserInfoStarsTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0.00" VerticalAlignment="Top" Width="30" Margin="213,33,0,0"/>
+                    <TextBlock x:Name="UserInfoFansTextBlock" HorizontalAlignment="Left" Text="Fans:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="248,34,0,0" RenderTransformOrigin="1.372,0.627"/>
+                    <TextBox x:Name="UserInfoFansTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="65" Margin="279,33,0,0" Grid.ColumnSpan="3"/>
+                    <TextBlock x:Name="UserInfoCreationTextBlock" HorizontalAlignment="Left" Text="Creation Date:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="180,55,0,0"/>
+                    <TextBox x:Name="UserInfoCreationTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="1/1/1900" VerticalAlignment="Top" Width="83" Margin="261,54,0,0" Grid.ColumnSpan="3"/>
+                    <TextBlock x:Name="UserInfoRatingsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ratings:" VerticalAlignment="Top" Margin="180,92,0,0"/>
+                    <TextBlock x:Name="UserInfoFunnyTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Funny" VerticalAlignment="Top" Margin="229,76,0,0"/>
+                    <TextBlock x:Name="UserInfoCoolTextBlock" TextWrapping="Wrap" Text="Cool " VerticalAlignment="Top" Margin="275,76,12.2,0"/>
+                    <TextBlock x:Name="UserInfoUsefulTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Useful" VerticalAlignment="Top" Margin="311,76,0,0" RenderTransformOrigin="1.438,0.6" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="UserInfoFunnyTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="229,92,0,0"/>
+                    <TextBox x:Name="UserInfoCoolTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="275,92,0,0"/>
+                    <TextBox x:Name="UserInfoUsefulTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="314,92,0,0" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="UserInfoTipsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Tips:" VerticalAlignment="Top" Margin="180,114,0,0"/>
+                    <TextBox x:Name="UserInfoTipsTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="34" Margin="209,113,0,0"/>
+                    <TextBlock x:Name="UserInfoLikesTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Likes:" VerticalAlignment="Top" Margin="248,114,0,0" RenderTransformOrigin="0.798,0.543"/>
+                    <TextBox x:Name="UserInfoLikesTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="61" Margin="281,113,0,0" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="UserInfoLocationTextBlock" HorizontalAlignment="Left" Margin="180,135,0,0" TextWrapping="Wrap" Text="Location" VerticalAlignment="Top"/>
+                    <Button x:Name="UserInfoEditButton" Content="Edit" HorizontalAlignment="Left" Margin="275,196,0,0" VerticalAlignment="Top" Width="71" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="UserInfoLatTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="123" Margin="216,151,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="UserInfoLongTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="123" Margin="216,172,0,0" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="UserInfoLatTextBlock" HorizontalAlignment="Left" Margin="180,152,0,0" TextWrapping="Wrap"  Text="Lat:  " VerticalAlignment="Top"/>
+                    <TextBlock x:Name="UserInfoLongTextBlock" HorizontalAlignment="Left" Margin="179,172,0,0" TextWrapping="Wrap" Text="Long: " VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Business Search">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
