@@ -17,8 +17,8 @@
                         <ColumnDefinition Width="8*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <DataGrid x:Name="FriendsTipsGrid" HorizontalAlignment="Left" Height="351" Margin="16.8,31,0,0" VerticalAlignment="Top" Width="222" Grid.Column="2"/>
-                    <TextBlock x:Name="FriendTipsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Friend's Tips" VerticalAlignment="Top" Margin="168.2,10,0,0" Width="71" Grid.Column="2"/>
+                    <DataGrid x:Name="FriendsTipsGrid" HorizontalAlignment="Left" Height="361" Margin="17.2,21,0,0" VerticalAlignment="Top" Width="222" Grid.Column="2"/>
+                    <TextBlock x:Name="FriendTipsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Latest Friend's Tips" VerticalAlignment="Top" Margin="128,0,0,0" Width="102" Grid.Column="2"/>
                     <DataGrid x:Name="FriendsGrid" HorizontalAlignment="Left" Height="155" VerticalAlignment="Top" Width="341" Margin="10,227,0,0" Grid.ColumnSpan="3"/>
                     <TextBox x:Name="UserNameTextBox" GotFocus="UserNameTextBox_GotFocus" LostFocus="UserNameTextBox_LostFocus" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="User Name" VerticalAlignment="Top" Width="99" Margin="10,10,0,0"/>
                     <TextBlock x:Name="FriendsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Friends" VerticalAlignment="Top" Margin="10,211,0,0" Width="158"/>
