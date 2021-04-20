@@ -21,12 +21,11 @@ namespace CPTS451_TrmPrjWPFv0._1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private NpgsqlConnection Connection { get; set; }
         private User UserAcct { get; set; }
 
         public partial class Business
         {
-            public string BusinessID { get; set; } // for querying businesses in a state/city
+            public string BusinessID { get; set; }
             public string BusinessName { get; set; }
             public string State { get; set; }
             public string City { get; set; }
@@ -64,10 +63,19 @@ namespace CPTS451_TrmPrjWPFv0._1
             public string Text { get; set; }
         }
 
+        public class TipHelper
+        {
+            //UserName, BusinessName, City, Text, Date
+            public string UserName { get; set; }
+            public string BusinessName { get; set; }
+            public string City { get; set; }
+            public string Text { get; set; }
+            public DateTime CreationDate { get; set; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
-            this.Connection = new NpgsqlConnection(GetConnectionString());
             this.UserAcct = null;
 
             CreateUserIDColumns();
@@ -87,28 +95,32 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
         {
-            if (this.Connection.State == System.Data.ConnectionState.Closed)
+            using (var connection = new NpgsqlConnection(GetConnectionString()))
             {
-                this.Connection.Open();
-            }
-            var cmd = new NpgsqlCommand();
-            cmd.Connection = this.Connection;
-            cmd.CommandText = sqlstr;
-
-            try
-            {
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                connection.Open();
+                using (var cmd = new NpgsqlCommand())
                 {
-                    myf(reader);
+                    cmd.Connection = connection;
+                    cmd.CommandText = sqlstr;
+
+                    try
+                    {
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            myf(reader);
+                        }
+                    }
+                    catch (NpgsqlException er)
+                    {
+                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
                 }
             }
-            catch (NpgsqlException er)
-            {
-                System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
-            }
-
-            this.Connection.Close();
         }
 
         private void CreateFriendsColumns()
@@ -143,6 +155,12 @@ namespace CPTS451_TrmPrjWPFv0._1
             DataGridTextColumn fcity = new DataGridTextColumn();
             DataGridTextColumn ftext = new DataGridTextColumn();
             DataGridTextColumn fdate = new DataGridTextColumn();
+
+            fname.Binding = new Binding("UserName");
+            fbusi.Binding = new Binding("BusinessName");
+            fcity.Binding = new Binding("City");
+            ftext.Binding = new Binding("Text");
+            fdate.Binding = new Binding("CreationDate");
 
             fname.Header = "Friend";
             fbusi.Header = "Business";
@@ -202,6 +220,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             if (b.Content.Equals("Search") && this.UserNameTextBox.Text != "User Name")
             {
                 b.Content = "Log In";
+                this.UserIDGrid.Items.Clear();
                 string uname = this.UserNameTextBox.Text;
                 string sqlcall = "SELECT UserID, UserName FROM Users WHERE UserName = '" + uname + "'";
 
@@ -210,16 +229,56 @@ namespace CPTS451_TrmPrjWPFv0._1
             else if (b.Content.Equals("Log In") &&
                 this.UserIDGrid.SelectedItem != null)
             {
+                this.UserAcct = null;
+
                 b.Content = "Log Out";
                 var cell = this.UserIDGrid.SelectedCells[1];
                 var content = ((TextBlock)cell.Column.GetCellContent(cell.Item)).Text;
                 string sqlcall = "SELECT * FROM Users WHERE UserID = '" + content.ToString() + "'";
 
                 ExecuteQuery(sqlcall, AttemptLogIn);
+
+                if (this.UserAcct != null)
+                {
+                    sqlcall = "SELECT UserID, UserName, TotalLikes, AvgStarRating, CreationDate FROM Users, Friends WHERE (User01='" + this.UserAcct.ID + "') AND (User02=UserID);";
+                    ExecuteQuery(sqlcall, AddFriends);
+
+                    sqlcall = @"SELECT UserName, BusinessName, City, Text, Date
+                                FROM Users, Businesses, Friends, (
+	                                SELECT Tips.UserID, Tips.BusinessID, Tips.Text, Tips.Date
+	                                FROM Tips
+	                                LEFT JOIN Tips AS NewerDate
+	                                ON Tips.UserID = NewerDate.UserID
+	                                AND NewerDate.Date > Tips.Date
+	                                WHERE NewerDate.UserID IS NULL
+	                                ORDER BY Tips.UserID
+                                ) AS FilteredTips
+                                WHERE (Users.UserID = FilteredTips.UserID)
+                                AND (Businesses.BusinessID = FilteredTips.BusinessID)
+                                AND (Friends.User02 = FilteredTips.UserID)
+                                AND Friends.User01 = '" + this.UserAcct.ID + @"'
+                                ORDER BY Date DESC;";
+                    ExecuteQuery(sqlcall, AddFriendTips);
+                }
             }
             else if (b.Content.Equals("Log Out"))
             {
                 this.UserIDGrid.Items.Clear();
+                this.FriendsGrid.Items.Clear();
+                this.FriendsTipsGrid.Items.Clear();
+
+                this.UserInfoNameTextBox.Text = "";
+                this.UserInfoStarsTextBox.Text = "";
+                this.UserInfoFansTextBox.Text = "";
+                this.UserInfoCreationTextBox.Text = "";
+                this.UserInfoFunnyTextBox.Text = "";
+                this.UserInfoCoolTextBox.Text = "";
+                this.UserInfoUsefulTextBox.Text = "";
+                this.UserInfoTipsTextBox.Text = "";
+                this.UserInfoLikesTextBox.Text = "";
+                this.UserInfoLatTextBox.Text = "";
+                this.UserInfoLongTextBox.Text = "";
+
                 b.Content = "Search";
             }
         }
@@ -235,27 +294,11 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void AddItemsToUserIDGrid(NpgsqlDataReader reader)
         {
-            this.UserIDGrid.Items.Clear();
             this.UserIDGrid.Items.Add(new User() { ID = reader.GetString(0), Name = reader.GetString(1) });
         }
 
         private void AttemptLogIn(NpgsqlDataReader reader)
         {
-            /*
-             * 
-                UserID          TEXT NOT NULL,
-                CreationDate    TIMESTAMP NOT NULL DEFAULT NOW(),
-                UserName        TEXT,
-                TotalLikes      INTEGER DEFAULT (0),
-                TipCount        INTEGER DEFAULT (0),
-                FansRating      INTEGER,
-                FunnyRating     INTEGER,
-                CoolRating      INTEGER,
-                AvgStarRating   DECIMAL (3, 2),
-                Latitude        DECIMAL (8, 6),
-                Longitude       DECIMAL (9, 6),
-             */
-
             float lat = (reader.IsDBNull(9) == false) ? reader.GetFloat(9) : 0.0F;
             float lng = (reader.IsDBNull(10) == false) ? reader.GetFloat(10) : 0.0F;
             
@@ -286,6 +329,37 @@ namespace CPTS451_TrmPrjWPFv0._1
             this.UserInfoLikesTextBox.Text = this.UserAcct.Likes.ToString();
             this.UserInfoLatTextBox.Text = this.UserAcct.Latitude.ToString();
             this.UserInfoLongTextBox.Text = this.UserAcct.Longitude.ToString();
+        }
+
+        private void AddFriends(NpgsqlDataReader reader)
+        {
+            //SELECT UserID, UserName, TotalLikes, AvgStarRating, CreationDate
+            User friend = new User()
+            {
+                ID = reader.GetString(0),
+                Name = reader.GetString(1),
+                Likes = reader.GetInt32(2),
+                Stars = reader.GetFloat(3),
+                CreationDate = reader.GetDateTime(4)
+            };
+
+            this.FriendsGrid.Items.Add(friend);
+        }
+
+        private void AddFriendTips(NpgsqlDataReader reader)
+        {
+
+            //UserName, BusinessName, City, Text, Date
+            TipHelper helper = new TipHelper()
+            {
+                UserName = reader.GetString(0),
+                BusinessName = reader.GetString(1),
+                City = reader.GetString(2),
+                Text = reader.GetString(3),
+                CreationDate = reader.GetDateTime(4)
+            };
+
+            this.FriendsTipsGrid.Items.Add(helper);
         }
 
         private void UserIDGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
