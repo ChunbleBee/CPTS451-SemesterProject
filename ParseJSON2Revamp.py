@@ -6,11 +6,13 @@ import pandas as pd
 def cleanStr4SQL(s):
     return s.replace("'", "`").replace("\n", " ")
 
+
 def int2BoolStr(value):
     if value == 0:
         return 'false'
     else:
         return 'true'
+
 
 schema = open("./TAZE_schema_MS2.sql")
 triggers = open("./TAZE_trigger.sql")
@@ -23,21 +25,14 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 # tips = open("./Project/YelpData/YelpTipSubset.json", "r")
 # businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
-# schema = open("./TAZE_schema_MS2.sql")
-# triggers = open("./TAZE_trigger.sql")
-# update = open("./TAZE_UPDATE.sql")
-# users = open("./Project/YelpData/yelp_user.JSON", "r")
-# businesses = open("./Project/YelpData/yelpBusinessSubset.JSON", "r")
-# checkins = open('./Project/YelpData/yelpCheckinSubset.JSON', "r")
-# tips = open('./Project/YelpData/yelpTipSubset.JSON', "r")
+try:
+    db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+except Exception as ex:
+    print("Connection to database failed with error: ", ex)
+    exit(-1)
+
 
 def DestroyPreviousDatabase():
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-    
     cursor = db.cursor()
     cursor.execute(
         "GRANT ALL ON SCHEMA public TO postgres;" +
@@ -47,12 +42,8 @@ def DestroyPreviousDatabase():
     )
     db.commit()
 
+
 def BuildDatabase(schema):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
     cursor = db.cursor()
     commitval = ""
 
@@ -64,15 +55,9 @@ def BuildDatabase(schema):
             db.commit()
             commitval = ""
     cursor.close()
-    db.close()
+
 
 def BusinessTableInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -100,7 +85,7 @@ def BusinessTableInsert(fin):
         valString += "0)"   #NumTips
 
         commitval = insertString + valString
-        print("\tCommit val: ", commitval)
+        # print("\tCommit val: ", commitval)
         try:
             cursor.execute(commitval)
         except Exception as ex:
@@ -109,15 +94,9 @@ def BusinessTableInsert(fin):
         # print("\tSUCCESS\n")
         db.commit()
     cursor.close()
-    db.close()
+
 
 def BusinessCategoriesInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -133,7 +112,7 @@ def BusinessCategoriesInsert(fin):
 
             commitval = insertString + temp
 
-            print("\tCommit val: ", commitval)
+            # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
             except Exception as ex:
@@ -142,15 +121,9 @@ def BusinessCategoriesInsert(fin):
             # print("\tSUCCESS\n")
             db.commit()
     cursor.close()
-    db.close()
+
 
 def BusinessAttributesInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -191,7 +164,7 @@ def BusinessAttributesInsert(fin):
 
                 commitval = insertStringSimple + temp
 
-            print("\tCommit val: ", commitval)
+            # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
             except Exception as ex:
@@ -200,15 +173,9 @@ def BusinessAttributesInsert(fin):
             # print("\tSUCCESS\n")
             db.commit()
     cursor.close()
-    db.close()
+
 
 def BusinessHoursInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -239,26 +206,20 @@ def BusinessHoursInsert(fin):
         if (openingTimes != "ARRAY[]" and closingTimes != "ARRAY[]"):
             valString += openingTimes + "," + closingTimes + ")"
             commitval = insertString + valString
-            print("\tCommit val: ", commitval)
+            # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
             except Exception as ex:
                 print("Insert into BusinessHours table failed with error: ", ex)
                 exit(-1)
-            print("\tSUCCESS\n")
+            # print("\tSUCCESS\n")
             db.commit()
-        else:
-            print("\tNO KNOWN HOURS, SKIPPING")
+        # else:
+            # print("\tNO KNOWN HOURS, SKIPPING")
     cursor.close()
-    db.close()
+
 
 def UserTableInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -279,7 +240,7 @@ def UserTableInsert(fin):
         valString += str(user["cool"]) + ", "
         valString += str(user["average_stars"]) + ")"
         commitval = insertString + valString
-        print("\tCommit val: ", commitval)
+        # print("\tCommit val: ", commitval)
         try:
             cursor.execute(commitval)
         except Exception as ex:
@@ -288,15 +249,9 @@ def UserTableInsert(fin):
         # print("\tSUCCESS\n")
         db.commit()
     cursor.close()
-    db.close()
+
 
 def FriendsTableInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -308,7 +263,7 @@ def FriendsTableInsert(fin):
         valString += "'" + user["user_id"] + "', "
         for friend in user["friends"]:
             commitval = insertString + valString + "'" + friend + "');"
-            print("\tCommit val: ", commitval)
+            # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
             except Exception as ex:
@@ -317,15 +272,9 @@ def FriendsTableInsert(fin):
             # print("\tSUCCESS\n")
         db.commit()
     cursor.close()
-    db.close()
+
 
 def TipsTableInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -341,7 +290,7 @@ def TipsTableInsert(fin):
         valString += "'" + cleanStr4SQL(tip["user_id"]) + "');"
 
         commitval = insertString + valString
-        print("\tCommit val: ", commitval)
+        # print("\tCommit val: ", commitval)
         try:
             cursor.execute(commitval)
         except Exception as ex:
@@ -350,15 +299,9 @@ def TipsTableInsert(fin):
         # print("\tSUCCESS\n")
         db.commit()
     cursor.close()
-    db.close()
+
 
 def CheckInsTableInsert(fin):
-    try:
-        db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='SegaSaturn'")
-    except Exception as ex:
-        print("Connection to database failed with error: ", ex)
-        exit(-1)
-
     cursor = db.cursor()
 
     for line in fin.readlines():
@@ -371,7 +314,7 @@ def CheckInsTableInsert(fin):
 
         for date in checkin["date"].split(','):
             commitval = insertString + valString + "'" + date + "'::TIMESTAMP);"
-            print("\tCommit val: ", commitval)
+            # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
                 db.commit()
@@ -379,7 +322,7 @@ def CheckInsTableInsert(fin):
                 print("Insert into CheckIns table failed with error: ", ex)
             # print("\tSUCCESS\n")
     cursor.close()
-    db.close()
+
 
 if __name__ == "__main__":
     print("------------------------------------------------")
@@ -437,9 +380,10 @@ if __name__ == "__main__":
     CheckInsTableInsert(checkins)
     checkins.seek(0)
 
-    print("------------------------------------------------")
-    print("#\t\tUpdate Database Derived Collumns\t\t#")
-    print("------------------------------------------------")
-    BuildDatabase(update)
+    # print("------------------------------------------------")
+    # print("#\t\tUpdate Database Derived Collumns\t\t#")
+    # print("------------------------------------------------")
+    # BuildDatabase(update)
 
     print("...\n\nCompleted without errors!")
+    db.close()
