@@ -22,6 +22,7 @@ namespace CPTS451_TrmPrjWPFv0._1
     public partial class MainWindow : Window
     {
         private NpgsqlConnection Connection { get; set; }
+        private bool LoggedIn = false;
 
         public partial class Business
         {
@@ -68,6 +69,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             InitializeComponent();
             this.Connection = new NpgsqlConnection(GetConnectionString());
 
+            CreateUserIDColumns();
             CreateFriendsColumns();
             CreateFriendsTipsColumns();
         }
@@ -80,6 +82,35 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                                       |                                              |
             //                                       v                                              v
             return "Host = localhost; Username = postgres; Database = milestone1db; password= [ENTER YOUR PASSWORD HERE]";
+        }
+
+        private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
+        {
+            using (this.Connection)
+            {
+                if (this.Connection.State == System.Data.ConnectionState.Closed)
+                {
+                    this.Connection.Open();
+                }
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = this.Connection;
+                    cmd.CommandText = sqlstr;
+
+                    try
+                    {
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            myf(reader);
+                        }
+                    }
+                    catch (NpgsqlException er)
+                    {
+                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+                    }
+                }
+            }
         }
 
         private void CreateFriendsColumns()
@@ -128,10 +159,25 @@ namespace CPTS451_TrmPrjWPFv0._1
             this.FriendsTipsGrid.Columns.Add(fdate);
         }
 
+        private void CreateUserIDColumns()
+        {
+            DataGridTextColumn uname = new DataGridTextColumn();
+            DataGridTextColumn uid = new DataGridTextColumn();
+
+            uname.Header = "User Name";
+            uid.Header = "User ID";
+
+            uname.Binding = new Binding("Name");
+            uid.Binding = new Binding("ID");
+
+            this.UserIDGrid.Columns.Add(uname);
+            this.UserIDGrid.Columns.Add(uid);
+        }
+
         private void UserNameTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox tbox = (TextBox)sender;
-            if (tbox.Equals("User Name"))
+            if (tbox.Text.Equals("User Name"))
             {
                 tbox.Text = "";
             }
@@ -140,10 +186,39 @@ namespace CPTS451_TrmPrjWPFv0._1
         private void UserNameTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             TextBox tbox = (TextBox)sender;
-            if (tbox.Equals(""))
+            if (tbox.Text.Equals(""))
             {
                 tbox.Text = "User Name";
             }
+        }
+
+        private void UserNameButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+            if (b.Content.Equals("Search") && this.UserNameTextBox.Text != "User Name")
+            {
+                b.Content = "Log In";
+                string uname = this.UserNameTextBox.Text;
+                string sqlcall = "SELECT UserID, UserName FROM Users WHERE UserName = '" + uname + "'";
+
+                ExecuteQuery(sqlcall, AddItemsToUserIDGrid);
+            }
+            else if (b.Content.Equals("Log In") &&
+                this.UserIDGrid.SelectedItem.Equals(null) == false)
+            {
+                b.Content = "Log Out";
+            }
+            else if (b.Content.Equals("Log Out"))
+            {
+                this.UserIDGrid.Items.Clear();
+                b.Content = "Search";
+            }
+        }
+
+        private void AddItemsToUserIDGrid(NpgsqlDataReader reader)
+        {
+            this.UserIDGrid.Items.Clear();
+            this.UserIDGrid.Items.Add(new User() { ID = reader.GetString(0), Name = reader.GetString(1) });
         }
     }
 }

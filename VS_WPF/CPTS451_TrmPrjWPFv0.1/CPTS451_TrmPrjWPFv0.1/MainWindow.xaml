@@ -22,7 +22,7 @@
                     <DataGrid x:Name="FriendsGrid" HorizontalAlignment="Left" Height="155" VerticalAlignment="Top" Width="341" Margin="10,227,0,0" Grid.ColumnSpan="3"/>
                     <TextBox x:Name="UserNameTextBox" GotFocus="UserNameTextBox_GotFocus" LostFocus="UserNameTextBox_LostFocus" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="User Name" VerticalAlignment="Top" Width="99" Margin="10,10,0,0"/>
                     <TextBlock x:Name="FriendsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Friends" VerticalAlignment="Top" Margin="10,211,0,0" Width="158"/>
-                    <Button x:Name="UserNameButton" Content="Search" HorizontalAlignment="Left" VerticalAlignment="Top" Width="54" Margin="114,7,0,0" Height="19"/>
+                    <Button x:Name="UserNameButton" Content="Search" HorizontalAlignment="Left" VerticalAlignment="Top" Width="54" Margin="114,7,0,0" Height="19" Click="UserNameButton_Click"/>
                     <DataGrid x:Name="UserIDGrid" HorizontalAlignment="Left" Height="180" VerticalAlignment="Top" Width="158" Margin="10,31,0,0"/>
 
                     <Rectangle Fill="LightGray" HorizontalAlignment="Left" Height="212" Stroke="Black" VerticalAlignment="Top" Width="178" Margin="173,10,0,0" Grid.ColumnSpan="3"/>
