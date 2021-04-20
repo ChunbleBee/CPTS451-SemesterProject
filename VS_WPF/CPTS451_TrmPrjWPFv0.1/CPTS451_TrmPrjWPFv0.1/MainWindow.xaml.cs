@@ -106,9 +106,13 @@ namespace CPTS451_TrmPrjWPFv0._1
                     try
                     {
                         var reader = cmd.ExecuteReader();
-                        while (reader.Read())
+
+                        if (myf != null)
                         {
-                            myf(reader);
+                            while (reader.Read())
+                            {
+                                myf(reader);
+                            }
                         }
                     }
                     catch (NpgsqlException er)
@@ -383,7 +387,6 @@ namespace CPTS451_TrmPrjWPFv0._1
                     this.UserInfoNameTextBox.IsReadOnly = false;
                     this.UserInfoLatTextBox.IsReadOnly = false;
                     this.UserInfoLongTextBox.IsReadOnly = false;
-
                 }
                 else if (b.Content.Equals("Update"))
                 {
@@ -396,6 +399,28 @@ namespace CPTS451_TrmPrjWPFv0._1
                     this.UserInfoNameTextBox.IsReadOnly = true;
                     this.UserInfoLatTextBox.IsReadOnly = true;
                     this.UserInfoLongTextBox.IsReadOnly = true;
+
+                    float outlat, outlong;
+                    float.TryParse(this.UserInfoLatTextBox.Text, out outlat);
+                    float.TryParse(this.UserInfoLongTextBox.Text, out outlong);
+
+                    if (this.UserInfoNameTextBox.Text.Equals(this.UserAcct.Name) == false ||
+                        outlat != this.UserAcct.Latitude ||
+                        outlong != this.UserAcct.Longitude)
+                    {
+                        this.UserAcct.Name = this.UserInfoNameTextBox.Text;
+                        this.UserAcct.Latitude = outlat;
+                        this.UserAcct.Longitude = outlong;
+
+                        string sqlcall = @"UPDATE Users
+                        SET
+                            UserName = '" + this.UserAcct.Name + @"',
+                            Latitude = " + this.UserAcct.Latitude.ToString() + @",
+                            Longitude = " + this.UserAcct.Longitude.ToString() + @"
+                        WHERE UserID = '" + this.UserAcct.ID + "';";
+                        
+                        ExecuteQuery(sqlcall, null);
+                    }
                 }
             }
         }
