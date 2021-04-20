@@ -366,5 +366,38 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             // If I need it.
         }
+
+        private void UserInfoEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+
+            if (this.UserAcct != null)
+            {
+                if (b.Content.Equals("Edit"))
+                {
+                    b.Content = "Update";
+                    this.UserInfoNameTextBox.IsEnabled = true;
+                    this.UserInfoLatTextBox.IsEnabled = true;
+                    this.UserInfoLongTextBox.IsEnabled = true;
+
+                    this.UserInfoNameTextBox.IsReadOnly = false;
+                    this.UserInfoLatTextBox.IsReadOnly = false;
+                    this.UserInfoLongTextBox.IsReadOnly = false;
+
+                }
+                else if (b.Content.Equals("Update"))
+                {
+                    b.Content = "Edit";
+
+                    this.UserInfoNameTextBox.IsEnabled = false;
+                    this.UserInfoLatTextBox.IsEnabled = false;
+                    this.UserInfoLongTextBox.IsEnabled = false;
+
+                    this.UserInfoNameTextBox.IsReadOnly = true;
+                    this.UserInfoLatTextBox.IsReadOnly = true;
+                    this.UserInfoLongTextBox.IsReadOnly = true;
+                }
+            }
+        }
     }
 }
