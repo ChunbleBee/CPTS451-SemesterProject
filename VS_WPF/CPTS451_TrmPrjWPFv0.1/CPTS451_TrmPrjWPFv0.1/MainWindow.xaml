@@ -23,32 +23,32 @@
                     <TextBox x:Name="UserNameTextBox" GotFocus="UserNameTextBox_GotFocus" LostFocus="UserNameTextBox_LostFocus" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="User Name" VerticalAlignment="Top" Width="99" Margin="10,10,0,0"/>
                     <TextBlock x:Name="FriendsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Friends" VerticalAlignment="Top" Margin="10,211,0,0" Width="158"/>
                     <Button x:Name="UserNameButton" Content="Search" HorizontalAlignment="Left" VerticalAlignment="Top" Width="54" Margin="114,7,0,0" Height="19" Click="UserNameButton_Click"/>
-                    <DataGrid x:Name="UserIDGrid" HorizontalAlignment="Left" Height="180" VerticalAlignment="Top" Width="158" Margin="10,31,0,0"/>
+                    <DataGrid x:Name="UserIDGrid" HorizontalAlignment="Left" Height="180" VerticalAlignment="Top" Width="158" Margin="10,31,0,0" SelectionChanged="UserIDGrid_SelectionChanged"/>
 
                     <Rectangle Fill="LightGray" HorizontalAlignment="Left" Height="212" Stroke="Black" VerticalAlignment="Top" Width="178" Margin="173,10,0,0" Grid.ColumnSpan="3"/>
                     <TextBlock x:Name="UserInfoNameTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Name:" VerticalAlignment="Top" Margin="180,13,0,0"/>
-                    <TextBox x:Name="UserInfoNameTextBox" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" Margin="219,13,0,0" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="UserInfoNameTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="16" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="125" Margin="219,13,0,0" Grid.ColumnSpan="3"/>
                     <TextBlock x:Name="UserInfoStarsTextBlock" HorizontalAlignment="Left" Text="Stars:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="180,34,0,0"/>
-                    <TextBox x:Name="UserInfoStarsTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0.00" VerticalAlignment="Top" Width="30" Margin="213,33,0,0"/>
+                    <TextBox x:Name="UserInfoStarsTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0.00" VerticalAlignment="Top" Width="30" Margin="213,33,0,0"/>
                     <TextBlock x:Name="UserInfoFansTextBlock" HorizontalAlignment="Left" Text="Fans:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="248,34,0,0" RenderTransformOrigin="1.372,0.627"/>
-                    <TextBox x:Name="UserInfoFansTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="65" Margin="279,33,0,0" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="UserInfoFansTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="65" Margin="279,33,0,0" Grid.ColumnSpan="3"/>
                     <TextBlock x:Name="UserInfoCreationTextBlock" HorizontalAlignment="Left" Text="Creation Date:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="180,55,0,0"/>
-                    <TextBox x:Name="UserInfoCreationTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="1/1/1900" VerticalAlignment="Top" Width="83" Margin="261,54,0,0" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="UserInfoCreationTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="1/1/1900" VerticalAlignment="Top" Width="83" Margin="261,54,0,0" Grid.ColumnSpan="3"/>
                     <TextBlock x:Name="UserInfoRatingsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Ratings:" VerticalAlignment="Top" Margin="180,92,0,0"/>
                     <TextBlock x:Name="UserInfoFunnyTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Funny" VerticalAlignment="Top" Margin="229,76,0,0"/>
                     <TextBlock x:Name="UserInfoCoolTextBlock" TextWrapping="Wrap" Text="Cool " VerticalAlignment="Top" Margin="275,76,12.2,0"/>
                     <TextBlock x:Name="UserInfoUsefulTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Useful" VerticalAlignment="Top" Margin="311,76,0,0" RenderTransformOrigin="1.438,0.6" Grid.ColumnSpan="3"/>
-                    <TextBox x:Name="UserInfoFunnyTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="229,92,0,0"/>
-                    <TextBox x:Name="UserInfoCoolTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="275,92,0,0"/>
-                    <TextBox x:Name="UserInfoUsefulTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="314,92,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="UserInfoFunnyTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="229,92,0,0"/>
+                    <TextBox x:Name="UserInfoCoolTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="275,92,0,0"/>
+                    <TextBox x:Name="UserInfoUsefulTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="30" Margin="314,92,0,0" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="UserInfoTipsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Tips:" VerticalAlignment="Top" Margin="180,114,0,0"/>
-                    <TextBox x:Name="UserInfoTipsTextBox" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="34" Margin="209,113,0,0"/>
+                    <TextBox x:Name="UserInfoTipsTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextWrapping="Wrap" TextAlignment="Right" Text="0" VerticalAlignment="Top" Width="34" Margin="209,113,0,0"/>
                     <TextBlock x:Name="UserInfoLikesTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Likes:" VerticalAlignment="Top" Margin="248,114,0,0" RenderTransformOrigin="0.798,0.543"/>
-                    <TextBox x:Name="UserInfoLikesTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="61" Margin="281,113,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="UserInfoLikesTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="61" Margin="281,113,0,0" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="UserInfoLocationTextBlock" HorizontalAlignment="Left" Margin="180,135,0,0" TextWrapping="Wrap" Text="Location" VerticalAlignment="Top"/>
                     <Button x:Name="UserInfoEditButton" Content="Edit" HorizontalAlignment="Left" Margin="275,196,0,0" VerticalAlignment="Top" Width="71" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="UserInfoLatTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="123" Margin="216,151,0,0" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="UserInfoLongTextBox" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="123" Margin="216,172,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="UserInfoLatTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="123" Margin="216,151,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="UserInfoLongTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="17" TextAlignment="Right" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="123" Margin="216,172,0,0" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="UserInfoLatTextBlock" HorizontalAlignment="Left" Margin="180,152,0,0" TextWrapping="Wrap"  Text="Lat:  " VerticalAlignment="Top"/>
                     <TextBlock x:Name="UserInfoLongTextBlock" HorizontalAlignment="Left" Margin="179,172,0,0" TextWrapping="Wrap" Text="Long: " VerticalAlignment="Top"/>
                 </Grid>

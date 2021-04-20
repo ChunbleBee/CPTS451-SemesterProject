@@ -22,7 +22,7 @@ namespace CPTS451_TrmPrjWPFv0._1
     public partial class MainWindow : Window
     {
         private NpgsqlConnection Connection { get; set; }
-        private bool LoggedIn = false;
+        private User UserAcct { get; set; }
 
         public partial class Business
         {
@@ -68,6 +68,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             InitializeComponent();
             this.Connection = new NpgsqlConnection(GetConnectionString());
+            this.UserAcct = null;
 
             CreateUserIDColumns();
             CreateFriendsColumns();
@@ -81,36 +82,33 @@ namespace CPTS451_TrmPrjWPFv0._1
             //                  ---------------------------------------------------------------------
             //                                       |                                              |
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone1db; password= [ENTER YOUR PASSWORD HERE]";
+            return "Host = localhost; Username = postgres; Database = milestone2; password= 'SegaSaturn'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
         {
-            using (this.Connection)
+            if (this.Connection.State == System.Data.ConnectionState.Closed)
             {
-                if (this.Connection.State == System.Data.ConnectionState.Closed)
-                {
-                    this.Connection.Open();
-                }
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = this.Connection;
-                    cmd.CommandText = sqlstr;
+                this.Connection.Open();
+            }
+            var cmd = new NpgsqlCommand();
+            cmd.Connection = this.Connection;
+            cmd.CommandText = sqlstr;
 
-                    try
-                    {
-                        var reader = cmd.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            myf(reader);
-                        }
-                    }
-                    catch (NpgsqlException er)
-                    {
-                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
-                    }
+            try
+            {
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    myf(reader);
                 }
             }
+            catch (NpgsqlException er)
+            {
+                System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+            }
+
+            this.Connection.Close();
         }
 
         private void CreateFriendsColumns()
@@ -181,6 +179,12 @@ namespace CPTS451_TrmPrjWPFv0._1
             {
                 tbox.Text = "";
             }
+            else if (this.UserNameButton.Content.Equals("Log In"))
+            {
+                tbox.Text = "";
+                this.UserIDGrid.Items.Clear();
+                this.UserNameButton.Content = "Search";
+            }
         }
 
         private void UserNameTextBox_LostFocus(object sender, RoutedEventArgs e)
@@ -204,9 +208,14 @@ namespace CPTS451_TrmPrjWPFv0._1
                 ExecuteQuery(sqlcall, AddItemsToUserIDGrid);
             }
             else if (b.Content.Equals("Log In") &&
-                this.UserIDGrid.SelectedItem.Equals(null) == false)
+                this.UserIDGrid.SelectedItem != null)
             {
                 b.Content = "Log Out";
+                var cell = this.UserIDGrid.SelectedCells[1];
+                var content = ((TextBlock)cell.Column.GetCellContent(cell.Item)).Text;
+                string sqlcall = "SELECT * FROM Users WHERE UserID = '" + content.ToString() + "'";
+
+                ExecuteQuery(sqlcall, AttemptLogIn);
             }
             else if (b.Content.Equals("Log Out"))
             {
@@ -215,10 +224,73 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
+        private void LogUserIn(NpgsqlDataReader reader)
+        {
+            this.UserAcct = new User()
+            {
+                ID = reader.GetString(0),
+                Name = reader.GetString(1)
+            };
+        }
+
         private void AddItemsToUserIDGrid(NpgsqlDataReader reader)
         {
             this.UserIDGrid.Items.Clear();
             this.UserIDGrid.Items.Add(new User() { ID = reader.GetString(0), Name = reader.GetString(1) });
+        }
+
+        private void AttemptLogIn(NpgsqlDataReader reader)
+        {
+            /*
+             * 
+                UserID          TEXT NOT NULL,
+                CreationDate    TIMESTAMP NOT NULL DEFAULT NOW(),
+                UserName        TEXT,
+                TotalLikes      INTEGER DEFAULT (0),
+                TipCount        INTEGER DEFAULT (0),
+                FansRating      INTEGER,
+                FunnyRating     INTEGER,
+                CoolRating      INTEGER,
+                AvgStarRating   DECIMAL (3, 2),
+                Latitude        DECIMAL (8, 6),
+                Longitude       DECIMAL (9, 6),
+             */
+
+            float lat = (reader.IsDBNull(9) == false) ? reader.GetFloat(9) : 0.0F;
+            float lng = (reader.IsDBNull(10) == false) ? reader.GetFloat(10) : 0.0F;
+            
+            this.UserAcct = new User()
+            {
+                ID = reader.GetString(0),
+                CreationDate = reader.GetDateTime(1),
+                Name = reader.GetString(2),
+                Likes = reader.GetInt32(3),
+                Tips = reader.GetInt32(4),
+                Fans = reader.GetInt32(5),
+                FunnyRates = reader.GetInt32(6),
+                CoolRates = reader.GetInt32(7),
+                UsefulRates = 0,
+                Stars = reader.GetFloat(8),
+                Latitude = lat,
+                Longitude = lng
+            };
+
+            this.UserInfoNameTextBox.Text = this.UserAcct.Name;
+            this.UserInfoStarsTextBox.Text = this.UserAcct.Stars.ToString();
+            this.UserInfoFansTextBox.Text = this.UserAcct.Fans.ToString();
+            this.UserInfoCreationTextBox.Text = this.UserAcct.CreationDate.ToString();
+            this.UserInfoFunnyTextBox.Text = this.UserAcct.FunnyRates.ToString();
+            this.UserInfoCoolTextBox.Text = this.UserAcct.CoolRates.ToString();
+            this.UserInfoUsefulTextBox.Text = this.UserAcct.UsefulRates.ToString();
+            this.UserInfoTipsTextBox.Text = this.UserAcct.Tips.ToString();
+            this.UserInfoLikesTextBox.Text = this.UserAcct.Likes.ToString();
+            this.UserInfoLatTextBox.Text = this.UserAcct.Latitude.ToString();
+            this.UserInfoLongTextBox.Text = this.UserAcct.Longitude.ToString();
+        }
+
+        private void UserIDGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // If I need it.
         }
     }
 }
