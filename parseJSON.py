@@ -351,7 +351,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
-    # BuildDatabase(triggers)
+    BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")
