@@ -54,7 +54,10 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Business Search">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <ComboBox x:Name="StateComboBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="StateComboBox_SelectionChanged"/>
+
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

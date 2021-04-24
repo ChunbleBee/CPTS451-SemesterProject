@@ -81,6 +81,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             CreateUserIDColumns();
             CreateFriendsColumns();
             CreateFriendsTipsColumns();
+            ExecuteQuery("SELECT DISTINCT State FROM Businesses", AddStateToStateComboBox);
         }
 
         // not a great way of building a connection. unsafe to show user businessname and password.
@@ -127,6 +128,10 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
+
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// USER TAB STUFFS/////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////
         private void CreateFriendsColumns()
         {
             DataGridTextColumn fnames = new DataGridTextColumn();
@@ -423,6 +428,20 @@ namespace CPTS451_TrmPrjWPFv0._1
                     }
                 }
             }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// BUSINESS TAB STUFFS/////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        
+        private void AddStatesToStateComboBox(NpgsqlDataReader reader)
+        {
+            this.StateComboBox.Items.Add(reader.GetString(0));
+        }
+
+        private void StateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
