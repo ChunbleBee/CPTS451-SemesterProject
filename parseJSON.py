@@ -26,7 +26,7 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 # businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 try:
-    db = psycopg2.connect("dbname='milestone2' user='postgres' host='localhost' password='th@darncat8'")
+    db = psycopg2.connect("dbname='milestone2test' user='postgres' host='localhost' password='th@darncat8'")
 except Exception as ex:
     print("Connection to database failed with error: ", ex)
     exit(-1)
@@ -182,15 +182,20 @@ def BusinessHoursInsert(fin):
         business = json.loads(line)
         # print("Attempting to push: ", business["business_id"], business["hours"])
 
-        insertString = "INSERT INTO BusinessHours (BusinessID, OpeningTimes, ClosingTimes)"
+        insertString = "INSERT INTO BusinessHours (BusinessID, Day, OpeningTime, ClosingTime)"
         arrString = "ARRAY["
+        day = ""
         openingTimes = ""
         closingTimes = ""
 
-        valString = " VALUES ( "
-        valString += "'" + business["business_id"] + "', "
+        start = " VALUES ( " + "'" + business["business_id"] + "', "
 
         for days, hours in business["hours"].items():
+            valString = start
+            openingTimes = ""
+            closingTimes = ""
+            day = ""
+            day = "'" + days + "'"
             times = hours.split('-')
             opening = times[0]
             if (opening[-2] == ':'):
@@ -200,20 +205,36 @@ def BusinessHoursInsert(fin):
                 closing += '0'
             openingTimes += "'" + opening + ":00'::TIME, "
             closingTimes += "'" + closing + ":00'::TIME, "
+            openingTimes = openingTimes[:-2] #+ "]"
+            closingTimes = closingTimes[:-2] #+ "]"
+            if (openingTimes != "" and closingTimes != "" and day != ""):
+                valString += day + "," + openingTimes + "," + closingTimes + ")"
+                commitval = insertString + valString
+                # commitval = cleanStr4SQL(commitval)
+                # print("\tCommit val: ", commitval)
+                try:
+                    cursor.execute(commitval)
+                except Exception as ex:
+                    print("Insert into BusinessHours table failed with error: ", ex)
+                    exit(-1)
+                # print("\tSUCCESS\n")
+                db.commit()
 
-        openingTimes = arrString + openingTimes[:-2] + "]"
-        closingTimes = arrString + closingTimes[:-2] + "]"
-        if (openingTimes != "ARRAY[]" and closingTimes != "ARRAY[]"):
-            valString += openingTimes + "," + closingTimes + ")"
-            commitval = insertString + valString
-            # print("\tCommit val: ", commitval)
-            try:
-                cursor.execute(commitval)
-            except Exception as ex:
-                print("Insert into BusinessHours table failed with error: ", ex)
-                exit(-1)
-            # print("\tSUCCESS\n")
-            db.commit()
+        # day = arrString + day[:-2] + "]"
+        # openingTimes = arrString + openingTimes[:-2] + "]"
+        # closingTimes = arrString + closingTimes[:-2] + "]"
+        # # if (openingTimes != "ARRAY[]" and closingTimes != "ARRAY[]" and day != "ARRAY[]"):
+        # if (openingTimes != "" and closingTimes != "" and day != ""):
+        #     valString += day + "," + openingTimes + "," + closingTimes + ")"
+        #     commitval = insertString + valString
+        #     # print("\tCommit val: ", commitval)
+        #     try:
+        #         cursor.execute(commitval)
+        #     except Exception as ex:
+        #         print("Insert into BusinessHours table failed with error: ", ex)
+        #         exit(-1)
+        #     # print("\tSUCCESS\n")
+        #     db.commit()
         # else:
             # print("\tNO KNOWN HOURS, SKIPPING")
     cursor.close()
@@ -330,7 +351,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
-    BuildDatabase(triggers)
+    # BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")

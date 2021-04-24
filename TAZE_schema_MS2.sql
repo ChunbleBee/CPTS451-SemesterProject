@@ -55,10 +55,11 @@ CREATE TABLE BusinessHours
 (
     BusinessID      TEXT NOT NULL,
     /*Opening & closing time of 0:0 indicates closed on that day*/
-    OpeningTimes    TIME [],
-    ClosingTimes    TIME [],
+    Day            TEXT,
+    OpeningTime    TIME,
+    ClosingTime    TIME,
     FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
-    PRIMARY KEY (BusinessID)
+    PRIMARY KEY (BusinessID, Day)
 );
 
 /* Basic Business Attributes Table */
