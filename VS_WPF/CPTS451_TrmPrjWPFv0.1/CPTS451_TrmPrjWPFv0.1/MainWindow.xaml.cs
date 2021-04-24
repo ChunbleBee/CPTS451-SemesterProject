@@ -21,14 +21,17 @@ namespace CPTS451_TrmPrjWPFv0._1
     /// </summary>
     public partial class MainWindow : Window
     {
+        //public delegate void AsyncCall(NpgsqlDataReader reader); //Was an attempt as asyncronous data gathering
+
         private User UserAcct { get; set; }
 
         public partial class Business
         {
             public string BusinessID { get; set; }
             public string BusinessName { get; set; }
-            public string State { get; set; }
+            public string Street { get; set; }
             public string City { get; set; }
+            public string State { get; set; }
             public int ZipCode { get; set; }
             public float Latitude { get; set; }
             public float Longitude { get; set; }
@@ -76,12 +79,18 @@ namespace CPTS451_TrmPrjWPFv0._1
         public MainWindow()
         {
             InitializeComponent();
-            this.UserAcct = null;
 
+            // User Page Tab initialization
+            this.UserAcct = null;
             CreateUserIDColumns();
             CreateFriendsColumns();
             CreateFriendsTipsColumns();
-            ExecuteQuery("SELECT DISTINCT State FROM Businesses", AddStateToStateComboBox);
+
+            //Business Search Tab initialization
+            this.StateComboBox.Items.Add("State");
+            this.StateComboBox.SelectedIndex = 0;
+            ExecuteQuery("SELECT DISTINCT State FROM Businesses ORDER BY State ASC", AddStateToStateComboBox);
+            CreateBusinessSearchColumns();
         }
 
         // not a great way of building a connection. unsafe to show user businessname and password.
@@ -89,7 +98,6 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
-            //                                       |                                              |
             //                                       v                                              v
             return "Host = localhost; Username = postgres; Database = milestone2; password= 'SegaSaturn'";
         }
@@ -112,6 +120,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                         {
                             while (reader.Read())
                             {
+                                /*AsyncCall newcall = new AsyncCall(myf);
+                                newcall.BeginInvoke(reader, null, null);*/
                                 myf(reader);
                             }
                         }
@@ -433,15 +443,218 @@ namespace CPTS451_TrmPrjWPFv0._1
         //////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////// BUSINESS TAB STUFFS/////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////
-        
-        private void AddStatesToStateComboBox(NpgsqlDataReader reader)
+        private void CreateBusinessSearchColumns()
+        {
+            // Name, Addr, City, State, Distance, Stars, Tip Count, Checkins
+            DataGridTextColumn bname = new DataGridTextColumn();
+            DataGridTextColumn baddr = new DataGridTextColumn();
+            DataGridTextColumn bcity = new DataGridTextColumn();
+            DataGridTextColumn bstate = new DataGridTextColumn();
+            DataGridTextColumn bdist = new DataGridTextColumn();
+            DataGridTextColumn bstars = new DataGridTextColumn();
+            DataGridTextColumn btipcount = new DataGridTextColumn();
+            DataGridTextColumn bcheckins = new DataGridTextColumn();
+
+            bname.Binding = new Binding("BusinessName");
+            baddr.Binding = new Binding("Street");
+            bcity.Binding = new Binding("City");
+            bstate.Binding = new Binding("State");
+            //bdist.Binding = new Binding("Distance");
+            bstars.Binding = new Binding("StarRating");
+            btipcount.Binding = new Binding("NumTips");
+            bcheckins.Binding = new Binding("NumCheckIns");
+
+            bname.Header = "Name";
+            baddr.Header = "Address";
+            bcity.Header = "City";
+            bstate.Header = "State";
+            bdist.Header = "Distance";
+            bstars.Header = "Avg. Stars";
+            btipcount.Header = "Tip Count";
+            bcheckins.Header = "Check Ins";
+
+            this.SearchResultsGrid.Columns.Add(bname);
+            this.SearchResultsGrid.Columns.Add(baddr);
+            this.SearchResultsGrid.Columns.Add(bcity);
+            this.SearchResultsGrid.Columns.Add(bstate);
+            this.SearchResultsGrid.Columns.Add(bdist);
+            this.SearchResultsGrid.Columns.Add(bstars);
+            this.SearchResultsGrid.Columns.Add(btipcount);
+            this.SearchResultsGrid.Columns.Add(bcheckins);
+        }
+
+        private void AddStateToStateComboBox(NpgsqlDataReader reader)
         {
             this.StateComboBox.Items.Add(reader.GetString(0));
         }
 
+        private void AddZipCodeToListBox(NpgsqlDataReader reader)
+        {
+            this.ZipCodeListBox.Items.Add(reader.GetInt32(0));
+        }
+
+        private void AddCityToListBox(NpgsqlDataReader reader)
+        {
+            this.CityListBox.Items.Add(reader.GetString(0));
+        }
+
+        private void AddCategoryToListBox(NpgsqlDataReader reader)
+        {
+            this.CategoriesListBox.Items.Add(reader.GetString(0));
+        }
+
+        private void AddBusinessesToSearchResults(NpgsqlDataReader reader)
+        {
+            /*
+            public string BusinessID { get; set; }
+            public string BusinessName { get; set; }
+            public string Street { get; set; }
+            public string City { get; set; }
+            public string State { get; set; }
+            public int ZipCode { get; set; }
+            public float Latitude { get; set; }
+            public float Longitude { get; set; }
+            public bool IsOpen { get; set; }
+            public int ReviewCount { get; set; }
+            public float StarRating { get; set; }
+            public int NumCheckIns { get; set; }
+            public int NumTips { get; set; }
+            Businesses.BusinessID, BusinessName, Street, City, State, StarRating, NumTips, NumCheckIn
+             */
+            this.SearchResultsGrid.Items.Add(
+                new Business
+                {
+                    BusinessID = reader.GetString(0),
+                    BusinessName = reader.GetString(1),
+                    Street = reader.GetString(2),
+                    City = reader.GetString(3),
+                    State = reader.GetString(4),
+                    ZipCode = reader.GetInt32(5),
+                    StarRating = (float)reader.GetDouble(6),
+                    NumTips = reader.GetInt32(7),
+                    NumCheckIns = reader.GetInt32(8)
+                }
+            );
+        }
+
         private void StateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ComboBox box = (ComboBox)sender;
 
+            this.CityListBox.Items.Clear();
+            this.ZipCodeListBox.Items.Clear();
+            this.CategoriesListBox.Items.Clear();
+
+            if (box.SelectedIndex == 0)
+            {
+                ExecuteQuery("SELECT DISTINCT City FROM Businesses ORDER BY City ASC", AddCityToListBox);
+                ExecuteQuery("SELECT DISTINCT ZipCode FROM Businesses ORDER BY ZipCode ASC", AddZipCodeToListBox);
+                ExecuteQuery("SELECT DISTINCT Category FROM BusinessCategories ORDER BY Category ASC", AddCategoryToListBox);
+            }
+            else
+            {
+                string state = box.SelectedItem.ToString();
+                ExecuteQuery("SELECT DISTINCT City FROM Businesses WHERE State='" + state + "' ORDER BY City ASC;", AddCityToListBox);
+                ExecuteQuery("SELECT DISTINCT ZipCode FROM Businesses WHERE State='" + state + "' ORDER BY ZipCode ASC;", AddZipCodeToListBox);
+                ExecuteQuery("SELECT DISTINCT Category FROM Businesses, BusinessCategories WHERE State='" + state +
+                    "' AND Businesses.BusinessID = BusinessCategories.BusinessID ORDER BY Category ASC;", AddCategoryToListBox);
+            }
+        }
+
+        private void AddHoursToSelectedBusiness(NpgsqlDataReader reader)
+        {
+            StringBuilder str = new StringBuilder();
+
+        }
+
+        private void CityListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+        private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
+
+            if (this.CategoriesListBox.SelectedItems.Count > 0)
+            {
+                sqlcall.Append(", BusinessCategories");
+            }
+
+            if (
+                this.StateComboBox.SelectedIndex != 0 ||
+                this.CityListBox.SelectedItems.Count > 0 ||
+                this.ZipCodeListBox.SelectedItems.Count > 0 ||
+                this.CategoriesListBox.SelectedItems.Count > 0
+                )
+            {
+                sqlcall.Append(" WHERE ");
+                if (this.StateComboBox.SelectedIndex != 0)
+                {
+                    sqlcall.Append("State='" + this.StateComboBox.SelectedItem.ToString() + "'");
+                }
+
+                if (this.CityListBox.SelectedItems.Count > 0)
+                {
+                    if (this.StateComboBox.SelectedIndex != 0)
+                    {
+                        sqlcall.Append(" AND ");
+                    }
+
+                    sqlcall.Append("City='" + this.CityListBox.SelectedItem.ToString() + "'");
+                }
+
+                if (this.ZipCodeListBox.SelectedItems.Count > 0)
+                {
+
+                    if (this.StateComboBox.SelectedIndex != 0 ||
+                        this.CityListBox.SelectedItems.Count > 0)
+                    {
+                        sqlcall.Append(" AND ");
+                    }
+
+                    sqlcall.Append("ZipCode=" + this.ZipCodeListBox.SelectedItem.ToString());
+                }
+
+                if (this.CategoriesListBox.SelectedItems.Count > 0)
+                {
+
+                    if (this.StateComboBox.SelectedIndex != 0 ||
+                        this.CityListBox.SelectedItems.Count > 0 ||
+                        this.ZipCodeListBox.SelectedItems.Count > 0)
+                    {
+                        sqlcall.Append(" AND ");
+                    }
+                    sqlcall.Append("(");
+                    foreach (var item in this.CategoriesListBox.SelectedItems)
+                    {
+                        sqlcall.Append("Category='" + item.ToString() + "' OR ");
+                    }
+
+                    sqlcall.Remove(sqlcall.Length - 4, 4);
+                    sqlcall.Append(") AND Businesses.BusinessID = BusinessCategories.BusinessID");
+                }
+            }
+
+            sqlcall.Append(" ORDER BY BusinessName ASC;");
+
+            ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
+        }
+
+        private void SearchResultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Business selected  = (Business)(this.SearchResultsGrid.SelectedItem);
+
+            this.SelectedBusinessNameTextBox.Text = selected.BusinessName;
+            string address = selected.Street + ", " + selected.City + ", " + selected.State + " " + selected.ZipCode.ToString();
+            this.SelectedBusinessAddrTextBox.Text = address;
+            
+            DayOfWeek today = DateTime.Today.DayOfWeek;
+            string sqlcall = "SELECT OpeningTime, ClosingTime FROM BusinessHours " +
+                "WHERE BusinessID='" + selected.BusinessID + "' " +
+                "AND Day='" + today.ToString() + "';";
+
+            ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
         }
     }
 }
