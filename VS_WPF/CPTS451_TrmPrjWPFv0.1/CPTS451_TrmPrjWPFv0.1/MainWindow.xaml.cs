@@ -93,6 +93,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             CreateFriendsTipsColumns();
 
             //Business Search Tab initialization
+            this.SearchResultsGrid.IsReadOnly = true; // make the datagrid not edittable.
             this.StateComboBox.Items.Add("State");
             this.StateComboBox.SelectedIndex = 0;
             ExecuteQuery("SELECT DISTINCT State FROM Businesses ORDER BY State ASC", AddStateToStateComboBox);
@@ -646,6 +647,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
         {
+            this.SearchResultsGrid.Items.Clear(); // first clear all previously selected businesses
             StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
 
             if (this.CategoriesListBox.SelectedItems.Count > 0)
@@ -711,6 +713,8 @@ namespace CPTS451_TrmPrjWPFv0._1
             sqlcall.Append(" ORDER BY BusinessName ASC;");
 
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
+            // update "# Business Result: " Label.
+            this.numBusinessSearchLabel.Content = "# Business Result: " + this.SearchResultsGrid.Items.Count;
         }
 
         private void SearchResultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -913,6 +917,11 @@ namespace CPTS451_TrmPrjWPFv0._1
             {
                 ((TreeViewItem)(this.FilteredTreeView.Items[this.CatsIndex])).Items.Add(item);
             }
+        }
+
+        private void ShowCheckinbutton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
