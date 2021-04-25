@@ -648,18 +648,38 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
         {
+            this.SearchResultsGrid.Items.Clear();
             StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
+            TreeViewItem attributes = ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]);
+
 
             if (this.CategoriesListBox.SelectedItems.Count > 0)
             {
-                sqlcall.Append(", BusinessCategories");
+                int cat = 0;
+                foreach (string el in this.CategoriesListBox.SelectedItems)
+                {
+                    sqlcall.Append(", (SELECT Businesses.BusinessID FROM Businesses, BusinessCategories WHERE BusinessCategories.Category = '" + el +
+                        "' AND Businesses.BusinessID = BusinessCategories.BusinessID) AS cat" + cat.ToString());
+                    cat++;
+                }
+            }
+            if (attributes.Items.Count > 0)
+            {
+                int bat = 0;
+                foreach (TreeViewItem el in attributes.Items)
+                {
+                    sqlcall.Append(", (SELECT Businesses.BusinessID FROM Businesses, BusinessAttributes WHERE BusinessAttributes.Attribute = '" + el.Tag.ToString() +
+                        "' AND Businesses.BusinessID = BusinessAttributes.BusinessID) AS bat" + bat.ToString());
+                    bat++;
+                }
             }
 
             if (
                 this.StateComboBox.SelectedIndex != 0 ||
                 this.CityListBox.SelectedItems.Count > 0 ||
                 this.ZipCodeListBox.SelectedItems.Count > 0 ||
-                this.CategoriesListBox.SelectedItems.Count > 0
+                this.CategoriesListBox.SelectedItems.Count > 0 ||
+                attributes.Items.Count > 0
                 )
             {
                 sqlcall.Append(" WHERE ");
@@ -699,18 +719,41 @@ namespace CPTS451_TrmPrjWPFv0._1
                     {
                         sqlcall.Append(" AND ");
                     }
-                    sqlcall.Append("(");
+                    int cat = 0;
                     foreach (var item in this.CategoriesListBox.SelectedItems)
                     {
-                        sqlcall.Append("Category='" + item.ToString() + "' OR ");
+                        sqlcall.Append("Businesses.BusinessID=cat" + cat.ToString() + ".BusinessID AND ");
+                        cat++;
                     }
 
-                    sqlcall.Remove(sqlcall.Length - 4, 4);
-                    sqlcall.Append(") AND Businesses.BusinessID = BusinessCategories.BusinessID");
+                    sqlcall.Remove(sqlcall.Length - 5, 5);
+                }
+
+                if (attributes.Items.Count > 0)
+                {
+                    if (this.StateComboBox.SelectedIndex != 0 ||
+                        this.CityListBox.SelectedItems.Count > 0 ||
+                        this.ZipCodeListBox.SelectedItems.Count > 0 ||
+                        this.CategoriesListBox.SelectedItems.Count > 0)
+                    {
+                        sqlcall.Append(" AND ");
+                    }
+
+                    int bat = 0;
+                    foreach (TreeViewItem el in attributes.Items)
+                    {
+                        sqlcall.Append("Businesses.BusinessID=bat" + bat.ToString() + ".BusinessID AND ");
+                        bat++;
+                    }
+
+                    sqlcall.Remove(sqlcall.Length - 5, 5);
                 }
             }
 
-            sqlcall.Append(" ORDER BY BusinessName ASC;");
+            string sorttype = (this.sortResultcomboBox.SelectedIndex == this.sortResultcomboBox.Items.Count - 1 ||
+                this.sortResultcomboBox.SelectedIndex == 0) ? " ASC;" : " DESC;";
+            
+            sqlcall.Append(" ORDER BY " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString() + sorttype);
 
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
         }
@@ -719,20 +762,23 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             Business selected  = (Business)(this.SearchResultsGrid.SelectedItem);
 
-            this.SelectedBusinessNameTextBox.Text = selected.BusinessName;
-            string address = selected.Street + ", " + selected.City + ", " + selected.State + " " + selected.ZipCode.ToString();
-            this.SelectedBusinessAddrTextBox.Text = address;
-            
-            DayOfWeek today = DateTime.Today.DayOfWeek;
-            string sqlcall = "SELECT OpeningTime, ClosingTime FROM BusinessHours " +
-                "WHERE BusinessID='" + selected.BusinessID + "' " +
-                "AND Day='" + today.ToString() + "';";
-
-            ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
-
-            if (this.UserAcct != null)
+            if (selected != null)
             {
-                this.BusinessTipsButton.IsEnabled = true;
+                this.SelectedBusinessNameTextBox.Text = selected.BusinessName;
+                string address = selected.Street + ", " + selected.City + ", " + selected.State + " " + selected.ZipCode.ToString();
+                this.SelectedBusinessAddrTextBox.Text = address;
+
+                DayOfWeek today = DateTime.Today.DayOfWeek;
+                string sqlcall = "SELECT OpeningTime, ClosingTime FROM BusinessHours " +
+                    "WHERE BusinessID='" + selected.BusinessID + "' " +
+                    "AND Day='" + today.ToString() + "';";
+
+                ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
+
+                if (this.UserAcct != null)
+                {
+                    this.BusinessTipsButton.IsEnabled = true;
+                }
             }
         }
 
