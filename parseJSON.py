@@ -250,7 +250,7 @@ def UserTableInsert(fin):
         insertString = (
             "INSERT INTO Users" +
             " (UserID, CreationDate, UserName, " +
-            "FansRating, FunnyRating, CoolRating, AvgStarRating)"
+            "FansRating, FunnyRating, CoolRating, UsefulRating, AvgStarRating)"
         )
         valString = " VALUES ( "
         valString += "'" + user["user_id"] + "', "
@@ -259,6 +259,7 @@ def UserTableInsert(fin):
         valString += str(user["fans"]) + ", "
         valString += str(user["funny"]) + ", "
         valString += str(user["cool"]) + ", "
+        valString += str(user["useful"]) + ", "
         valString += str(user["average_stars"]) + ")"
         commitval = insertString + valString
         # print("\tCommit val: ", commitval)
@@ -308,7 +309,7 @@ def TipsTableInsert(fin):
         valString += "'" + tip["user_id"] + "', "
         valString += "'" + tip["date"] + "'::TIMESTAMP, "
         valString += str(tip["likes"]) + ", "
-        valString += "'" + cleanStr4SQL(tip["user_id"]) + "');"
+        valString += "'" + cleanStr4SQL(tip["text"]) + "');"
 
         commitval = insertString + valString
         # print("\tCommit val: ", commitval)

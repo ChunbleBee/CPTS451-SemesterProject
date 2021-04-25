@@ -12,6 +12,7 @@ CREATE TABLE Users
     FansRating      INTEGER,
     FunnyRating     INTEGER,
     CoolRating      INTEGER,
+    UsefulRating    INTEGER,
     AvgStarRating   DECIMAL (3, 2),
     Latitude        DECIMAL (8, 6),
     Longitude       DECIMAL (9, 6),

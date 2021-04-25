@@ -16,6 +16,61 @@ using Npgsql;
 
 namespace CPTS451_TrmPrjWPFv0._1
 {
+
+    public partial class Business
+    {
+        public string BusinessID { get; set; }
+        public string BusinessName { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public int ZipCode { get; set; }
+        public float Latitude { get; set; }
+        public float Longitude { get; set; }
+        public bool IsOpen { get; set; }
+        public int ReviewCount { get; set; }
+        public float StarRating { get; set; }
+        public int NumCheckIns { get; set; }
+        public int NumTips { get; set; }
+    }
+
+    public class User
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
+        public float Stars { get; set; }
+        public int Fans { get; set; }
+        public DateTime CreationDate { get; set; }
+        public int FunnyRates { get; set; }
+        public int CoolRates { get; set; }
+        public int UsefulRates { get; set; }
+        public int Tips { get; set; }
+        public int Likes { get; set; }
+        public float Latitude { get; set; }
+        public float Longitude { get; set; }
+    }
+    public class Tip
+    {
+        public string BusinessID { get; set; }
+        public string UserID { get; set; }
+        DateTime CreationDate { get; set; }
+        public int Likes { get; set; }
+        public string Text { get; set; }
+    }
+
+    public class TipHelper
+    {
+        public string UserID { get; set; }
+        public string BusinessID { get; set; }
+        //UserName, BusinessName, City, Text, Date
+        public string UserName { get; set; }
+        public string BusinessName { get; set; }
+        public string City { get; set; }
+        public string Text { get; set; }
+        public int Likes { get; set; }
+        public DateTime CreationDate { get; set; }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -24,58 +79,6 @@ namespace CPTS451_TrmPrjWPFv0._1
         //public delegate void AsyncCall(NpgsqlDataReader reader); //Was an attempt as asyncronous data gathering
 
         private User UserAcct { get; set; }
-
-        public partial class Business
-        {
-            public string BusinessID { get; set; }
-            public string BusinessName { get; set; }
-            public string Street { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            public int ZipCode { get; set; }
-            public float Latitude { get; set; }
-            public float Longitude { get; set; }
-            public bool IsOpen { get; set; }
-            public int ReviewCount { get; set; }
-            public float StarRating { get; set; }
-            public int NumCheckIns { get; set; }
-            public int NumTips { get; set; }
-        }
-
-        public class User
-        {
-            public string ID { get; set; }
-            public string Name { get; set; }
-            public float Stars { get; set; }
-            public int Fans { get; set; }
-            public DateTime CreationDate { get; set; }
-            public int FunnyRates {get; set; }
-            public int CoolRates { get; set; }
-            public int UsefulRates { get; set; }
-            public int Tips { get; set; }
-            public int Likes { get; set; }
-            public float Latitude { get; set; }
-            public float Longitude { get; set; }
-        }
-        public class Tip
-        {
-            public string BusinessID { get; set; }
-            public string UserID { get; set; }
-            DateTime CreationDate { get; set; }
-            public int Likes { get; set; }
-            public string Text { get; set; }
-        }
-
-        public class TipHelper
-        {
-            //UserName, BusinessName, City, Text, Date
-            public string UserName { get; set; }
-            public string BusinessName { get; set; }
-            public string City { get; set; }
-            public string Text { get; set; }
-            public DateTime CreationDate { get; set; }
-        }
-
         public MainWindow()
         {
             InitializeComponent();
@@ -99,7 +102,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone2; password= 'SegaSaturn'";
+            return "Host = localhost; Username = postgres; Database = milestone3; password= 'SegaSaturn'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -138,6 +141,30 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
+        public string GetUserID()
+        {
+            if (this.UserAcct != null)
+            {
+                return this.UserAcct.ID;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public string GetBusinessID()
+        {
+            if (this.SearchResultsGrid.SelectedItems.Count > 0)
+            {
+                Business busy = (Business)(this.SearchResultsGrid.SelectedItem);
+                return busy.BusinessID;
+            }
+            else
+            {
+                return "";
+            }
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////// USER TAB STUFFS/////////////////////////////////////////////
@@ -278,6 +305,11 @@ namespace CPTS451_TrmPrjWPFv0._1
                                 AND Friends.User01 = '" + this.UserAcct.ID + @"'
                                 ORDER BY Date DESC;";
                     ExecuteQuery(sqlcall, AddFriendTips);
+
+                    if (this.SearchResultsGrid.SelectedItems.Count > 0)
+                    {
+                        this.BusinessTipsButton.IsEnabled = true;
+                    }
                 }
             }
             else if (b.Content.Equals("Log Out"))
@@ -299,6 +331,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                 this.UserInfoLongTextBox.Text = "";
 
                 b.Content = "Search";
+
+                this.BusinessTipsButton.IsEnabled = false;
             }
         }
 
@@ -655,6 +689,22 @@ namespace CPTS451_TrmPrjWPFv0._1
                 "AND Day='" + today.ToString() + "';";
 
             ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
+
+            if (this.UserAcct != null)
+            {
+                this.BusinessTipsButton.IsEnabled = true;
+            }
+        }
+
+        private void BusinessTipsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.SearchResultsGrid.SelectedItems.Count > 0 && this.UserAcct != null)
+            {
+                Business b = (Business)this.SearchResultsGrid.SelectedItem;
+                System.Windows.MessageBox.Show(this.UserAcct.ID + ", " + b.BusinessID);
+                TipsWindow tipsWindow = new TipsWindow(this.UserAcct.ID, b.BusinessID);
+                tipsWindow.Show();
+            }
         }
     }
 }
