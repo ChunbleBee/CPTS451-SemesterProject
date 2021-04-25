@@ -64,7 +64,7 @@
                     <GridSplitter x:Name="MasterSplinter" HorizontalAlignment="Left" Height="495" Margin="202,0,0,0" VerticalAlignment="Top" Width="4"/>
                     <TextBlock x:Name="SearchResultsTextBlock" HorizontalAlignment="Left" Margin="211,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315"><Run Text="Search Results:"/></TextBlock>
                     <DataGrid x:Name="SearchResultsGrid" SelectionMode="Single" HorizontalAlignment="Left" Height="339" Margin="211,31,0,0" VerticalAlignment="Top" Width="477" SelectionChanged="SearchResultsGrid_SelectionChanged"/>
-                    <TextBlock x:Name="SelectedBusinessTextBlock" HorizontalAlignment="Left" Margin="211,377,0,0" TextWrapping="Wrap" Text="Selected Business Attributes" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="SelectedBusinessTextBlock" HorizontalAlignment="Left" Margin="211,377,0,0" TextWrapping="Wrap" Text="Selected Business Info" VerticalAlignment="Top"/>
                     <TextBlock x:Name="SelectedBusinessNameTextBlock" HorizontalAlignment="Left" Margin="211,401,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="79"/>
                     <TextBox x:Name="SelectedBusinessNameTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="19" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" Margin="295,398,0,0"/>
                     <TextBlock x:Name="SelectedBusinessAddrTextBlock" HorizontalAlignment="Left" Margin="211,422,0,0" TextWrapping="Wrap" Text="Address" VerticalAlignment="Top" Width="79"/>
@@ -73,10 +73,10 @@
                     <TextBox x:Name="SelectedBusinessHoursTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="40" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" Margin="295,445,0,0"/>
                     <Button x:Name="BusinessTipsButton" Content="Tips" IsEnabled="False" HorizontalAlignment="Left" Margin="565,443,0,0" VerticalAlignment="Top" Width="123" Height="42" Click="BusinessTipsButton_Click"/>
                     <Label x:Name="numBusinessSearchLabel" Content="# Business Result: " Margin="542,3,197,469"/>
-                    <CheckBox x:Name="price1CheckBox" Content="$" HorizontalAlignment="Left" Margin="712,31,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="price2CheckBox" Content="$$" HorizontalAlignment="Left" Margin="712,51,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="price3CheckBox" Content="$$$" HorizontalAlignment="Left" Margin="773,31,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="price4CheckBox" Content="$$$$" HorizontalAlignment="Left" Margin="773,51,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="price1CheckBox" Content="$" HorizontalAlignment="Left" Margin="712,31,0,0" VerticalAlignment="Top" Checked="price1CheckBox_Checked" Unchecked="price1CheckBox_Unchecked"/>
+                    <CheckBox x:Name="price2CheckBox" Content="$$" HorizontalAlignment="Left" Margin="712,51,0,0" VerticalAlignment="Top" Checked="price2CheckBox_Checked" Unchecked="price2CheckBox_Unchecked"/>
+                    <CheckBox x:Name="price3CheckBox" Content="$$$" HorizontalAlignment="Left" Margin="773,31,0,0" VerticalAlignment="Top" Checked="price3CheckBox_Checked" Unchecked="price3CheckBox_Unchecked"/>
+                    <CheckBox x:Name="price4CheckBox" Content="$$$$" HorizontalAlignment="Left" Margin="773,51,0,0" VerticalAlignment="Top" Checked="price4CheckBox_Checked" Unchecked="price4CheckBox_Unchecked"/>
                     <Label x:Name="priceFilterlabel" Content="Filter by Price" HorizontalAlignment="Left" Margin="712,2,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="attributeFilterlabel" Content="Filter by Attribute" HorizontalAlignment="Left" Margin="688,84,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="acceptCreditCardcheckBox" Content="Accepts Credit Cards" HorizontalAlignment="Left" Margin="693,110,0,0" VerticalAlignment="Top" FontSize="8" Checked="acceptCreditCardcheckBox_Checked" Unchecked="acceptCreditCardcheckBox_Unchecked"/>
