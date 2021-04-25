@@ -183,7 +183,7 @@ def BusinessHoursInsert(fin):
         # print("Attempting to push: ", business["business_id"], business["hours"])
 
         insertString = "INSERT INTO BusinessHours (BusinessID, Day, OpeningTime, ClosingTime)"
-        arrString = "ARRAY["
+        # arrString = "ARRAY["
         day = ""
         openingTimes = ""
         closingTimes = ""
