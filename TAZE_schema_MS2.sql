@@ -12,6 +12,7 @@ CREATE TABLE Users
     FansRating      INTEGER,
     FunnyRating     INTEGER,
     CoolRating      INTEGER,
+    UsefulRating      INTEGER,
     AvgStarRating   DECIMAL (3, 2),
     Latitude        DECIMAL (8, 6),
     Longitude       DECIMAL (9, 6),
@@ -68,8 +69,6 @@ CREATE TABLE BusinessAttributes
     BusinessID          TEXT NOT NULL,
     Attribute           TEXT NOT NULL,
     Value               TEXT,
-    SubTypes            TEXT[],
-    Values              TEXT[],
     FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
     PRIMARY KEY (BusinessID, Attribute)
 );
@@ -108,9 +107,10 @@ CREATE TABLE Reviews
 CREATE TABLE CheckIns
 (
     BusinessID  TEXT NOT NULL,
-    CheckInDate TIMESTAMP NOT NULL DEFAULT NOW(),
+    CheckInDate DATE NOT NULL DEFAULT NOW(),
+    CheckInTime TIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
-    PRIMARY KEY (BusinessID, CheckInDate)
+    PRIMARY KEY (BusinessID, CheckInDate, CheckInTime)
 );
 
 /* Tips Table */

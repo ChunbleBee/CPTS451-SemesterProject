@@ -130,8 +130,8 @@ def BusinessAttributesInsert(fin):
         business = json.loads(line)
         # print("Attempting to push: ", business["business_id"], business["attributes"])
 
-        insertStringSimple = "INSERT INTO BusinessAttributes (BusinessID, Attribute, Value)"
-        insertStringExtended = "INSERT INTO BusinessAttributes (BusinessID, Attribute, SubTypes, Values)"
+        insertString = "INSERT INTO BusinessAttributes (BusinessID, Attribute, Value)"
+        # insertStringExtended = "INSERT INTO BusinessAttributes (BusinessID, Attribute, SubTypes, Values)"
         valString = " VALUES ('" + business["business_id"] + "', '"
         arrString = "ARRAY ["
         temp = ""
@@ -142,18 +142,27 @@ def BusinessAttributesInsert(fin):
             if (isinstance(business["attributes"][attr], dict)):
                 subtypestr = arrString + ""
                 valuesstr = arrString + ""
-                for subtype, value in business["attributes"][attr].items():
-                    subtypestr += "'" + cleanStr4SQL(subtype) + "', "
-                    valuesstr += "'" + cleanStr4SQL(value) + "', "
-                subtypestr = subtypestr[:-2] + "]"
-                valuesstr = valuesstr[:-2] + "]"
-                temp = (
-                    valString + 
-                    cleanStr4SQL(attr).strip() + "', " +
-                    subtypestr + ", " +
-                    valuesstr + ");"
-                )
-                commitval = insertStringExtended + temp
+                for type, value in business["attributes"][attr].items():
+                    # subtypestr += "'" + cleanStr4SQL(subtype) + "', "
+                    # valuesstr += "'" + cleanStr4SQL(value) + "', "
+                    commitval = (insertString + valString + cleanStr4SQL(type) +  "', "
+                                            + "'" + cleanStr4SQL(value) +  "');")
+                    try:
+                        cursor.execute(commitval)
+                    except Exception as ex:
+                        print("Insert into BusinessAttributes table failed with error: ", ex)
+                        exit(-1)
+                    # print("\tSUCCESS\n")
+                    db.commit()
+                # subtypestr = subtypestr[:-2] + "]"
+                # valuesstr = valuesstr[:-2] + "]"
+                # temp = (
+                #     valString +
+                #     cleanStr4SQL(attr).strip() + "', " +
+                #     subtypestr + ", " +
+                #     valuesstr + ");"
+                # )
+                # commitval = insertStringExtended + temp
 
             else:
                 temp =  (
@@ -161,17 +170,17 @@ def BusinessAttributesInsert(fin):
                     cleanStr4SQL(attr).strip() + "', '" +
                     str(business["attributes"][attr])  + "');"
                 )
-
-                commitval = insertStringSimple + temp
+                commitval = insertString + temp
+                try:
+                    cursor.execute(commitval)
+                except Exception as ex:
+                    print("Insert into BusinessAttributes table failed with error: ", ex)
+                    exit(-1)
+                # print("\tSUCCESS\n")
+                db.commit()
 
             # print("\tCommit val: ", commitval)
-            try:
-                cursor.execute(commitval)
-            except Exception as ex:
-                print("Insert into BusinessAttributes table failed with error: ", ex)
-                exit(-1)
-            # print("\tSUCCESS\n")
-            db.commit()
+
     cursor.close()
 
 
@@ -219,24 +228,6 @@ def BusinessHoursInsert(fin):
                     exit(-1)
                 # print("\tSUCCESS\n")
                 db.commit()
-
-        # day = arrString + day[:-2] + "]"
-        # openingTimes = arrString + openingTimes[:-2] + "]"
-        # closingTimes = arrString + closingTimes[:-2] + "]"
-        # # if (openingTimes != "ARRAY[]" and closingTimes != "ARRAY[]" and day != "ARRAY[]"):
-        # if (openingTimes != "" and closingTimes != "" and day != ""):
-        #     valString += day + "," + openingTimes + "," + closingTimes + ")"
-        #     commitval = insertString + valString
-        #     # print("\tCommit val: ", commitval)
-        #     try:
-        #         cursor.execute(commitval)
-        #     except Exception as ex:
-        #         print("Insert into BusinessHours table failed with error: ", ex)
-        #         exit(-1)
-        #     # print("\tSUCCESS\n")
-        #     db.commit()
-        # else:
-            # print("\tNO KNOWN HOURS, SKIPPING")
     cursor.close()
 
 
@@ -329,18 +320,21 @@ def CheckInsTableInsert(fin):
         checkin = json.loads(line)
         # print("Attempting to push: ", checkin["business_id"], checkin["date"])
 
-        insertString = "INSERT INTO CheckIns (BusinessID, CheckInDate)"
-        valString = " VALUES ( "
-        valString += "'" + checkin["business_id"] + "', "
+        insertString = "INSERT INTO CheckIns (BusinessID, CheckInDate, CheckInTime)"
 
         for date in checkin["date"].split(','):
-            commitval = insertString + valString + "'" + date + "'::TIMESTAMP);"
+            valString = " VALUES ( " + "'" + checkin["business_id"] + "', "
+            datetime = date.split(' ')
+            time = datetime[1]
+            date = datetime[0]
+            valString += "'" + date + "'" + ", " + "'" + time
+            commitval = insertString + valString + "');"
             # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
                 db.commit()
             except Exception as ex:
-                print("Insert into CheckIns table failed with error: ", ex)
+                 print("Insert into CheckIns table failed with error: ", ex)
             # print("\tSUCCESS\n")
     cursor.close()
 
@@ -351,7 +345,6 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
-    BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")
@@ -402,9 +395,10 @@ if __name__ == "__main__":
     checkins.seek(0)
 
     print("------------------------------------------------")
-    print("#\t\tUpdate Database Derived Collumns\t\t#")
+    print("#\t\tUpdate Database Derived Collumns and Triggers\t\t#")
     print("------------------------------------------------")
-    BuildDatabase(update)
+    # BuildDatabase(update)
+    # BuildDatabase(triggers)
 
     print("...\n\nCompleted without errors!")
     db.close()
