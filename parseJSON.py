@@ -26,7 +26,7 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 # businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 try:
-    db = psycopg2.connect("dbname='milestone2test' user='postgres' host='localhost' password='th@darncat8'")
+    db = psycopg2.connect("dbname='milestone3' user='postgres' host='localhost' password='SegaSaturn'")
 except Exception as ex:
     print("Connection to database failed with error: ", ex)
     exit(-1)
@@ -130,58 +130,34 @@ def BusinessAttributesInsert(fin):
         business = json.loads(line)
         # print("Attempting to push: ", business["business_id"], business["attributes"])
 
-        insertString = "INSERT INTO BusinessAttributes (BusinessID, Attribute, Value)"
-        # insertStringExtended = "INSERT INTO BusinessAttributes (BusinessID, Attribute, SubTypes, Values)"
+        insertString = "INSERT INTO BusinessAttributes (BusinessID, Attribute)"
         valString = " VALUES ('" + business["business_id"] + "', '"
-        arrString = "ARRAY ["
-        temp = ""
         commitval = ""
+        attributes = BusinessAttributesHelper(business["attributes"])
 
-        for attr in business["attributes"]:
-            #print(attr, "\t", business["attributes"][attr])
-            if (isinstance(business["attributes"][attr], dict)):
-                subtypestr = arrString + ""
-                valuesstr = arrString + ""
-                for type, value in business["attributes"][attr].items():
-                    # subtypestr += "'" + cleanStr4SQL(subtype) + "', "
-                    # valuesstr += "'" + cleanStr4SQL(value) + "', "
-                    commitval = (insertString + valString + cleanStr4SQL(type) +  "', "
-                                            + "'" + cleanStr4SQL(value) +  "');")
-                    try:
-                        cursor.execute(commitval)
-                    except Exception as ex:
-                        print("Insert into BusinessAttributes table failed with error: ", ex)
-                        exit(-1)
-                    # print("\tSUCCESS\n")
-                    db.commit()
-                # subtypestr = subtypestr[:-2] + "]"
-                # valuesstr = valuesstr[:-2] + "]"
-                # temp = (
-                #     valString +
-                #     cleanStr4SQL(attr).strip() + "', " +
-                #     subtypestr + ", " +
-                #     valuesstr + ");"
-                # )
-                # commitval = insertStringExtended + temp
-
-            else:
-                temp =  (
-                    valString +
-                    cleanStr4SQL(attr).strip() + "', '" +
-                    str(business["attributes"][attr])  + "');"
-                )
-                commitval = insertString + temp
-                try:
-                    cursor.execute(commitval)
-                except Exception as ex:
-                    print("Insert into BusinessAttributes table failed with error: ", ex)
-                    exit(-1)
-                # print("\tSUCCESS\n")
-                db.commit()
-
-            # print("\tCommit val: ", commitval)
-
+        for attribute in attributes:
+            commitval = insertString + valString + attribute +"');"
+            try:
+                cursor.execute(commitval)
+            except Exception as ex:
+                print("Insert into BusinessAttributes table failed with error: ", ex)
+                exit(-1)
+            # print("\tSUCCESS\n")
+            db.commit()
     cursor.close()
+
+def BusinessAttributesHelper(attributes):
+    attrout = []
+    for key, val in attributes.items():
+        if (isinstance(val, dict)):
+            subitems = BusinessAttributesHelper(val)
+            for item in subitems:
+                attrout.append(item)
+        else:
+            if (val != "False"):
+                attrout.append(key)
+    return attrout
+        
 
 
 def BusinessHoursInsert(fin):
@@ -192,7 +168,7 @@ def BusinessHoursInsert(fin):
         # print("Attempting to push: ", business["business_id"], business["hours"])
 
         insertString = "INSERT INTO BusinessHours (BusinessID, Day, OpeningTime, ClosingTime)"
-        arrString = "ARRAY["
+        # arrString = "ARRAY["
         day = ""
         openingTimes = ""
         closingTimes = ""
@@ -241,7 +217,7 @@ def UserTableInsert(fin):
         insertString = (
             "INSERT INTO Users" +
             " (UserID, CreationDate, UserName, " +
-            "FansRating, FunnyRating, CoolRating, AvgStarRating)"
+            "FansRating, FunnyRating, CoolRating, UsefulRating, AvgStarRating)"
         )
         valString = " VALUES ( "
         valString += "'" + user["user_id"] + "', "
@@ -250,6 +226,7 @@ def UserTableInsert(fin):
         valString += str(user["fans"]) + ", "
         valString += str(user["funny"]) + ", "
         valString += str(user["cool"]) + ", "
+        valString += str(user["useful"]) + ", "
         valString += str(user["average_stars"]) + ")"
         commitval = insertString + valString
         # print("\tCommit val: ", commitval)
@@ -299,7 +276,7 @@ def TipsTableInsert(fin):
         valString += "'" + tip["user_id"] + "', "
         valString += "'" + tip["date"] + "'::TIMESTAMP, "
         valString += str(tip["likes"]) + ", "
-        valString += "'" + cleanStr4SQL(tip["user_id"]) + "');"
+        valString += "'" + cleanStr4SQL(tip["text"]) + "');"
 
         commitval = insertString + valString
         # print("\tCommit val: ", commitval)
@@ -359,7 +336,7 @@ if __name__ == "__main__":
     businesses.seek(0)
 
     print("------------------------------------------------")
-    print("#\t\tStarting Attribute Parse\t\t#")
+    print("#\t\tStarting Attribute Parse\t#")
     print("------------------------------------------------")
     BusinessAttributesInsert(businesses)
     businesses.seek(0)
@@ -399,6 +376,11 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     # BuildDatabase(update)
     # BuildDatabase(triggers)
+
+    print("------------------------------------------------")
+    print("#\t\tAdding Triggers\t\t#")
+    print("------------------------------------------------")
+    BuildDatabase(triggers)
 
     print("...\n\nCompleted without errors!")
     db.close()
