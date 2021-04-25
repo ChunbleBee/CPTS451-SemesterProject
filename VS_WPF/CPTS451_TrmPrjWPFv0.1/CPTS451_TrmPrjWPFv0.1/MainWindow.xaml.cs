@@ -99,7 +99,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone2; password= 'SegaSaturn'";
+            return "Host = localhost; Username = postgres; Database = Milestone2db; password= 'z'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)

@@ -26,7 +26,7 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 # businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 try:
-    db = psycopg2.connect("dbname='milestone2test' user='postgres' host='localhost' password='th@darncat8'")
+    db = psycopg2.connect("dbname='Milestone2db' user='postgres' host='localhost' password='z'")
 except Exception as ex:
     print("Connection to database failed with error: ", ex)
     exit(-1)
