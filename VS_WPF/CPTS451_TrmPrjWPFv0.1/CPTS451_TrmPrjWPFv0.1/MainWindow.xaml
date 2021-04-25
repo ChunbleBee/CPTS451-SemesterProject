@@ -98,7 +98,7 @@
                     <Label x:Name="mealFilterlabel" Content="Filter by Meal:" HorizontalAlignment="Left" Margin="790,84,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="showCheckinbutton" Content="Show Checkins" HorizontalAlignment="Left" Margin="693,339,0,0" VerticalAlignment="Top" Width="86"/>
                     <Button x:Name="showTipsbutton" Content="Show Tips" HorizontalAlignment="Left" Margin="693,363,0,0" VerticalAlignment="Top" Width="86" RenderTransformOrigin="0.485,0.475"/>
-                    <ComboBox x:Name="sortResultcomboBox" HorizontalAlignment="Left" Margin="785,339,0,0" VerticalAlignment="Top" Width="91">
+                    <ComboBox x:Name="sortResultcomboBox" HorizontalAlignment="Left" Margin="785,339,0,0" VerticalAlignment="Top" Width="91" FontSize="8">
                         <ComboBoxItem Content="Name (default)"></ComboBoxItem>
                         <ComboBoxItem Content="Highest Rated"></ComboBoxItem>
                         <ComboBoxItem Content="Most # of Tips"></ComboBoxItem>
