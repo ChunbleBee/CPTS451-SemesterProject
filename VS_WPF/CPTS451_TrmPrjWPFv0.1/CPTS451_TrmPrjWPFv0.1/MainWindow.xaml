@@ -53,25 +53,25 @@
                     <ComboBox x:Name="StateComboBox" HorizontalAlignment="Left" Margin="48,10,0,0" VerticalAlignment="Top" Width="149" SelectionChanged="StateComboBox_SelectionChanged"/>
                     <TextBlock x:Name="StateTextBlock" TextWrapping="Wrap" Margin="10,11,837,464"><Run Text="State:"/></TextBlock>
                     <TextBlock x:Name="CityTextBlock" TextWrapping="Wrap" Text="City" Margin="10,36,688,443"/>
-                    <ListBox x:Name="CityListBox" HorizontalAlignment="Left" Height="53" Margin="10,57,0,0" VerticalAlignment="Top" Width="187" SelectionChanged="CityListBox_SelectionChanged"/>
+                    <ListBox x:Name="CityListBox" SelectionMode="Single"  HorizontalAlignment="Left" Height="53" Margin="10,57,0,0" VerticalAlignment="Top" Width="187"/>
                     <TextBlock x:Name="ZipCodeTextBlock" HorizontalAlignment="Left" Margin="10,115,0,0" TextWrapping="Wrap" Text="ZipCode" VerticalAlignment="Top" Width="187"/>
-                    <ListBox x:Name="ZipCodeListBox" HorizontalAlignment="Left" Height="51" Margin="10,136,0,0" VerticalAlignment="Top" Width="187"/>
+                    <ListBox x:Name="ZipCodeListBox" SelectionMode="Single" HorizontalAlignment="Left" Height="51" Margin="11,136,0,0" VerticalAlignment="Top" Width="187"/>
                     <TextBlock x:Name="CategoriesTextBlock" HorizontalAlignment="Left" Margin="10,192,0,0" TextWrapping="Wrap" Text="Categories" VerticalAlignment="Top" Width="187"/>
-                    <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="134" Margin="10,213,0,0" VerticalAlignment="Top" Width="187"/>
+                    <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="159" Margin="10,213,0,0" VerticalAlignment="Top" Width="187" SelectionChanged="CategoriesListBox_SelectionChanged"/>
                     <TextBlock x:Name="SelectedAttributesTextBlock" TextWrapping="Wrap" Text="Selected Attributes" Margin="10,377,688,102"/>
                     <ListBox x:Name="SelectedAttributesListBox" Focusable="False" HorizontalAlignment="Left" Height="63" Margin="10,398,0,0" VerticalAlignment="Top" Width="187"/>
                     <Button x:Name="SelectedAttributesSearchButton" Content="Search" HorizontalAlignment="Left" Height="19" Margin="10,466,0,0" VerticalAlignment="Top" Width="187" Click="SelectedAttributesSearchButton_Click"/>
                     <GridSplitter x:Name="MasterSplinter" HorizontalAlignment="Left" Height="495" Margin="202,0,0,0" VerticalAlignment="Top" Width="4"/>
                     <TextBlock x:Name="SearchResultsTextBlock" HorizontalAlignment="Left" Margin="211,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315"><Run Text="Search Results:"/></TextBlock>
-                    <DataGrid x:Name="SearchResultsGrid"  SelectionMode="Single" HorizontalAlignment="Left" Height="339" Margin="211,31,0,0" VerticalAlignment="Top" Width="477" SelectionChanged="SearchResultsGrid_SelectionChanged"/>
+                    <DataGrid x:Name="SearchResultsGrid" SelectionMode="Single" HorizontalAlignment="Left" Height="339" Margin="211,31,0,0" VerticalAlignment="Top" Width="477" SelectionChanged="SearchResultsGrid_SelectionChanged"/>
                     <TextBlock x:Name="SelectedBusinessTextBlock" HorizontalAlignment="Left" Margin="211,377,0,0" TextWrapping="Wrap" Text="Selected Business Attributes" VerticalAlignment="Top"/>
                     <TextBlock x:Name="SelectedBusinessNameTextBlock" HorizontalAlignment="Left" Margin="211,401,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="79"/>
-                    <TextBox x:Name="SelectedBusinessNameTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="19" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="393" Margin="295,398,0,0"/>
+                    <TextBox x:Name="SelectedBusinessNameTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="19" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" Margin="295,398,0,0"/>
                     <TextBlock x:Name="SelectedBusinessAddrTextBlock" HorizontalAlignment="Left" Margin="211,422,0,0" TextWrapping="Wrap" Text="Address" VerticalAlignment="Top" Width="79"/>
-                    <TextBox x:Name="SelectedBusinessAddrTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="393" Margin="295,422,0,0"/>
+                    <TextBox x:Name="SelectedBusinessAddrTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="18" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" Margin="295,422,0,0"/>
                     <TextBlock x:Name="SelectedBusinessHoursTextBlock" HorizontalAlignment="Left" Margin="211,443,0,0" TextWrapping="Wrap" Text="Hours Today" VerticalAlignment="Top" Width="79"/>
-                    <TextBox x:Name="SelectedBusinessHoursTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="40" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="393" Margin="295,445,0,0"/>
-                    <Button x:Name="BusinessTipsButton" Content="Tips" IsEnabled="False" HorizontalAlignment="Left" Margin="693,443,0,0" VerticalAlignment="Top" Width="182" Height="42" Click="BusinessTipsButton_Click"/>
+                    <TextBox x:Name="SelectedBusinessHoursTextBox" IsEnabled="False" IsReadOnly="True" HorizontalAlignment="Left" Height="40" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" Margin="295,445,0,0"/>
+                    <Button x:Name="BusinessTipsButton" Content="Tips" IsEnabled="False" HorizontalAlignment="Left" Margin="565,443,0,0" VerticalAlignment="Top" Width="123" Height="42" Click="BusinessTipsButton_Click"/>
                     <Label x:Name="numBusinessSearchLabel" Content="# Business Result: " Margin="542,3,197,469"/>
                     <CheckBox x:Name="price1CheckBox" Content="$" HorizontalAlignment="Left" Margin="712,31,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="price2CheckBox" Content="$$" HorizontalAlignment="Left" Margin="712,51,0,0" VerticalAlignment="Top"/>
@@ -79,35 +79,33 @@
                     <CheckBox x:Name="price4CheckBox" Content="$$$$" HorizontalAlignment="Left" Margin="773,51,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="priceFilterlabel" Content="Filter by Price" HorizontalAlignment="Left" Margin="712,2,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="attributeFilterlabel" Content="Filter by Attribute" HorizontalAlignment="Left" Margin="688,84,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="acceptCreditCardcheckBox" Content="Accepts Credit Cards" HorizontalAlignment="Left" Margin="693,110,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="takesReservationscheckBox" Content="Takes Reservations" HorizontalAlignment="Left" Margin="693,129,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="wheelChairAccessiblecheckBox" Content="Wheel Chair Accessible" HorizontalAlignment="Left" Margin="693,149,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="OutDoorSeatcheckBox" Content="Outdoor Seating" HorizontalAlignment="Left" Margin="693,169,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="good4KidcheckBox" Content="Good for Kids" HorizontalAlignment="Left" Margin="693,189,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="good4GroupscheckBox" Content="Good for Groups" HorizontalAlignment="Left" Margin="693,209,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="deliverycheckBox" Content="Delivery" HorizontalAlignment="Left" Margin="693,229,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="takeOutcheckBox" Content="Take out" HorizontalAlignment="Left" Margin="693,249,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="freeWificheckBox" Content="Free wifi" HorizontalAlignment="Left" Margin="693,269,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="bikeParkingcheckBox" Content="Bike Parking" HorizontalAlignment="Left" Margin="693,289,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="breakfastcheckBox" Content="Breakfast" HorizontalAlignment="Left" Margin="810,110,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="lunchcheckBox" Content="Lunch" HorizontalAlignment="Left" Margin="810,129,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="brunchcheckBox" Content="Brunch" HorizontalAlignment="Left" Margin="810,149,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="dinnercheckBox" Content="Dinner" HorizontalAlignment="Left" Margin="810,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.388,0.632" FontSize="8"/>
-                    <CheckBox x:Name="dessertcheckBox" Content="Dessert" HorizontalAlignment="Left" Margin="810,189,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <CheckBox x:Name="lateNightcheckBox" Content="Late Night" HorizontalAlignment="Left" Margin="810,209,0,0" VerticalAlignment="Top" FontSize="8"/>
-                    <ListBox x:Name="filteredResultlistBox" HorizontalAlignment="Left" Height="100" Margin="771,229,0,0" VerticalAlignment="Top" Width="103"/>
+                    <CheckBox x:Name="acceptCreditCardcheckBox" Content="Accepts Credit Cards" HorizontalAlignment="Left" Margin="693,110,0,0" VerticalAlignment="Top" FontSize="8" Checked="acceptCreditCardcheckBox_Checked" Unchecked="acceptCreditCardcheckBox_Unchecked"/>
+                    <CheckBox x:Name="takesReservationscheckBox" Content="Takes Reservations" HorizontalAlignment="Left" Margin="693,129,0,0" VerticalAlignment="Top" FontSize="8" Checked="takesReservationscheckBox_Checked" Unchecked="takesReservationscheckBox_Unchecked"/>
+                    <CheckBox x:Name="wheelChairAccessiblecheckBox" Content="Wheel Chair Accessible" HorizontalAlignment="Left" Margin="693,149,0,0" VerticalAlignment="Top" FontSize="8" Checked="wheelChairAccessiblecheckBox_Checked" Unchecked="wheelChairAccessiblecheckBox_Unchecked"/>
+                    <CheckBox x:Name="OutDoorSeatcheckBox" Content="Outdoor Seating" HorizontalAlignment="Left" Margin="693,169,0,0" VerticalAlignment="Top" FontSize="8" Checked="OutDoorSeatcheckBox_Checked" Unchecked="OutDoorSeatcheckBox_Unchecked"/>
+                    <CheckBox x:Name="good4KidcheckBox" Content="Good for Kids" HorizontalAlignment="Left" Margin="693,189,0,0" VerticalAlignment="Top" FontSize="8" Checked="good4KidcheckBox_Checked" Unchecked="good4KidcheckBox_Unchecked"/>
+                    <CheckBox x:Name="good4GroupscheckBox" Content="Good for Groups" HorizontalAlignment="Left" Margin="693,209,0,0" VerticalAlignment="Top" FontSize="8" Checked="good4GroupscheckBox_Checked" Unchecked="good4GroupscheckBox_Unchecked"/>
+                    <CheckBox x:Name="deliverycheckBox" Content="Delivery" HorizontalAlignment="Left" Margin="693,229,0,0" VerticalAlignment="Top" FontSize="8" Checked="deliverycheckBox_Checked" Unchecked="deliverycheckBox_Unchecked"/>
+                    <CheckBox x:Name="takeOutcheckBox" Content="Take out" HorizontalAlignment="Left" Margin="693,249,0,0" VerticalAlignment="Top" FontSize="8" Checked="takeOutcheckBox_Checked" Unchecked="takeOutcheckBox_Unchecked"/>
+                    <CheckBox x:Name="freeWificheckBox" Content="Free wifi" HorizontalAlignment="Left" Margin="693,269,0,0" VerticalAlignment="Top" FontSize="8" Checked="freeWificheckBox_Checked" Unchecked="freeWificheckBox_Unchecked"/>
+                    <CheckBox x:Name="bikeParkingcheckBox" Content="Bike Parking" HorizontalAlignment="Left" Margin="693,289,0,0" VerticalAlignment="Top" FontSize="8" Checked="bikeParkingcheckBox_Checked" Unchecked="bikeParkingcheckBox_Unchecked"/>
+                    <CheckBox x:Name="breakfastcheckBox" Content="Breakfast" HorizontalAlignment="Left" Margin="810,110,0,0" VerticalAlignment="Top" FontSize="8" Checked="breakfastcheckBox_Checked" Unchecked="breakfastcheckBox_Unchecked"/>
+                    <CheckBox x:Name="lunchcheckBox" Content="Lunch" HorizontalAlignment="Left" Margin="810,129,0,0" VerticalAlignment="Top" FontSize="8" Checked="lunchcheckBox_Checked" Unchecked="lunchcheckBox_Unchecked"/>
+                    <CheckBox x:Name="brunchcheckBox" Content="Brunch" HorizontalAlignment="Left" Margin="810,149,0,0" VerticalAlignment="Top" FontSize="8" Checked="brunchcheckBox_Checked" Unchecked="brunchcheckBox_Unchecked"/>
+                    <CheckBox x:Name="dinnercheckBox" Content="Dinner" HorizontalAlignment="Left" Margin="810,169,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.388,0.632" FontSize="8" Checked="dinnercheckBox_Checked" Unchecked="dinnercheckBox_Unchecked"/>
+                    <CheckBox x:Name="dessertcheckBox" Content="Dessert" HorizontalAlignment="Left" Margin="810,189,0,0" VerticalAlignment="Top" FontSize="8" Checked="dessertcheckBox_Checked" Unchecked="dessertcheckBox_Unchecked"/>
+                    <CheckBox x:Name="lateNightcheckBox" Content="Late Night" HorizontalAlignment="Left" Margin="810,209,0,0" VerticalAlignment="Top" FontSize="8" Checked="lateNightcheckBox_Checked" Unchecked="lateNightcheckBox_Unchecked"/>
                     <Label x:Name="mealFilterlabel" Content="Filter by Meal:" HorizontalAlignment="Left" Margin="790,84,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="showCheckinbutton" Content="Show Checkins" HorizontalAlignment="Left" Margin="693,398,0,0" VerticalAlignment="Top" Width="182" Height="40"/>
-                    <ComboBox x:Name="sortResultcomboBox" HorizontalAlignment="Left" Margin="693,365,0,0" VerticalAlignment="Top" Width="91" FontSize="8">
+                    <Button x:Name="showCheckinbutton" Content="Show Check Ins" HorizontalAlignment="Left" Margin="565,398,0,0" VerticalAlignment="Top" Width="123" Height="40"/>
+                    <ComboBox x:Name="sortResultcomboBox" HorizontalAlignment="Left" Margin="784,287,0,0" VerticalAlignment="Top" Width="91" FontSize="8">
                         <ComboBoxItem Content="Name (default)"></ComboBoxItem>
                         <ComboBoxItem Content="Highest Rated"></ComboBoxItem>
                         <ComboBoxItem Content="Most # of Tips"></ComboBoxItem>
                         <ComboBoxItem Content="Most Check ins"></ComboBoxItem>
                         <ComboBoxItem Content="Nearest"></ComboBoxItem>
                     </ComboBox>
-                    <Label x:Name="sortlabel" Content="Sort Result By:" HorizontalAlignment="Left" Margin="693,334,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="addCategorybutton" Content="Add" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button x:Name="removeCategorybutton" Content="Remove" HorizontalAlignment="Left" Margin="90,355,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Label x:Name="sortlabel" Content="Sort Result By:" HorizontalAlignment="Left" Margin="784,261,0,0" VerticalAlignment="Top"/>
+                    <TreeView x:Name="FilteredTreeView" HorizontalAlignment="Left" Height="176" VerticalAlignment="Top" Width="182" Margin="693,309,0,0"/>
                 </Grid>
             </TabItem>
         </TabControl>
