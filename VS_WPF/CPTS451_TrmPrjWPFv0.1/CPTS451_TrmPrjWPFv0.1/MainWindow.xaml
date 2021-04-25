@@ -58,8 +58,8 @@
                     <ListBox x:Name="ZipCodeListBox" SelectionMode="Single" HorizontalAlignment="Left" Height="51" Margin="11,136,0,0" VerticalAlignment="Top" Width="187"/>
                     <TextBlock x:Name="CategoriesTextBlock" HorizontalAlignment="Left" Margin="10,192,0,0" TextWrapping="Wrap" Text="Categories" VerticalAlignment="Top" Width="187"/>
                     <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="119" Margin="10,213,0,0" VerticalAlignment="Top" Width="187" SelectionChanged="CategoriesListBox_SelectionChanged"/>
-                    <TextBlock x:Name="searchResultLabel" TextWrapping="Wrap" Text="Search Result Business(es)" Margin="10,337,687.6,141"/>
-                    <ListBox x:Name="SelectedAttributesListBox" Focusable="False" HorizontalAlignment="Left" Height="102" Margin="10,359,0,0" VerticalAlignment="Top" Width="187"/>
+                    <TextBlock x:Name="previousSearchResultLabel" TextWrapping="Wrap" Text="Previous Search Result" Margin="10,337,687.6,141"/>
+                    <ListBox x:Name="previousSearchListBox" Focusable="False" HorizontalAlignment="Left" Height="102" Margin="10,359,0,0" VerticalAlignment="Top" Width="187"/>
                     <Button x:Name="SelectedAttributesSearchButton" Content="Search" HorizontalAlignment="Left" Height="19" Margin="10,466,0,0" VerticalAlignment="Top" Width="187" Click="SelectedAttributesSearchButton_Click"/>
                     <GridSplitter x:Name="MasterSplinter" HorizontalAlignment="Left" Height="495" Margin="202,0,0,0" VerticalAlignment="Top" Width="4"/>
                     <TextBlock x:Name="SearchResultsTextBlock" HorizontalAlignment="Left" Margin="211,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315"><Run Text="Search Results:"/></TextBlock>

@@ -648,6 +648,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
         {
             this.SearchResultsGrid.Items.Clear(); // first clear all previously selected businesses
+            this.previousSearchListBox.Items.Clear(); // clear previous entries when search button is clicked.
             StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
 
             if (this.CategoriesListBox.SelectedItems.Count > 0)
@@ -666,6 +667,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                 if (this.StateComboBox.SelectedIndex != 0)
                 {
                     sqlcall.Append("State='" + this.StateComboBox.SelectedItem.ToString() + "'");
+                    // include the state into the previous search listbox
+                    this.previousSearchListBox.Items.Add(this.StateComboBox.SelectedItem.ToString());
                 }
 
                 if (this.CityListBox.SelectedItems.Count > 0)
@@ -673,6 +676,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                     if (this.StateComboBox.SelectedIndex != 0)
                     {
                         sqlcall.Append(" AND ");
+                        // include the city if a city is selected to the previous search listbox.
+                        this.previousSearchListBox.Items.Add(this.CityListBox.SelectedItem.ToString());
                     }
 
                     sqlcall.Append("City='" + this.CityListBox.SelectedItem.ToString() + "'");
@@ -685,6 +690,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                         this.CityListBox.SelectedItems.Count > 0)
                     {
                         sqlcall.Append(" AND ");
+                        // include the zipcode if a zipcode is selected to the previous search listbox.
+                        this.previousSearchListBox.Items.Add(this.ZipCodeListBox.SelectedItem.ToString());
                     }
 
                     sqlcall.Append("ZipCode=" + this.ZipCodeListBox.SelectedItem.ToString());
@@ -703,6 +710,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                     foreach (var item in this.CategoriesListBox.SelectedItems)
                     {
                         sqlcall.Append("Category='" + item.ToString() + "' OR ");
+                        // include any/all categories selected to the previous search listbox.
+                        this.previousSearchListBox.Items.Add(item.ToString());
                     }
 
                     sqlcall.Remove(sqlcall.Length - 4, 4);
@@ -710,6 +719,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                 }
             }
 
+            // TODO: update the ORDER BY to use what is selected from the sort results by drop-down combo box.
             sqlcall.Append(" ORDER BY BusinessName ASC;");
 
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
