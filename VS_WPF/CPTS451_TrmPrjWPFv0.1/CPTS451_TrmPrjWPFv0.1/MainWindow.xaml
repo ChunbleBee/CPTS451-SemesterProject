@@ -57,7 +57,7 @@
                     <TextBlock x:Name="ZipCodeTextBlock" HorizontalAlignment="Left" Margin="10,115,0,0" TextWrapping="Wrap" Text="ZipCode" VerticalAlignment="Top" Width="187"/>
                     <ListBox x:Name="ZipCodeListBox" HorizontalAlignment="Left" Height="51" Margin="10,136,0,0" VerticalAlignment="Top" Width="187"/>
                     <TextBlock x:Name="CategoriesTextBlock" HorizontalAlignment="Left" Margin="10,192,0,0" TextWrapping="Wrap" Text="Categories" VerticalAlignment="Top" Width="187"/>
-                    <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="159" Margin="10,213,0,0" VerticalAlignment="Top" Width="187"/>
+                    <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="134" Margin="10,213,0,0" VerticalAlignment="Top" Width="187"/>
                     <TextBlock x:Name="SelectedAttributesTextBlock" TextWrapping="Wrap" Text="Selected Attributes" Margin="10,377,688,102"/>
                     <ListBox x:Name="SelectedAttributesListBox" Focusable="False" HorizontalAlignment="Left" Height="63" Margin="10,398,0,0" VerticalAlignment="Top" Width="187"/>
                     <Button x:Name="SelectedAttributesSearchButton" Content="Search" HorizontalAlignment="Left" Height="19" Margin="10,466,0,0" VerticalAlignment="Top" Width="187" Click="SelectedAttributesSearchButton_Click"/>
@@ -106,6 +106,8 @@
                         <ComboBoxItem Content="Nearest"></ComboBoxItem>
                     </ComboBox>
                     <Label x:Name="sortlabel" Content="Sort Result By:" HorizontalAlignment="Left" Margin="693,334,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="addCategorybutton" Content="Add" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button x:Name="removeCategorybutton" Content="Remove" HorizontalAlignment="Left" Margin="90,355,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
         </TabControl>
