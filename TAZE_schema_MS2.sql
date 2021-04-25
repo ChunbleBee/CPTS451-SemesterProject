@@ -68,7 +68,6 @@ CREATE TABLE BusinessAttributes
 (
     BusinessID          TEXT NOT NULL,
     Attribute           TEXT NOT NULL,
-    Value               TEXT,
     FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
     PRIMARY KEY (BusinessID, Attribute)
 );
