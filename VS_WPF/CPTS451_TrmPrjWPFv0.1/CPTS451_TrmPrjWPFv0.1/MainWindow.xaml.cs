@@ -770,6 +770,8 @@ namespace CPTS451_TrmPrjWPFv0._1
             sqlcall.Append(" ORDER BY " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString() + sorttype);
 
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
+            // display num of businesses returned
+            this.numBusinessSearchLabel.Content = "# Business Result: " + this.SearchResultsGrid.Items.Count;
         }
 
         private void SearchResultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
