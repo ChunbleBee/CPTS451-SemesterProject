@@ -120,7 +120,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone3; password= 'SegaSaturn'";
+            return "Host = localhost; Username = postgres; Database = Milestone2db; password= 'z'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -691,7 +691,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                 {
                     sqlcall.Append("State='" + this.StateComboBox.SelectedItem.ToString() + "'");
                     // include the state into the previous search display
-                    this.previousSearchListBox.Items.Add(this.StateComboBox.SelectedItem.ToString());
+                    this.previousSearchListBox.Items.Add("State " + this.StateComboBox.SelectedItem.ToString());
                 }
 
                 if (this.CityListBox.SelectedItems.Count > 0)
@@ -703,7 +703,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
                     sqlcall.Append("City='" + this.CityListBox.SelectedItem.ToString() + "'");
                     // include the city into the previous search display
-                    this.previousSearchListBox.Items.Add(this.CityListBox.SelectedItem.ToString());
+                    this.previousSearchListBox.Items.Add("City " + this.CityListBox.SelectedItem.ToString());
 
                 }
 
@@ -718,7 +718,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
                     sqlcall.Append("ZipCode=" + this.ZipCodeListBox.SelectedItem.ToString());
                     // include the zipcode into the previous search display.
-                    this.previousSearchListBox.Items.Add(this.ZipCodeListBox.SelectedItem.ToString());
+                    this.previousSearchListBox.Items.Add("Zipcode " + this.ZipCodeListBox.SelectedItem.ToString());
                 }
 
                 if (this.CategoriesListBox.SelectedItems.Count > 0)
@@ -735,7 +735,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                     {
                         sqlcall.Append("Businesses.BusinessID=cat" + cat.ToString() + ".BusinessID AND ");
                         // include the categories into the previous search display
-                        this.previousSearchListBox.Items.Add(item.ToString());
+                        this.previousSearchListBox.Items.Add("Category " + item.ToString());
                         cat++;
                     }
 
@@ -757,7 +757,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                     {
                         sqlcall.Append("Businesses.BusinessID=bat" + bat.ToString() + ".BusinessID AND ");
                         bat++;
-                        this.previousSearchListBox.Items.Add(el.Tag.ToString());
+                        this.previousSearchListBox.Items.Add("Attribute " + el.Tag.ToString());
                     }
 
                     sqlcall.Remove(sqlcall.Length - 5, 5);
@@ -768,6 +768,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                 this.sortResultcomboBox.SelectedIndex == 0) ? " ASC;" : " DESC;";
             
             sqlcall.Append(" ORDER BY " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString() + sorttype);
+            this.previousSearchListBox.Items.Add("Sorted By " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString());
 
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
             // display num of businesses returned

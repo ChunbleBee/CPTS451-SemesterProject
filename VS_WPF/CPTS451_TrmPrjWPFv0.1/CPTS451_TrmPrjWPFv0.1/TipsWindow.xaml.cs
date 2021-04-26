@@ -210,14 +210,20 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
             else
             {
-                string sqlstr = @"INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) 
-                VALUES('" + this.busi.BusinessID.ToString()                // BusinessID
-                + "', '" + this.acct.ID.ToString()                         // UserID
-                + "', '" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") // Date
-                + "', " + 0                                                // # Likes, initially 0.
-                + ", '"+ AddNewTipTextBox.Text.ToString() + "');";         // Text of tip
-                ExecuteQuery(sqlstr, AddTipsToAllGrid);
+                var cs = GetConnectionString();
 
+                using (var con = new NpgsqlConnection(cs))
+                {
+                    con.Open();
+
+                    using (var cmd = new NpgsqlCommand()) {
+                        cmd.Connection = con;
+                                                                                                                        // BusinessID                         // UserID                              // Date                                   // # Likes, initially 0.         // Text of tip
+                        cmd.CommandText = "INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'" + this.busi.BusinessID.ToString() + "\', \'" + this.acct.ID.ToString() + "\', \'" + DateTime.Now.ToString("MM-dd-yy HH:mm:ss") + "\', " + 0 + ", \'" + AddNewTipTextBox.Text.ToString() + "\');";
+                        cmd.ExecuteNonQuery();
+                        //ExecuteQuery(sqlstr, AddTipsToAllGrid);
+                    }
+                }
             }
         }
     }
