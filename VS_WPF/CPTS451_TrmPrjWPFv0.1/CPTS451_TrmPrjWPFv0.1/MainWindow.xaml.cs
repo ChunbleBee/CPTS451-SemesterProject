@@ -804,7 +804,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             if (this.SearchResultsGrid.SelectedItems.Count > 0 && this.UserAcct != null)
             {
                 Business b = (Business)this.SearchResultsGrid.SelectedItem;
-                System.Windows.MessageBox.Show(this.UserAcct.ID + ", " + b.BusinessID);
+                //System.Windows.MessageBox.Show(this.UserAcct.ID + ", " + b.BusinessID);
                 TipsWindow tipsWindow = new TipsWindow(this.UserAcct.ID, b.BusinessID);
                 tipsWindow.Show();
             }

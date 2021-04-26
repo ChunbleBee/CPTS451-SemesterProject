@@ -53,9 +53,16 @@ namespace CPTS451_TrmPrjWPFv0._1
                 FROM Businesses
                 WHERE Businesses.BusinessID='" + bid + @"';", AddBusiness);
 
+            ExecuteQuery(
+                @"SELECT Users.UserID
+                FROM Users
+                WHERE Users.UserID='" + uid + @"';", AddUserAccount);
+
             this.AddTipBusinessNameTextBox.Text = this.busi.BusinessName.ToString(); // display the appropriate name for the business.
             this.AddTipBusinessNameTextBox.IsReadOnly = true; // make the textbox not edittable
 
+            this.FriendsTipsGrid.IsReadOnly = true;
+            this.AllTipsGrid.IsReadOnly = true;
 
         }
 
@@ -153,10 +160,10 @@ namespace CPTS451_TrmPrjWPFv0._1
             this.acct = new User()
             {
                 ID = reader.GetString(0),
-                Name = reader.GetString(1),
-                Likes = reader.GetInt32(2),
-                Stars = reader.GetFloat(3),
-                CreationDate = reader.GetDateTime(4)
+                //Name = reader.GetString(1),
+                //Likes = reader.GetInt32(2),
+                //Stars = reader.GetFloat(3),
+                //CreationDate = reader.GetDateTime(4)
             };
         }
 
@@ -220,13 +227,46 @@ namespace CPTS451_TrmPrjWPFv0._1
                         cmd.Connection = con;
                         int initialLikes = 0;
                         string likes = initialLikes.ToString();
-                        string sqlstr = "INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'" + this.busi.BusinessID.ToString() + "\', \'" + this.acct.ID.ToString() + "\', \'" + DateTime.Now.ToString("MM-dd-yy HH:mm:ss") + "\', " + likes + ", \'" + AddNewTipTextBox.Text.ToString() + "\');";
+                        StringBuilder temp = new StringBuilder("INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'");
+                        temp.Append(this.busi.BusinessID.ToString());
+                        temp.Append("\', \'");
+                        temp.Append(this.acct.ID.ToString()); // this is returning null... I think I have a solution.
+                        temp.Append("\', \'");
+                        temp.Append(DateTime.Now.ToString("MM-dd-yy HH:mm:ss"));
+                        temp.Append("\', 0, \'");
+                        temp.Append(AddNewTipTextBox.Text.ToString());
+                        temp.Append("\');");
+                        cmd.CommandText = temp.ToString();
+                        string sqlstr = temp.ToString();
+                            //"INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'" + this.busi.BusinessID.ToString() + "\', \'" + this.acct.ID.ToString() + "\', \'" + DateTime.Now.ToString("MM-dd-yy HH:mm:ss") + "\', " + likes + ", \'" + AddNewTipTextBox.Text.ToString() + "\');";
                         // BusinessID                         // UserID                              // Date                                   // # Likes, initially 0.         // Text of tip
                         cmd.CommandText = sqlstr.ToString();
                         cmd.ExecuteNonQuery();
                         //ExecuteQuery(sqlstr, AddTipsToAllGrid);
                     }
                 }
+                //clear datagrid
+                this.AllTipsGrid.Items.Clear();
+                this.FriendsTipsGrid.Items.Clear();
+                //rerun query.
+                ExecuteQuery(
+                    @"SELECT Users.UserID, Users.UserName, Date, Likes, Text
+                        FROM Tips, Users
+                        WHERE Users.UserID=Tips.UserID
+                        AND BusinessID='" + this.busi.BusinessID + "';",
+                AddTipsToAllGrid);
+
+                ExecuteQuery(
+                    @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text 
+                        FROM Tips, Users, Friends
+                        WHERE Tips.BusinessID='" + this.busi.BusinessID + @"'
+                        AND Friends.User01='" + this.acct.ID + @"'
+                        AND Friends.User02=Users.UserID
+                        AND Users.UserID=Tips.UserID;",
+                AddTipsToFriendsGrid);
+
+                //reset textbox text to initial / default text.
+                this.AddNewTipTextBox.Text = "Enter new Tip text here.";
             }
         }
     }
