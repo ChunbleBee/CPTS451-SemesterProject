@@ -28,6 +28,9 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             InitializeComponent();
             SetBusinessTipsColumns();
+            //this.AddTipBusinessNameTextBox.Text = bname;
+            //this.AddTipBusinessNameTextBox.IsReadOnly = true;
+
 
             ExecuteQuery(
                 @"SELECT Users.UserID, Users.UserName, Date, Likes, Text
@@ -44,6 +47,16 @@ namespace CPTS451_TrmPrjWPFv0._1
                 AND Friends.User02=Users.UserID
                 AND Users.UserID=Tips.UserID;",
                 AddTipsToFriendsGrid);
+
+            ExecuteQuery(
+                @"SELECT Businesses.BusinessID, Businesses.BusinessName
+                FROM Businesses
+                WHERE Businesses.BusinessID='" + bid + @"';", AddBusiness);
+
+            this.AddTipBusinessNameTextBox.Text = this.busi.BusinessName.ToString(); // display the appropriate name for the business.
+            this.AddTipBusinessNameTextBox.IsReadOnly = true; // make the textbox not edittable
+
+
         }
 
         // not a great way of building a connection. unsafe to show user businessname and password.
@@ -151,7 +164,9 @@ namespace CPTS451_TrmPrjWPFv0._1
         {
             this.busi = new Business()
             {
-                BusinessID = reader.GetString(0)
+                BusinessID = reader.GetString(0),
+                BusinessName = reader.GetString(1)
+
             };
         }
 
@@ -179,6 +194,31 @@ namespace CPTS451_TrmPrjWPFv0._1
                 Likes = reader.GetInt32(3),
                 Text = reader.GetString(4)
             });
+        }
+
+        private void LikeTipButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        private void AddNewTipButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((this.AddNewTipTextBox.Text == "") || (this.AddNewTipTextBox.Text == "Enter new Tip text here."))
+            {
+                MessageBox.Show("Looks like you forgot to type a tip!");
+            }
+            else
+            {
+                string sqlstr = @"INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) 
+                VALUES('" + this.busi.BusinessID.ToString()                // BusinessID
+                + "', '" + this.acct.ID.ToString()                         // UserID
+                + "', '" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") // Date
+                + "', " + 0                                                // # Likes, initially 0.
+                + ", '"+ AddNewTipTextBox.Text.ToString() + "');";         // Text of tip
+                ExecuteQuery(sqlstr, AddTipsToAllGrid);
+
+            }
         }
     }
 }

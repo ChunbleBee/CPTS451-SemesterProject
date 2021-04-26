@@ -9,8 +9,8 @@
     <Grid  Background="DarkGray">
         <TextBox x:Name="AddTipBusinessNameTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" TextWrapping="Wrap" Text="Business Name" VerticalAlignment="Top" Width="772"/>
         <TextBox x:Name="AddNewTipTextBox" HorizontalAlignment="Left" Height="79" Margin="10,43,0,0" TextWrapping="Wrap" Text="Enter new Tip text here." VerticalAlignment="Top" Width="652"/>
-        <Button x:Name="AddNewTipButton" Content="Add New Tip" HorizontalAlignment="Left" Margin="667,43,0,0" VerticalAlignment="Top" Width="115" Height="79"/>
-        <Button x:Name="LikeTipButton" Content="Like Tip" HorizontalAlignment="Left" Margin="667,140,0,0" VerticalAlignment="Top" Width="115" Height="88"/>
+        <Button x:Name="AddNewTipButton" Content="Add New Tip" HorizontalAlignment="Left" Margin="667,43,0,0" VerticalAlignment="Top" Width="115" Height="79" Click="AddNewTipButton_Click"/>
+        <Button x:Name="LikeTipButton" Content="Like Tip" HorizontalAlignment="Left" Margin="667,140,0,0" VerticalAlignment="Top" Width="115" Height="88" Click="LikeTipButton_Click"/>
         <GroupBox x:Name="AllTipsGroupBox" Header="All Tips For This Business" HorizontalAlignment="Left" Height="451" Margin="10,127,0,0" VerticalAlignment="Top" Width="652">
             <DataGrid x:Name="AllTipsGrid" Height="428" Margin="0,0,-2,0" VerticalAlignment="Top"/>
         </GroupBox>
