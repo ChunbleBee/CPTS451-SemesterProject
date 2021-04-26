@@ -26,7 +26,7 @@ tips = open('./Project/YelpData/yelp_tip.JSON', "r")
 # businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 try:
-    db = psycopg2.connect("dbname='milestone3' user='postgres' host='localhost' password='SegaSaturn'")
+    db = psycopg2.connect("dbname='milestone2test' user='postgres' host='localhost' password='th@darncat8'")
 except Exception as ex:
     print("Connection to database failed with error: ", ex)
     exit(-1)
@@ -154,7 +154,15 @@ def BusinessAttributesHelper(attributes):
             for item in subitems:
                 attrout.append(item)
         else:
-            if (val != "False"):
+            if (val != 'False'
+                    and val != "false"
+                    and val != "FALSE"
+                    and val != "no"
+                    and val != "No"
+                    and val != "NO"
+                    and val != "NONE"
+                    and val != "None"
+                    and val != "none"):
                 attrout.append(key)
     return attrout
         
@@ -372,7 +380,7 @@ if __name__ == "__main__":
     checkins.seek(0)
 
     print("------------------------------------------------")
-    print("#\t\tUpdate Database Derived Collumns and Triggers\t\t#")
+    print("#\t\tUpdate Database Derived Collumns\t\t#")
     print("------------------------------------------------")
     # BuildDatabase(update)
     # BuildDatabase(triggers)
@@ -380,7 +388,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     print("#\t\tAdding Triggers\t\t#")
     print("------------------------------------------------")
-    BuildDatabase(triggers)
+    # BuildDatabase(triggers)
 
     print("...\n\nCompleted without errors!")
     db.close()
