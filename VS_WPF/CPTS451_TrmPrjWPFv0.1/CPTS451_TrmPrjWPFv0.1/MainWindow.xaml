@@ -97,11 +97,11 @@
                     <CheckBox x:Name="lateNightcheckBox" Content="Late Night" HorizontalAlignment="Left" Margin="810,209,0,0" VerticalAlignment="Top" FontSize="8" Checked="lateNightcheckBox_Checked" Unchecked="lateNightcheckBox_Unchecked"/>
                     <Label x:Name="mealFilterlabel" Content="Filter by Meal:" HorizontalAlignment="Left" Margin="790,84,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="showCheckinbutton" Content="Show Check Ins" HorizontalAlignment="Left" Margin="565,398,0,0" VerticalAlignment="Top" Width="123" Height="40"/>
-                    <ComboBox x:Name="sortResultcomboBox" HorizontalAlignment="Left" Margin="784,287,0,0" VerticalAlignment="Top" Width="91" FontSize="8">
-                        <ComboBoxItem Content="Name (default)"></ComboBoxItem>
-                        <ComboBoxItem Content="Highest Rated"></ComboBoxItem>
-                        <ComboBoxItem Content="Most # of Tips"></ComboBoxItem>
-                        <ComboBoxItem Content="Most Check ins"></ComboBoxItem>
+                    <ComboBox x:Name="sortResultcomboBox" SelectedIndex="0"  HorizontalAlignment="Left" Margin="784,287,0,0" VerticalAlignment="Top" Width="91" FontSize="8">
+                        <ComboBoxItem Content="Name (default)" Tag="BusinessName"></ComboBoxItem>
+                        <ComboBoxItem Content="Highest Rated" Tag="StarRating"></ComboBoxItem>
+                        <ComboBoxItem Content="Most # of Tips" Tag="NumTips"></ComboBoxItem>
+                        <ComboBoxItem Content="Most Check ins" Tag="NumCheckIns"></ComboBoxItem>
                         <ComboBoxItem Content="Nearest"></ComboBoxItem>
                     </ComboBox>
                     <Label x:Name="sortlabel" Content="Sort Result By:" HorizontalAlignment="Left" Margin="784,261,0,0" VerticalAlignment="Top"/>
