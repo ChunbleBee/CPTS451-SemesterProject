@@ -204,24 +204,6 @@ def BusinessHoursInsert(fin):
                     exit(-1)
                 # print("\tSUCCESS\n")
                 db.commit()
-
-        # day = arrString + day[:-2] + "]"
-        # openingTimes = arrString + openingTimes[:-2] + "]"
-        # closingTimes = arrString + closingTimes[:-2] + "]"
-        # # if (openingTimes != "ARRAY[]" and closingTimes != "ARRAY[]" and day != "ARRAY[]"):
-        # if (openingTimes != "" and closingTimes != "" and day != ""):
-        #     valString += day + "," + openingTimes + "," + closingTimes + ")"
-        #     commitval = insertString + valString
-        #     # print("\tCommit val: ", commitval)
-        #     try:
-        #         cursor.execute(commitval)
-        #     except Exception as ex:
-        #         print("Insert into BusinessHours table failed with error: ", ex)
-        #         exit(-1)
-        #     # print("\tSUCCESS\n")
-        #     db.commit()
-        # else:
-            # print("\tNO KNOWN HOURS, SKIPPING")
     cursor.close()
 
 
@@ -315,18 +297,21 @@ def CheckInsTableInsert(fin):
         checkin = json.loads(line)
         # print("Attempting to push: ", checkin["business_id"], checkin["date"])
 
-        insertString = "INSERT INTO CheckIns (BusinessID, CheckInDate)"
-        valString = " VALUES ( "
-        valString += "'" + checkin["business_id"] + "', "
+        insertString = "INSERT INTO CheckIns (BusinessID, CheckInDate, CheckInTime)"
 
         for date in checkin["date"].split(','):
-            commitval = insertString + valString + "'" + date + "'::TIMESTAMP);"
+            valString = " VALUES ( " + "'" + checkin["business_id"] + "', "
+            datetime = date.split(' ')
+            time = datetime[1]
+            date = datetime[0]
+            valString += "'" + date + "'" + ", " + "'" + time
+            commitval = insertString + valString + "');"
             # print("\tCommit val: ", commitval)
             try:
                 cursor.execute(commitval)
                 db.commit()
             except Exception as ex:
-                print("Insert into CheckIns table failed with error: ", ex)
+                 print("Insert into CheckIns table failed with error: ", ex)
             # print("\tSUCCESS\n")
     cursor.close()
 
@@ -387,9 +372,10 @@ if __name__ == "__main__":
     checkins.seek(0)
 
     print("------------------------------------------------")
-    print("#\t\tUpdate Database Derived Columns\t#")
+    print("#\t\tUpdate Database Derived Collumns and Triggers\t\t#")
     print("------------------------------------------------")
-    BuildDatabase(update)
+    # BuildDatabase(update)
+    # BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tAdding Triggers\t\t#")

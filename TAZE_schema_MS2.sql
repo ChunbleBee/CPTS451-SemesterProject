@@ -89,9 +89,10 @@ CREATE TABLE BusinessCategories
 CREATE TABLE CheckIns
 (
     BusinessID  TEXT NOT NULL,
-    CheckInDate TIMESTAMP NOT NULL DEFAULT NOW(),
+    CheckInDate DATE NOT NULL DEFAULT NOW(),
+    CheckInTime TIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (BusinessID) REFERENCES Businesses(BusinessID),
-    PRIMARY KEY (BusinessID, CheckInDate)
+    PRIMARY KEY (BusinessID, CheckInDate, CheckInTime)
 );
 
 /* Tips Table */

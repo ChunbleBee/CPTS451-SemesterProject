@@ -77,6 +77,7 @@ namespace CPTS451_TrmPrjWPFv0._1
     public partial class MainWindow : Window
     {
         //public delegate void AsyncCall(NpgsqlDataReader reader); //Was an attempt as asyncronous data gathering
+        private Dictionary<string, TreeViewItem> AttributeDict { get; set; }
 
         private User UserAcct { get; set; }
 
@@ -88,12 +89,12 @@ namespace CPTS451_TrmPrjWPFv0._1
 
             // User Page Tab initialization
             this.UserAcct = null;
+            this.AttributeDict = new Dictionary<string, TreeViewItem>();
             CreateUserIDColumns();
             CreateFriendsColumns();
             CreateFriendsTipsColumns();
 
             //Business Search Tab initialization
-            this.SearchResultsGrid.IsReadOnly = true; // make the datagrid not edittable.
             this.StateComboBox.Items.Add("State");
             this.StateComboBox.SelectedIndex = 0;
             ExecuteQuery("SELECT DISTINCT State FROM Businesses ORDER BY State ASC", AddStateToStateComboBox);
@@ -117,7 +118,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = Milestone2db; password= 'z'";
+            return "Host = localhost; Username = postgres; Database = milestone3; password= 'SegaSaturn'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -647,28 +648,44 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
         {
-            this.SearchResultsGrid.Items.Clear(); // first clear all previously selected businesses
-            this.previousSearchListBox.Items.Clear(); // clear previous entries when search button is clicked.
+            this.SearchResultsGrid.Items.Clear();
             StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
+            TreeViewItem attributes = ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]);
+
 
             if (this.CategoriesListBox.SelectedItems.Count > 0)
             {
-                sqlcall.Append(", BusinessCategories");
+                int cat = 0;
+                foreach (string el in this.CategoriesListBox.SelectedItems)
+                {
+                    sqlcall.Append(", (SELECT Businesses.BusinessID FROM Businesses, BusinessCategories WHERE BusinessCategories.Category = '" + el +
+                        "' AND Businesses.BusinessID = BusinessCategories.BusinessID) AS cat" + cat.ToString());
+                    cat++;
+                }
+            }
+            if (attributes.Items.Count > 0)
+            {
+                int bat = 0;
+                foreach (TreeViewItem el in attributes.Items)
+                {
+                    sqlcall.Append(", (SELECT Businesses.BusinessID FROM Businesses, BusinessAttributes WHERE BusinessAttributes.Attribute = '" + el.Tag.ToString() +
+                        "' AND Businesses.BusinessID = BusinessAttributes.BusinessID) AS bat" + bat.ToString());
+                    bat++;
+                }
             }
 
             if (
                 this.StateComboBox.SelectedIndex != 0 ||
                 this.CityListBox.SelectedItems.Count > 0 ||
                 this.ZipCodeListBox.SelectedItems.Count > 0 ||
-                this.CategoriesListBox.SelectedItems.Count > 0
+                this.CategoriesListBox.SelectedItems.Count > 0 ||
+                attributes.Items.Count > 0
                 )
             {
                 sqlcall.Append(" WHERE ");
                 if (this.StateComboBox.SelectedIndex != 0)
                 {
                     sqlcall.Append("State='" + this.StateComboBox.SelectedItem.ToString() + "'");
-                    // include the state into the previous search listbox
-                    this.previousSearchListBox.Items.Add(this.StateComboBox.SelectedItem.ToString());
                 }
 
                 if (this.CityListBox.SelectedItems.Count > 0)
@@ -676,8 +693,6 @@ namespace CPTS451_TrmPrjWPFv0._1
                     if (this.StateComboBox.SelectedIndex != 0)
                     {
                         sqlcall.Append(" AND ");
-                        // include the city if a city is selected to the previous search listbox.
-                        this.previousSearchListBox.Items.Add(this.CityListBox.SelectedItem.ToString());
                     }
 
                     sqlcall.Append("City='" + this.CityListBox.SelectedItem.ToString() + "'");
@@ -690,8 +705,6 @@ namespace CPTS451_TrmPrjWPFv0._1
                         this.CityListBox.SelectedItems.Count > 0)
                     {
                         sqlcall.Append(" AND ");
-                        // include the zipcode if a zipcode is selected to the previous search listbox.
-                        this.previousSearchListBox.Items.Add(this.ZipCodeListBox.SelectedItem.ToString());
                     }
 
                     sqlcall.Append("ZipCode=" + this.ZipCodeListBox.SelectedItem.ToString());
@@ -706,48 +719,66 @@ namespace CPTS451_TrmPrjWPFv0._1
                     {
                         sqlcall.Append(" AND ");
                     }
-                    sqlcall.Append("(");
+                    int cat = 0;
                     foreach (var item in this.CategoriesListBox.SelectedItems)
                     {
-                        sqlcall.Append("Category='" + item.ToString() + "' OR ");
-                        // include any/all categories selected to the previous search listbox.
-                        this.previousSearchListBox.Items.Add(item.ToString());
+                        sqlcall.Append("Businesses.BusinessID=cat" + cat.ToString() + ".BusinessID AND ");
+                        cat++;
                     }
-                    // for adding attributes to the previous search result
-                    // Need to use the treeview.items
-                    
 
-                    sqlcall.Remove(sqlcall.Length - 4, 4);
-                    sqlcall.Append(") AND Businesses.BusinessID = BusinessCategories.BusinessID");
+                    sqlcall.Remove(sqlcall.Length - 5, 5);
+                }
+
+                if (attributes.Items.Count > 0)
+                {
+                    if (this.StateComboBox.SelectedIndex != 0 ||
+                        this.CityListBox.SelectedItems.Count > 0 ||
+                        this.ZipCodeListBox.SelectedItems.Count > 0 ||
+                        this.CategoriesListBox.SelectedItems.Count > 0)
+                    {
+                        sqlcall.Append(" AND ");
+                    }
+
+                    int bat = 0;
+                    foreach (TreeViewItem el in attributes.Items)
+                    {
+                        sqlcall.Append("Businesses.BusinessID=bat" + bat.ToString() + ".BusinessID AND ");
+                        bat++;
+                    }
+
+                    sqlcall.Remove(sqlcall.Length - 5, 5);
                 }
             }
 
-            // TODO: update the ORDER BY to use what is selected from the sort results by drop-down combo box.
-            sqlcall.Append(" ORDER BY BusinessName ASC;");
+            string sorttype = (this.sortResultcomboBox.SelectedIndex == this.sortResultcomboBox.Items.Count - 1 ||
+                this.sortResultcomboBox.SelectedIndex == 0) ? " ASC;" : " DESC;";
+            
+            sqlcall.Append(" ORDER BY " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString() + sorttype);
 
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
-            // update "# Business Result: " Label.
-            this.numBusinessSearchLabel.Content = "# Business Result: " + this.SearchResultsGrid.Items.Count;
         }
 
         private void SearchResultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Business selected  = (Business)(this.SearchResultsGrid.SelectedItem);
 
-            this.SelectedBusinessNameTextBox.Text = selected.BusinessName;
-            string address = selected.Street + ", " + selected.City + ", " + selected.State + " " + selected.ZipCode.ToString();
-            this.SelectedBusinessAddrTextBox.Text = address;
-            
-            DayOfWeek today = DateTime.Today.DayOfWeek;
-            string sqlcall = "SELECT OpeningTime, ClosingTime FROM BusinessHours " +
-                "WHERE BusinessID='" + selected.BusinessID + "' " +
-                "AND Day='" + today.ToString() + "';";
-
-            ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
-
-            if (this.UserAcct != null)
+            if (selected != null)
             {
-                this.BusinessTipsButton.IsEnabled = true;
+                this.SelectedBusinessNameTextBox.Text = selected.BusinessName;
+                string address = selected.Street + ", " + selected.City + ", " + selected.State + " " + selected.ZipCode.ToString();
+                this.SelectedBusinessAddrTextBox.Text = address;
+
+                DayOfWeek today = DateTime.Today.DayOfWeek;
+                string sqlcall = "SELECT OpeningTime, ClosingTime FROM BusinessHours " +
+                    "WHERE BusinessID='" + selected.BusinessID + "' " +
+                    "AND Day='" + today.ToString() + "';";
+
+                ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
+
+                if (this.UserAcct != null)
+                {
+                    this.BusinessTipsButton.IsEnabled = true;
+                }
             }
         }
 
@@ -762,166 +793,6 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
-        private void acceptCreditCardcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Accepts Credit Cards");
-        }
-
-        private void acceptCreditCardcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Accepts Credit Cards");
-        }
-
-        private void takesReservationscheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Takes Reservations");
-        }
-
-        private void takesReservationscheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Takes Reservations");
-        }
-
-        private void wheelChairAccessiblecheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Wheelchair Accessible");
-        }
-
-        private void wheelChairAccessiblecheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Wheelchair Accessible");
-        }
-
-        private void OutDoorSeatcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Outdoor Seating");
-        }
-
-        private void OutDoorSeatcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Outdoor Seating");
-        }
-
-        private void good4KidcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Good For Kids");
-        }
-
-        private void good4KidcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Good For Kids");
-        }
-
-        private void good4GroupscheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Good For Groups");
-        }
-
-        private void good4GroupscheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Good For Groups");
-        }
-
-        private void deliverycheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Provides Delivery");
-        }
-
-        private void deliverycheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Provides Delivery");
-        }
-
-        private void takeOutcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Provides Takeout");
-        }
-
-        private void takeOutcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Provides Takeout");
-        }
-
-        private void freeWificheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Provides Free Wifi");
-        }
-
-        private void freeWificheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Provides Free Wifi");
-        }
-
-        private void bikeParkingcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Has Bike Parking");
-        }
-
-        private void bikeParkingcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Has Bike Parking");
-        }
-
-        private void breakfastcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Serves Breakfast");
-        }
-
-        private void breakfastcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Serves Breakfast");
-        }
-
-        private void lunchcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Serves Lunch");
-        }
-
-        private void lunchcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Serves Lunch");
-        }
-
-        private void brunchcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Serves Brunch");
-        }
-
-        private void brunchcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Serves Brunch");
-        }
-
-        private void dinnercheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Serves Dinner");
-        }
-
-        private void dinnercheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Serves Dinner");
-        }
-
-        private void dessertcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Serves Dessert");
-        }
-
-        private void dessertcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Serves Dessert");
-        }
-
-        private void lateNightcheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Add("Open Late");
-        }
-
-        private void lateNightcheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove("Open Late");
-        }
-
         private void CategoriesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ((TreeViewItem)(this.FilteredTreeView.Items[this.CatsIndex])).Items.Clear();
@@ -932,9 +803,325 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
-        private void ShowCheckinbutton_Click(object sender, RoutedEventArgs e)
+        private void acceptCreditCardcheckBox_Checked(object sender, RoutedEventArgs e)
         {
+            TreeViewItem item = new TreeViewItem(){Header="Accepts Credit Cards"};
+            item.Tag = "BusinessAcceptsCreditCards";
 
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void acceptCreditCardcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["BusinessAcceptsCreditCards"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void takesReservationscheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Accepts Reservations" };
+            item.Tag = "RestaurantsReservations";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void takesReservationscheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsReservations"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void wheelChairAccessiblecheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Wheelchair Accessible" };
+            item.Tag = "WheelchairAccessible";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void wheelChairAccessiblecheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["WheelchairAccessible"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void OutDoorSeatcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Outdoor Seating" };
+            item.Tag = "OutdoorSeating";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void OutDoorSeatcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["OutdoorSeating"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void good4KidcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Good For Kids" };
+            item.Tag = "GoodForKids";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void good4KidcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["GoodForKids"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void good4GroupscheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Good For Groups" };
+            item.Tag = "RestaurantsGoodForGroups";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void good4GroupscheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsGoodForGroups"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void deliverycheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Delivery" };
+            item.Tag = "RestaurantsDelivery";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void deliverycheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsDelivery"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void takeOutcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Take Out" };
+            item.Tag = "RestaurantsTakeOut";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void takeOutcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsTakeOut"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void freeWificheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Free WiFi" };
+            item.Tag = "WiFi";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void freeWificheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["WiFi"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void bikeParkingcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Bike Parking" };
+            item.Tag = "BikeParking";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void bikeParkingcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["BikeParking"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void breakfastcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Serves Breakfast" };
+            item.Tag = "breakfast";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void breakfastcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["breakfast"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void lunchcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Serves Lunch" };
+            item.Tag = "lunch";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void lunchcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["lunch"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void brunchcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Serves Brunch" };
+            item.Tag = "brunch";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void brunchcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["brunch"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void dinnercheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Serves Dinner" };
+            item.Tag = "dinner";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void dinnercheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["dinner"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void dessertcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Serves Dessert" };
+            item.Tag = "dessert";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void dessertcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["dessert"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void lateNightcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Serves Late Night" };
+            item.Tag = "latenight";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void lateNightcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["latenight"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void price1CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Price: $" };
+            item.Tag = "RestaurantsPriceRange1";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void price1CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsPriceRange1"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void price2CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Price: $$" };
+            item.Tag = "RestaurantsPriceRange2";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void price2CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsPriceRange2"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void price3CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Price: $$$" };
+            item.Tag = "RestaurantsPriceRange3";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void price3CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsPriceRange3"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void price4CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = new TreeViewItem() { Header = "Price: $$$$" };
+            item.Tag = "RestaurantsPriceRange4";
+
+            ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]).Items.Add(item);
+            this.AttributeDict.Add(item.Tag.ToString(), item);
+        }
+
+        private void price4CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = this.AttributeDict["RestaurantsPriceRange4"];
+            ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
+            this.AttributeDict.Remove(item.Tag.ToString());
         }
     }
 }
+ 

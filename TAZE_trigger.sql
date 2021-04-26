@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION UpdateTipCount()
   RETURNS TRIGGER
   AS
-  'BEGIN UPDATE Users SET TipCount = (select count(*) from Tips where userID = NEW.userID) WHERE OLD.UserID = NEW.UserID; RETURN NEW; END' LANGUAGE PLPGSQL;
+  'BEGIN UPDATE Users SET TipCount = (select count(*) from Tips where userID = NEW.userID) WHERE users.UserID = NEW.UserID; RETURN NEW; END' LANGUAGE PLPGSQL;
 
 CREATE TRIGGER AddTipCount
 AFTER INSERT OR UPDATE
@@ -12,7 +12,7 @@ FOR EACH ROW
 CREATE OR REPLACE FUNCTION UpdateNumTips()
   RETURNS TRIGGER
   AS
-  'BEGIN UPDATE Businesses SET NumTips = (select count(*) from Tips where BusinessID = NEW.BusinessID) WHERE OLD.BusinessID = NEW.BusinessID; RETURN NEW; END;' LANGUAGE PLPGSQL;
+  'BEGIN UPDATE Businesses SET NumTips = (select count(*) from Tips where businessID = NEW.BusinessID) WHERE businesses.BusinessID = NEW.BusinessID; RETURN NEW; END;' LANGUAGE PLPGSQL;
 
 
 CREATE TRIGGER AddNumTips
@@ -24,7 +24,7 @@ FOR EACH ROW
 CREATE OR REPLACE FUNCTION UpdateNumCheckins()
   RETURNS TRIGGER
  AS
- 'BEGIN UPDATE Businesses SET NumCheckIns = (select count(*) from checkins where businessID = new.businessID) WHERE OLD.BusinessID = NEW.BusinessID; RETURN NEW; END;' LANGUAGE PLPGSQL;
+ 'BEGIN UPDATE Businesses SET NumCheckIns = (select count(*) from checkins where businessID = new.businessID) WHERE businesses.BusinessID = NEW.BusinessID; RETURN NEW; END;' LANGUAGE PLPGSQL;
 
 
 CREATE TRIGGER addNumCheckins
@@ -36,10 +36,10 @@ FOR EACH ROW
 CREATE OR REPLACE FUNCTION UpdateTotalLikes()
   RETURNS TRIGGER
   AS
-  'BEGIN UPDATE Users SET TotalLikes = (SELECT SUM(likes) FROM Tips WHERE Users.UserID=Tips.UserID) WHERE OLD.UserID = NEW.UserID; RETURN NEW; END;' LANGUAGE PLPGSQL;
+  'BEGIN UPDATE Users SET TotalLikes = (SELECT SUM(likes) FROM Tips WHERE Users.UserID=Tips.UserID) WHERE users.UserID = NEW.UserID; RETURN NEW; END;' LANGUAGE PLPGSQL;
 
 
 CREATE TRIGGER AddTotalLikes
 AFTER INSERT ON Tips
 FOR EACH ROW
-  EXECUTE PROCEDURE UpdateNumCheckins();
+  EXECUTE PROCEDURE UpdateTotalLikes();
