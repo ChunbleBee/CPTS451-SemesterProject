@@ -96,7 +96,7 @@
                     <CheckBox x:Name="dessertcheckBox" Content="Dessert" HorizontalAlignment="Left" Margin="810,189,0,0" VerticalAlignment="Top" FontSize="8" Checked="dessertcheckBox_Checked" Unchecked="dessertcheckBox_Unchecked"/>
                     <CheckBox x:Name="lateNightcheckBox" Content="Late Night" HorizontalAlignment="Left" Margin="810,209,0,0" VerticalAlignment="Top" FontSize="8" Checked="lateNightcheckBox_Checked" Unchecked="lateNightcheckBox_Unchecked"/>
                     <Label x:Name="mealFilterlabel" Content="Filter by Meal:" HorizontalAlignment="Left" Margin="790,84,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="showCheckinbutton" Content="Show Check Ins" HorizontalAlignment="Left" Margin="565,398,0,0" VerticalAlignment="Top" Width="123" Height="40"/>
+                    <Button x:Name="showCheckinbutton" Content="Show Check Ins" HorizontalAlignment="Left" Margin="565,398,0,0" VerticalAlignment="Top" Width="123" Height="40" Click="showCheckinbutton_Click"/>
                     <ComboBox x:Name="sortResultcomboBox" SelectedIndex="0"  HorizontalAlignment="Left" Margin="784,287,0,0" VerticalAlignment="Top" Width="91" FontSize="8">
                         <ComboBoxItem Content="Name (default)" Tag="BusinessName"></ComboBoxItem>
                         <ComboBoxItem Content="Highest Rated" Tag="StarRating"></ComboBoxItem>

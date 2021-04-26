@@ -118,8 +118,8 @@ namespace CPTS451_TrmPrjWPFv0._1
         private string GetConnectionString()
         {
             // need to update this for everyone's personal machines
-            //                  ---------------------------------------------------------------------
-            //                                       v                                              v
+            //                  ---------------------------------------------------------------
+            //                                       v                                        v
             return "Host = localhost; Username = postgres; Database = milestone3; password= 'SegaSaturn'";
         }
 
@@ -791,10 +791,16 @@ namespace CPTS451_TrmPrjWPFv0._1
 
                 ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
 
+                this.showCheckinbutton.IsEnabled = true;
+
                 if (this.UserAcct != null)
                 {
                     this.BusinessTipsButton.IsEnabled = true;
                 }
+            }
+            else
+            {
+                this.showCheckinbutton.IsEnabled = false;
             }
         }
 
@@ -1137,6 +1143,25 @@ namespace CPTS451_TrmPrjWPFv0._1
             TreeViewItem item = this.AttributeDict["RestaurantsPriceRange4"];
             ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
             this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void showCheckinbutton_Click(object sender, RoutedEventArgs e)
+        {
+            string bid = "", uid = "";
+
+            if (this.SearchResultsGrid.SelectedItem != null)
+            {
+                bid = ((Business)this.SearchResultsGrid.SelectedItem).BusinessID;
+            }
+
+            if (this.UserAcct != null)
+            {
+                uid = this.UserAcct.ID;
+            }
+
+            MonthlyHistograms wind = new MonthlyHistograms(uid, bid);
+            wind.Owner = this;
+            wind.Show();
         }
     }
 }
