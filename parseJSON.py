@@ -28,7 +28,7 @@ tips = open("./Project/YelpData/YelpTipSubset.json", "r")
 businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 try:
-    db = psycopg2.connect("dbname='milestone3' user='postgres' host='localhost' password='SegaSaturn'")
+    db = psycopg2.connect("dbname='milestone2test' user='postgres' host='localhost' password='th@darncat8'")
 except Exception as ex:
     print("Connection to database failed with error: ", ex)
     exit(-1)
@@ -385,13 +385,18 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     print("#\t\tUpdate Database Derived Collumns\t\t#")
     print("------------------------------------------------")
-    # BuildDatabase(update)
+    BuildDatabase(update)
     # BuildDatabase(triggers)
 
     print("------------------------------------------------")
     print("#\t\tAdding Triggers\t\t#")
     print("------------------------------------------------")
-    # BuildDatabase(triggers)
+    BuildDatabase(triggers)
+
+    print("------------------------------------------------")
+    print("#\t\tAdding Functions\t\t#")
+    print("------------------------------------------------")
+    BuildDatabase(functions)
 
     print("...\n\nCompleted without errors!")
     db.close()
