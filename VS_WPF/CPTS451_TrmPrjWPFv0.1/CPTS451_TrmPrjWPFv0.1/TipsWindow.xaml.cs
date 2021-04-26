@@ -218,8 +218,11 @@ namespace CPTS451_TrmPrjWPFv0._1
 
                     using (var cmd = new NpgsqlCommand()) {
                         cmd.Connection = con;
-                                                                                                                        // BusinessID                         // UserID                              // Date                                   // # Likes, initially 0.         // Text of tip
-                        cmd.CommandText = "INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'" + this.busi.BusinessID.ToString() + "\', \'" + this.acct.ID.ToString() + "\', \'" + DateTime.Now.ToString("MM-dd-yy HH:mm:ss") + "\', " + 0 + ", \'" + AddNewTipTextBox.Text.ToString() + "\');";
+                        int initialLikes = 0;
+                        string likes = initialLikes.ToString();
+                        string sqlstr = "INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'" + this.busi.BusinessID.ToString() + "\', \'" + this.acct.ID.ToString() + "\', \'" + DateTime.Now.ToString("MM-dd-yy HH:mm:ss") + "\', " + likes + ", \'" + AddNewTipTextBox.Text.ToString() + "\');";
+                        // BusinessID                         // UserID                              // Date                                   // # Likes, initially 0.         // Text of tip
+                        cmd.CommandText = sqlstr.ToString();
                         cmd.ExecuteNonQuery();
                         //ExecuteQuery(sqlstr, AddTipsToAllGrid);
                     }
