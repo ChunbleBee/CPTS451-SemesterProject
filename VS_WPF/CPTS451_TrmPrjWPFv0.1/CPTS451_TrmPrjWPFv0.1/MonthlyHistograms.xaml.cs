@@ -25,7 +25,6 @@ namespace CPTS451_TrmPrjWPFv0._1
         public MonthlyHistograms(string uid, string bid)
         {
             InitializeComponent();
-            //ExecuteQuery("SELECT BusinessID FROM Businesses W")
             busi = new Business() { BusinessID = bid };
             this.SetMonthlyCheckIns();
         }
@@ -294,10 +293,13 @@ namespace CPTS451_TrmPrjWPFv0._1
                 now.Date.ToString().Replace(" 12:00:00 AM","") + "', '" +
                 now.TimeOfDay.ToString() + "');";
 
-            System.Windows.MessageBox.Show(sqlcall);
-
             this.ExecuteNonQuery(sqlcall);
             this.SetMonthlyCheckIns();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            ((MainWindow)this.Owner).ReloadContext();
         }
     }
 }

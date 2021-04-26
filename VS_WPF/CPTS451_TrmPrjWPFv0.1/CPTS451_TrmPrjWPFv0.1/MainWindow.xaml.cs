@@ -77,12 +77,12 @@ namespace CPTS451_TrmPrjWPFv0._1
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string LastSearch { get; set; }
         //public delegate void AsyncCall(NpgsqlDataReader reader); //Was an attempt as asyncronous data gathering
         private Dictionary<string, TreeViewItem> AttributeDict { get; set; }
         private User UserAcct { get; set; }
         private int CatsIndex { get; set; }
         private int BatsIndex { get; set; }
-        private double DistanceHelper { get; set; }
 
         public MainWindow()
         {
@@ -371,8 +371,8 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void AttemptLogIn(NpgsqlDataReader reader)
         {
-            float lat = (reader.IsDBNull(9) == false) ? reader.GetFloat(10) : 0.0F;
-            float lng = (reader.IsDBNull(10) == false) ? reader.GetFloat(11) : 0.0F;
+            float lat = (reader.IsDBNull(10) == false) ? reader.GetFloat(10) : 0.0F;
+            float lng = (reader.IsDBNull(11) == false) ? reader.GetFloat(11) : 0.0F;
             
             this.UserAcct = new User()
             {
@@ -765,6 +765,8 @@ namespace CPTS451_TrmPrjWPFv0._1
             sqlcall.Append(" ORDER BY " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString() + sorttype);
             this.previousSearchListBox.Items.Add("Sorted By " + ((ComboBoxItem)this.sortResultcomboBox.SelectedItem).Tag.ToString());
 
+            this.LastSearch = sqlcall.ToString();
+
             ExecuteQuery(sqlcall.ToString(), AddBusinessesToSearchResults);
             // display num of businesses returned
             this.numBusinessSearchLabel.Content = "# Business Result: " + this.SearchResultsGrid.Items.Count;
@@ -807,6 +809,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                 Business b = (Business)this.SearchResultsGrid.SelectedItem;
                 //System.Windows.MessageBox.Show(this.UserAcct.ID + ", " + b.BusinessID);
                 TipsWindow tipsWindow = new TipsWindow(this.UserAcct.ID, b.BusinessID);
+                tipsWindow.Owner = this;
                 tipsWindow.Show();
             }
         }
@@ -1158,6 +1161,15 @@ namespace CPTS451_TrmPrjWPFv0._1
             MonthlyHistograms wind = new MonthlyHistograms(uid, bid);
             wind.Owner = this;
             wind.Show();
+        }
+
+        public void ReloadContext()
+        {
+            if (this.LastSearch != null && this.LastSearch != "")
+            {
+                this.SearchResultsGrid.Items.Clear();
+                ExecuteQuery(this.LastSearch, AddBusinessesToSearchResults);
+            }
         }
     }
 }

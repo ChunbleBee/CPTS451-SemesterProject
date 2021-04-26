@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CPTS451_TrmPrjWPFv0._1"
         mc:Ignorable="d"
-        Title="MonthlyHistograms" Height="457.5" Width="1085">
+        Title="MonthlyHistograms" Closed="Window_Closed" Height="457.5" Width="1085">
     <Grid>
         <Grid Background="Aquamarine" HorizontalAlignment="Left" Height="364" Margin="81,22,0,0" VerticalAlignment="Top" Width="907">
             <Grid.RowDefinitions>
@@ -51,7 +51,7 @@
             <Label x:Name="label_Copy9" Content="Nov" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Width="75" Height="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,1,0,0" Grid.Column="10"/>
             <Label x:Name="label_Copy10" Content="Dec" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Width="75" Height="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,1,0,0" Grid.Column="11"/>
         </Grid>
-        <Button x:Name="CheckInButton" IsEnabled="False" Content="Check In" HorizontalAlignment="Left" Margin="993,22,0,0" VerticalAlignment="Top" Width="74" Height="60" Click="CheckInButton_Click"/>
+        <Button x:Name="CheckInButton" Content="Check In" HorizontalAlignment="Left" Margin="993,22,0,0" VerticalAlignment="Top" Width="74" Height="60" Click="CheckInButton_Click"/>
         <Grid HorizontalAlignment="Left" Height="352" Margin="10,10,0,0" VerticalAlignment="Top" Width="71">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30*"/>

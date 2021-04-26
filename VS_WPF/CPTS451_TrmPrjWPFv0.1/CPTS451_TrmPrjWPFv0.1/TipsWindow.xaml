@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CPTS451_TrmPrjWPFv0._1"
         mc:Ignorable="d"
-        Title="TipsWindow" Height="896" Width="800">
+        Title="TipsWindow" Closed="Window_Closed" Height="896" Width="800">
     <Grid  Background="DarkGray">
         <TextBox x:Name="AddTipBusinessNameTextBox" IsReadOnly="True" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" TextWrapping="Wrap" Text="Business Name" VerticalAlignment="Top" Width="772"/>
-        <TextBox x:Name="AddNewTipTextBox" HorizontalAlignment="Left" Height="79" Margin="10,43,0,0" TextWrapping="Wrap" Text="Enter new Tip text here." VerticalAlignment="Top" Width="652"/>
+        <TextBox x:Name="AddNewTipTextBox" HorizontalAlignment="Left" Height="79" Margin="10,43,0,0" TextWrapping="Wrap" Text="Enter new Tip text here." VerticalAlignment="Top" Width="652" GotFocus="TipBoxRemoveDefaultText" LostFocus="TipBoxAddDefaultText"/>
         <Button x:Name="AddNewTipButton" Content="Add New Tip" HorizontalAlignment="Left" Margin="667,43,0,0" VerticalAlignment="Top" Width="115" Height="79" Click="AddNewTipButton_Click"/>
         <Button x:Name="LikeTipButton" Content="Like Tip" HorizontalAlignment="Left" Margin="667,140,0,0" VerticalAlignment="Top" Width="115" Height="88" Click="LikeTipButton_Click"/>
         <GroupBox x:Name="AllTipsGroupBox" Header="All Tips For This Business" HorizontalAlignment="Left" Height="451" Margin="10,127,0,0" VerticalAlignment="Top" Width="652">

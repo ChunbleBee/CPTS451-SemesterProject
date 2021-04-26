@@ -32,23 +32,6 @@ namespace CPTS451_TrmPrjWPFv0._1
             //this.AddTipBusinessNameTextBox.Text = bname;
             //this.AddTipBusinessNameTextBox.IsReadOnly = true;
 
-
-            ExecuteQuery(
-                @"SELECT Users.UserID, Users.UserName, Date, Likes, Text
-                FROM Tips, Users
-                WHERE Users.UserID=Tips.UserID
-                AND BusinessID='" + bid + "';",
-                AddTipsToAllGrid);
-
-            ExecuteQuery(
-                @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text 
-                FROM Tips, Users, Friends
-                WHERE Tips.BusinessID='" + bid + @"'
-                AND Friends.User01='" + uid + @"'
-                AND Friends.User02=Users.UserID
-                AND Users.UserID=Tips.UserID;",
-                AddTipsToFriendsGrid);
-
             ExecuteQuery(
                 @"SELECT Businesses.BusinessID, Businesses.BusinessName
                 FROM Businesses
@@ -58,6 +41,27 @@ namespace CPTS451_TrmPrjWPFv0._1
                 @"SELECT Users.UserID
                 FROM Users
                 WHERE Users.UserID='" + uid + @"';", AddUserAccount);
+
+            this.AllTipsGrid.Items.Clear();
+            this.FriendsTipsGrid.Items.Clear();
+
+            ExecuteQuery(
+                @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text, Tips.BusinessID
+                        FROM Tips, Users
+                        WHERE Users.UserID=Tips.UserID
+                        AND BusinessID='" + this.busi.BusinessID + @"'
+                        ORDER BY Date DESC;",
+                AddTipsToAllGrid);
+
+            ExecuteQuery(
+                @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text, Tips.BusinessID
+                        FROM Tips, Users, Friends
+                        WHERE Tips.BusinessID='" + this.busi.BusinessID + @"'
+                        AND Friends.User01='" + this.acct.ID + @"'
+                        AND Friends.User02=Users.UserID
+                        AND Users.UserID=Tips.UserID
+                        ORDER BY Date DESC;",
+                AddTipsToFriendsGrid);
 
             this.AddTipBusinessNameTextBox.Text = this.busi.BusinessName.ToString(); // display the appropriate name for the business.
             this.AddTipBusinessNameTextBox.IsReadOnly = true; // make the textbox not edittable
@@ -99,6 +103,32 @@ namespace CPTS451_TrmPrjWPFv0._1
                                 myf(reader);
                             }
                         }
+                    }
+                    catch (NpgsqlException er)
+                    {
+                        System.Windows.MessageBox.Show("SQL Error - " + er.Message.ToString());
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+        }
+
+        private void ExecuteNonQuery(string sqlstr)
+        {
+            using (var connection = new NpgsqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = connection;
+                    cmd.CommandText = sqlstr;
+
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
                     }
                     catch (NpgsqlException er)
                     {
@@ -199,7 +229,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                 UserName = reader.GetString(1),
                 CreationDate = reader.GetDateTime(2),
                 Likes = reader.GetInt32(3),
-                Text = reader.GetString(4)
+                Text = reader.GetString(4),
+                BusinessID = reader.GetString(5)
             });
         }
 
@@ -212,35 +243,45 @@ namespace CPTS451_TrmPrjWPFv0._1
                 UserName = reader.GetString(1),
                 CreationDate = reader.GetDateTime(2),
                 Likes = reader.GetInt32(3),
-                Text = reader.GetString(4)
+                Text = reader.GetString(4),
+                BusinessID = reader.GetString(5)
             });
         }
 
         private void LikeTipButton_Click(object sender, RoutedEventArgs e)
         {
-            // need to refine this query to select only the selected datagrid rows user id's tip.
-            ExecuteQuery(
-                @"SELECT BusinessID, UserID, Likes, Text
-                FROM Tips", 
-                AddTip);
+            TipHelper SelectedTip = ((TipHelper)this.AllTipsGrid.SelectedItem);
+            if (SelectedTip != null)
+            {
+                string sqlcall = @"UPDATE Tips
+                                    SET Likes = Likes + 1
+                                    WHERE Tips.UserID='" + SelectedTip.UserID + @"'
+                                    AND Tips.BusinessID='" + SelectedTip.BusinessID + @"'
+                                    AND Tips.Date='" + SelectedTip.CreationDate + "';";
 
-            StringBuilder temp = new StringBuilder("UPDATE Tips SET ");
-            temp.Append("BusinessID=\'");
-            temp.Append(this.busi.BusinessID.ToString());
-            temp.Append("\', UserID=\'");
-            temp.Append(this.acct.ID.ToString());
-            temp.Append("\', Likes=");
-            temp.Append(this.tip.Likes + 1);
-            temp.Append(", Text=\'");
-            temp.Append(this.tip.Text.ToString());
-            temp.Append("\' ");
-            temp.Append("WHERE ");
-            temp.Append("UserID=\'");
-            temp.Append(this.tip.UserID.ToString());
-            temp.Append("\' AND BusinessID=\'");
-            temp.Append(this.busi.BusinessID.ToString());
-            temp.Append("\'");
-            // execute non query
+                this.ExecuteNonQuery(sqlcall);
+
+                this.AllTipsGrid.Items.Clear();
+                this.FriendsTipsGrid.Items.Clear();
+
+                ExecuteQuery(
+                    @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text, Tips.BusinessID
+                        FROM Tips, Users
+                        WHERE Users.UserID=Tips.UserID
+                        AND BusinessID='" + this.busi.BusinessID + @"'
+                        ORDER BY Date DESC;",
+                    AddTipsToAllGrid);
+
+                ExecuteQuery(
+                    @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text, Tips.BusinessID
+                        FROM Tips, Users, Friends
+                        WHERE Tips.BusinessID='" + this.busi.BusinessID + @"'
+                        AND Friends.User01='" + this.acct.ID + @"'
+                        AND Friends.User02=Users.UserID
+                        AND Users.UserID=Tips.UserID
+                        ORDER BY Date DESC;",
+                    AddTipsToFriendsGrid);
+            }
         }
 
 
@@ -280,29 +321,52 @@ namespace CPTS451_TrmPrjWPFv0._1
                         //ExecuteQuery(sqlstr, AddTipsToAllGrid);
                     }
                 }
-                //clear datagrid
+
                 this.AllTipsGrid.Items.Clear();
                 this.FriendsTipsGrid.Items.Clear();
-                //rerun query.
-                ExecuteQuery(
-                    @"SELECT Users.UserID, Users.UserName, Date, Likes, Text
-                        FROM Tips, Users
-                        WHERE Users.UserID=Tips.UserID
-                        AND BusinessID='" + this.busi.BusinessID + "';",
-                AddTipsToAllGrid);
 
                 ExecuteQuery(
-                    @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text 
+                    @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text, Tips.BusinessID
+                        FROM Tips, Users
+                        WHERE Users.UserID=Tips.UserID
+                        AND BusinessID='" + this.busi.BusinessID + @"'
+                        ORDER BY Date DESC;",
+                    AddTipsToAllGrid);
+
+                ExecuteQuery(
+                    @"SELECT Users.UserID, Users.UserName, Tips.Date, Tips.Likes, Tips.Text, Tips.BusinessID
                         FROM Tips, Users, Friends
                         WHERE Tips.BusinessID='" + this.busi.BusinessID + @"'
                         AND Friends.User01='" + this.acct.ID + @"'
                         AND Friends.User02=Users.UserID
-                        AND Users.UserID=Tips.UserID;",
-                AddTipsToFriendsGrid);
+                        AND Users.UserID=Tips.UserID
+                        ORDER BY Date DESC;",
+                    AddTipsToFriendsGrid);
 
                 //reset textbox text to initial / default text.
                 this.AddNewTipTextBox.Text = "Enter new Tip text here.";
             }
+        }
+
+        public void TipBoxRemoveDefaultText(object sender, RoutedEventArgs e)
+        {
+            if (this.AddNewTipTextBox.Text == "Enter new Tip text here.")
+            {
+                this.AddNewTipTextBox.Text = "";
+            }
+        }
+        
+        public void TipBoxAddDefaultText(object sender, RoutedEventArgs e)
+        {
+            if (this.AddNewTipTextBox.Text == "")
+            {
+                this.AddNewTipTextBox.Text = "Enter new Tip text here.";
+            }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            ((MainWindow)this.Owner).ReloadContext();
         }
     }
 }
