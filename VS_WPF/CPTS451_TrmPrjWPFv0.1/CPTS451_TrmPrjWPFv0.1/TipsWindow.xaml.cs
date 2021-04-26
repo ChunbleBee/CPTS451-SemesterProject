@@ -23,6 +23,7 @@ namespace CPTS451_TrmPrjWPFv0._1
     {
         private User acct { get; set; }
         private Business busi { get; set; }
+        private Tip tip { get; set; }
 
         public TipsWindow(string uid, string bid)
         {
@@ -167,6 +168,18 @@ namespace CPTS451_TrmPrjWPFv0._1
             };
         }
 
+        private void AddTip(NpgsqlDataReader reader)
+        {
+            //int tLikes = 0;
+            this.tip = new Tip()
+            {
+                BusinessID = reader.GetString(0),
+                UserID = reader.GetString(1),
+                Likes = Int32.Parse(reader.GetString(2)),
+                Text = reader.GetString(3)
+            };
+        }
+
         private void AddBusiness(NpgsqlDataReader reader)
         {
             this.busi = new Business()
@@ -205,7 +218,29 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void LikeTipButton_Click(object sender, RoutedEventArgs e)
         {
+            // need to refine this query to select only the selected datagrid rows user id's tip.
+            ExecuteQuery(
+                @"SELECT BusinessID, UserID, Likes, Text
+                FROM Tips", 
+                AddTip);
 
+            StringBuilder temp = new StringBuilder("UPDATE Tips SET ");
+            temp.Append("BusinessID=\'");
+            temp.Append(this.busi.BusinessID.ToString());
+            temp.Append("\', UserID=\'");
+            temp.Append(this.acct.ID.ToString());
+            temp.Append("\', Likes=");
+            temp.Append(this.tip.Likes + 1);
+            temp.Append(", Text=\'");
+            temp.Append(this.tip.Text.ToString());
+            temp.Append("\' ");
+            temp.Append("WHERE ");
+            temp.Append("UserID=\'");
+            temp.Append(this.tip.UserID.ToString());
+            temp.Append("\' AND BusinessID=\'");
+            temp.Append(this.busi.BusinessID.ToString());
+            temp.Append("\'");
+            // execute non query
         }
 
 
