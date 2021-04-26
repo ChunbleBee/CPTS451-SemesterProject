@@ -88,6 +88,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             InitializeComponent();
 
             // User Page Tab initialization
+            this.UserIDGrid.IsReadOnly = true; // make the userIDGrid not edittable
             this.UserAcct = null;
             this.AttributeDict = new Dictionary<string, TreeViewItem>();
             CreateUserIDColumns();
@@ -95,6 +96,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             CreateFriendsTipsColumns();
 
             //Business Search Tab initialization
+            this.SearchResultsGrid.IsReadOnly = true; // make the SearchResultsGrid not edittable.
             this.StateComboBox.Items.Add("State");
             this.StateComboBox.SelectedIndex = 0;
             ExecuteQuery("SELECT DISTINCT State FROM Businesses ORDER BY State ASC", AddStateToStateComboBox);
@@ -118,7 +120,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             // need to update this for everyone's personal machines
             //                  ---------------------------------------------------------------------
             //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = milestone3; password= 'SegaSaturn'";
+            return "Host = localhost; Username = postgres; Database = Milestone2db; password= 'z'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -648,6 +650,7 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
         {
+            this.previousSearchListBox.Items.Clear();
             this.SearchResultsGrid.Items.Clear();
             StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
             TreeViewItem attributes = ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]);
@@ -671,6 +674,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                     sqlcall.Append(", (SELECT Businesses.BusinessID FROM Businesses, BusinessAttributes WHERE BusinessAttributes.Attribute = '" + el.Tag.ToString() +
                         "' AND Businesses.BusinessID = BusinessAttributes.BusinessID) AS bat" + bat.ToString());
                     bat++;
+                    //this.previousSearchListBox.Items.Add(el.Tag.ToString());
                 }
             }
 
@@ -686,6 +690,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                 if (this.StateComboBox.SelectedIndex != 0)
                 {
                     sqlcall.Append("State='" + this.StateComboBox.SelectedItem.ToString() + "'");
+                    // include the state into the previous search display
+                    this.previousSearchListBox.Items.Add(this.StateComboBox.SelectedItem.ToString());
                 }
 
                 if (this.CityListBox.SelectedItems.Count > 0)
@@ -696,6 +702,9 @@ namespace CPTS451_TrmPrjWPFv0._1
                     }
 
                     sqlcall.Append("City='" + this.CityListBox.SelectedItem.ToString() + "'");
+                    // include the city into the previous search display
+                    this.previousSearchListBox.Items.Add(this.CityListBox.SelectedItem.ToString());
+
                 }
 
                 if (this.ZipCodeListBox.SelectedItems.Count > 0)
@@ -708,6 +717,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                     }
 
                     sqlcall.Append("ZipCode=" + this.ZipCodeListBox.SelectedItem.ToString());
+                    // include the zipcode into the previous search display.
+                    this.previousSearchListBox.Items.Add(this.ZipCodeListBox.SelectedItem.ToString());
                 }
 
                 if (this.CategoriesListBox.SelectedItems.Count > 0)
@@ -723,6 +734,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                     foreach (var item in this.CategoriesListBox.SelectedItems)
                     {
                         sqlcall.Append("Businesses.BusinessID=cat" + cat.ToString() + ".BusinessID AND ");
+                        // include the categories into the previous search display
+                        this.previousSearchListBox.Items.Add(item.ToString());
                         cat++;
                     }
 
@@ -744,6 +757,7 @@ namespace CPTS451_TrmPrjWPFv0._1
                     {
                         sqlcall.Append("Businesses.BusinessID=bat" + bat.ToString() + ".BusinessID AND ");
                         bat++;
+                        this.previousSearchListBox.Items.Add(el.Tag.ToString());
                     }
 
                     sqlcall.Remove(sqlcall.Length - 5, 5);

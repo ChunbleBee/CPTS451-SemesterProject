@@ -57,9 +57,9 @@
                     <TextBlock x:Name="ZipCodeTextBlock" HorizontalAlignment="Left" Margin="10,115,0,0" TextWrapping="Wrap" Text="ZipCode" VerticalAlignment="Top" Width="187"/>
                     <ListBox x:Name="ZipCodeListBox" SelectionMode="Single" HorizontalAlignment="Left" Height="51" Margin="11,136,0,0" VerticalAlignment="Top" Width="187"/>
                     <TextBlock x:Name="CategoriesTextBlock" HorizontalAlignment="Left" Margin="10,192,0,0" TextWrapping="Wrap" Text="Categories" VerticalAlignment="Top" Width="187"/>
-                    <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="159" Margin="10,213,0,0" VerticalAlignment="Top" Width="187" SelectionChanged="CategoriesListBox_SelectionChanged"/>
-                    <TextBlock x:Name="SelectedAttributesTextBlock" TextWrapping="Wrap" Text="Selected Attributes" Margin="10,377,688,102"/>
-                    <ListBox x:Name="SelectedAttributesListBox" Focusable="False" HorizontalAlignment="Left" Height="63" Margin="10,398,0,0" VerticalAlignment="Top" Width="187"/>
+                    <ListBox x:Name="CategoriesListBox" SelectionMode="Extended" HorizontalAlignment="Left" Height="129" Margin="10,213,0,0" VerticalAlignment="Top" Width="187" SelectionChanged="CategoriesListBox_SelectionChanged"/>
+                    <TextBlock x:Name="previousSearchTextBlock" TextWrapping="Wrap" Text="Previous Search" Margin="10,347,687.6,131"/>
+                    <ListBox x:Name="previousSearchListBox" Focusable="False" HorizontalAlignment="Left" Height="92" Margin="10,369,0,0" VerticalAlignment="Top" Width="187"/>
                     <Button x:Name="SelectedAttributesSearchButton" Content="Search" HorizontalAlignment="Left" Height="19" Margin="10,466,0,0" VerticalAlignment="Top" Width="187" Click="SelectedAttributesSearchButton_Click"/>
                     <GridSplitter x:Name="MasterSplinter" HorizontalAlignment="Left" Height="495" Margin="202,0,0,0" VerticalAlignment="Top" Width="4"/>
                     <TextBlock x:Name="SearchResultsTextBlock" HorizontalAlignment="Left" Margin="211,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="315"><Run Text="Search Results:"/></TextBlock>
