@@ -17,6 +17,8 @@ def int2BoolStr(value):
 schema = open("./TAZE_schema_MS2.sql")
 triggers = open("./TAZE_trigger.sql")
 update = open("./TAZE_UPDATE.sql")
+functions = open("./TAZE_functions.sql")
+
 users = open("./Project/YelpData/yelp_user.JSON", "r")
 # businesses = open("./Project/YelpData/yelp_business.JSON", "r")
 # checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
@@ -330,6 +332,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
+    BuildDatabase(functions)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")

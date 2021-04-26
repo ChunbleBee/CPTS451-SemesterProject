@@ -166,15 +166,6 @@ namespace CPTS451_TrmPrjWPFv0._1
                             AND Businesses.BusinessID='" + bid + "';", SetDecemberCheckIns);
         }
 
-        private void GetUser(NpgsqlDataReader reader)
-        {
-            //
-            this.acct = new User()
-            {
-                ID = reader.GetString(0)
-            };
-        }
-
         private void SetJanuaryCheckIns(NpgsqlDataReader reader)
         {
             int numJanCheckIns = reader.GetInt32(0);
