@@ -713,6 +713,9 @@ namespace CPTS451_TrmPrjWPFv0._1
                         // include any/all categories selected to the previous search listbox.
                         this.previousSearchListBox.Items.Add(item.ToString());
                     }
+                    // for adding attributes to the previous search result
+                    // Need to use the treeview.items
+                    
 
                     sqlcall.Remove(sqlcall.Length - 4, 4);
                     sqlcall.Append(") AND Businesses.BusinessID = BusinessCategories.BusinessID");
