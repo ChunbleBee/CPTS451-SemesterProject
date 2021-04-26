@@ -17,16 +17,18 @@ def int2BoolStr(value):
 schema = open("./TAZE_schema_MS2.sql")
 triggers = open("./TAZE_trigger.sql")
 update = open("./TAZE_UPDATE.sql")
+functions = open("./TAZE_functions.sql")
+
 users = open("./Project/YelpData/yelp_user.JSON", "r")
-businesses = open("./Project/YelpData/yelp_business.JSON", "r")
-checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
-tips = open('./Project/YelpData/yelp_tip.JSON', "r")
-# checkins = open("./Project/YelpData/YelpCheckinSubset.json", "r")
-# tips = open("./Project/YelpData/YelpTipSubset.json", "r")
-# businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
+# businesses = open("./Project/YelpData/yelp_business.JSON", "r")
+# checkins = open('./Project/YelpData/yelp_checkin.JSON', "r")
+# tips = open('./Project/YelpData/yelp_tip.JSON', "r")
+checkins = open("./Project/YelpData/YelpCheckinSubset.json", "r")
+tips = open("./Project/YelpData/YelpTipSubset.json", "r")
+businesses = open("./Project/YelpData/YelpBusinessSubset.json", "r")
 
 try:
-    db = psycopg2.connect("dbname='milestone2test' user='postgres' host='localhost' password='th@darncat8'")
+    db = psycopg2.connect("dbname='milestone3' user='postgres' host='localhost' password='SegaSaturn'")
 except Exception as ex:
     print("Connection to database failed with error: ", ex)
     exit(-1)
@@ -330,6 +332,7 @@ if __name__ == "__main__":
     print("------------------------------------------------")
     DestroyPreviousDatabase()
     BuildDatabase(schema)
+    BuildDatabase(functions)
 
     print("------------------------------------------------")
     print("#\t\tStarting Business Parse\t\t#")

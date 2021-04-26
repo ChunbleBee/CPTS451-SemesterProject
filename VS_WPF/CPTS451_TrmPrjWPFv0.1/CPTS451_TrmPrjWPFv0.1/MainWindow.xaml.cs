@@ -17,7 +17,7 @@ using Npgsql;
 namespace CPTS451_TrmPrjWPFv0._1
 {
 
-    public partial class Business
+    public class Business
     {
         public string BusinessID { get; set; }
         public string BusinessName { get; set; }
@@ -27,6 +27,7 @@ namespace CPTS451_TrmPrjWPFv0._1
         public int ZipCode { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
+        public float Distance { get; set; }
         public bool IsOpen { get; set; }
         public int ReviewCount { get; set; }
         public float StarRating { get; set; }
@@ -78,11 +79,11 @@ namespace CPTS451_TrmPrjWPFv0._1
     {
         //public delegate void AsyncCall(NpgsqlDataReader reader); //Was an attempt as asyncronous data gathering
         private Dictionary<string, TreeViewItem> AttributeDict { get; set; }
-
         private User UserAcct { get; set; }
-
         private int CatsIndex { get; set; }
         private int BatsIndex { get; set; }
+        private double DistanceHelper { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -118,9 +119,9 @@ namespace CPTS451_TrmPrjWPFv0._1
         private string GetConnectionString()
         {
             // need to update this for everyone's personal machines
-            //                  ---------------------------------------------------------------------
-            //                                       v                                              v
-            return "Host = localhost; Username = postgres; Database = Milestone2db; password= 'z'";
+            //                  ---------------------------------------------------------------
+            //                                       v                                        v
+            return "Host = localhost; Username = postgres; Database = milestone3; password= 'SegaSaturn'";
         }
 
         private void ExecuteQuery(string sqlstr, Action<NpgsqlDataReader> myf)
@@ -370,8 +371,8 @@ namespace CPTS451_TrmPrjWPFv0._1
 
         private void AttemptLogIn(NpgsqlDataReader reader)
         {
-            float lat = (reader.IsDBNull(9) == false) ? reader.GetFloat(9) : 0.0F;
-            float lng = (reader.IsDBNull(10) == false) ? reader.GetFloat(10) : 0.0F;
+            float lat = (reader.IsDBNull(9) == false) ? reader.GetFloat(10) : 0.0F;
+            float lng = (reader.IsDBNull(10) == false) ? reader.GetFloat(11) : 0.0F;
             
             this.UserAcct = new User()
             {
@@ -383,8 +384,8 @@ namespace CPTS451_TrmPrjWPFv0._1
                 Fans = reader.GetInt32(5),
                 FunnyRates = reader.GetInt32(6),
                 CoolRates = reader.GetInt32(7),
-                UsefulRates = 0,
-                Stars = reader.GetFloat(8),
+                UsefulRates = reader.GetInt32(8),
+                Stars = reader.GetFloat(9),
                 Latitude = lat,
                 Longitude = lng
             };
@@ -492,9 +493,9 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////// BUSINESS TAB STUFFS/////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// BUSINESS TAB STUFFS /////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         private void CreateBusinessSearchColumns()
         {
             // Name, Addr, City, State, Distance, Stars, Tip Count, Checkins
@@ -511,7 +512,7 @@ namespace CPTS451_TrmPrjWPFv0._1
             baddr.Binding = new Binding("Street");
             bcity.Binding = new Binding("City");
             bstate.Binding = new Binding("State");
-            //bdist.Binding = new Binding("Distance");
+            bdist.Binding = new Binding("Distance");
             bstars.Binding = new Binding("StarRating");
             btipcount.Binding = new Binding("NumTips");
             bcheckins.Binding = new Binding("NumCheckIns");
@@ -555,36 +556,44 @@ namespace CPTS451_TrmPrjWPFv0._1
             this.CategoriesListBox.Items.Add(reader.GetString(0));
         }
 
+        private void SetDistanceInSearchResults(NpgsqlDataReader reader)
+        {
+            //this.SearchResultsGrid.Columns.Add(bname);
+            //this.SearchResultsGrid.Columns.Add(baddr);
+            //this.SearchResultsGrid.Columns.Add(bcity);
+            //this.SearchResultsGrid.Columns.Add(bstate);
+            //this.SearchResultsGrid.Columns.Add(bdist);
+
+            string id = reader.GetString(0);
+            double dist = reader.GetDouble(1);
+
+            for (int i = 0; i < this.SearchResultsGrid.Items.Count; i++)
+            {
+                Business b = ((Business) this.SearchResultsGrid.Items[i]);
+
+                if (b.BusinessID == id)
+                {
+
+                }
+            }
+        }
+
         private void AddBusinessesToSearchResults(NpgsqlDataReader reader)
         {
-            /*
-            public string BusinessID { get; set; }
-            public string BusinessName { get; set; }
-            public string Street { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            public int ZipCode { get; set; }
-            public float Latitude { get; set; }
-            public float Longitude { get; set; }
-            public bool IsOpen { get; set; }
-            public int ReviewCount { get; set; }
-            public float StarRating { get; set; }
-            public int NumCheckIns { get; set; }
-            public int NumTips { get; set; }
-            Businesses.BusinessID, BusinessName, Street, City, State, StarRating, NumTips, NumCheckIn
-             */
+            //Businesses.BusinessID, BusinessName, myDistance, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns
             this.SearchResultsGrid.Items.Add(
                 new Business
                 {
                     BusinessID = reader.GetString(0),
                     BusinessName = reader.GetString(1),
-                    Street = reader.GetString(2),
-                    City = reader.GetString(3),
-                    State = reader.GetString(4),
-                    ZipCode = reader.GetInt32(5),
-                    StarRating = (float)reader.GetDouble(6),
-                    NumTips = reader.GetInt32(7),
-                    NumCheckIns = reader.GetInt32(8)
+                    Distance = (float)reader.GetDouble(2),
+                    Street = reader.GetString(3),
+                    City = reader.GetString(4),
+                    State = reader.GetString(5),
+                    ZipCode = reader.GetInt32(6),
+                    StarRating = (float)reader.GetDouble(7),
+                    NumTips = reader.GetInt32(8),
+                    NumCheckIns = reader.GetInt32(9)
                 }
             );
         }
@@ -629,30 +638,16 @@ namespace CPTS451_TrmPrjWPFv0._1
             }
         }
 
-        // Was going to do small filters here, but they break pretty easily.
-        // Not gonna debug it.
-        //private void CityListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    this.ZipCodeListBox.Items.Clear();
-        //    this.CategoriesListBox.Items.Clear();
-        //    ExecuteQuery("SELECT DISTINCT ZipCode FROM Businesses WHERE City='" + this.CityListBox.SelectedItem + "';", AddZipCodeToListBox);
-        //    ExecuteQuery("SELECT DISTINCT Category FROM Businesses, BusinessCategories WHERE Businesses.City='" + this.CityListBox.SelectedItem + "' AND Businesses.BusinessID=BusinessCategories.BusinessID;", AddCategoryToListBox);
-        //}
-
-        //private void ZipCodeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    this.CityListBox.Items.Clear();
-        //    this.CategoriesListBox.Items.Clear();
-
-        //    ExecuteQuery("SELECT DISTINCT City FROM Businesses WHERE ZipCode=" + this.ZipCodeListBox.SelectedItem + ";", AddCityToListBox);
-        //    ExecuteQuery("SELECT DISTINCT Category FROM Businesses, BusinessCategories WHERE Businesses.ZipCode=" + this.ZipCodeListBox.SelectedItem + " AND Businesses.BusinessID=BusinessCategories.BusinessID;", AddCategoryToListBox);
-        //}
-
         private void SelectedAttributesSearchButton_Click(object sender, RoutedEventArgs e)
         {
             this.previousSearchListBox.Items.Clear();
             this.SearchResultsGrid.Items.Clear();
-            StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns FROM Businesses");
+            
+            double lat = (this.UserAcct != null) ? this.UserAcct.Latitude : 0.0;
+            double lon = (this.UserAcct != null) ? this.UserAcct.Longitude : 0.0;
+
+            StringBuilder sqlcall = new StringBuilder("SELECT Businesses.BusinessID, BusinessName, myDistance, Street, City, State, ZipCode, StarRating, NumTips, NumCheckIns " +
+                "FROM Businesses, myDistance(Businesses.Longitude, Businesses.Latitude," + lon.ToString() + ", " + lat.ToString() + ")");
             TreeViewItem attributes = ((TreeViewItem)this.FilteredTreeView.Items[this.BatsIndex]);
 
 
@@ -792,10 +787,16 @@ namespace CPTS451_TrmPrjWPFv0._1
 
                 ExecuteQuery(sqlcall, AddHoursToSelectedBusiness);
 
+                this.showCheckinbutton.IsEnabled = true;
+
                 if (this.UserAcct != null)
                 {
                     this.BusinessTipsButton.IsEnabled = true;
                 }
+            }
+            else
+            {
+                this.showCheckinbutton.IsEnabled = false;
             }
         }
 
@@ -1138,6 +1139,25 @@ namespace CPTS451_TrmPrjWPFv0._1
             TreeViewItem item = this.AttributeDict["RestaurantsPriceRange4"];
             ((TreeViewItem)(this.FilteredTreeView.Items[this.BatsIndex])).Items.Remove(item);
             this.AttributeDict.Remove(item.Tag.ToString());
+        }
+
+        private void showCheckinbutton_Click(object sender, RoutedEventArgs e)
+        {
+            string bid = "", uid = "";
+
+            if (this.SearchResultsGrid.SelectedItem != null)
+            {
+                bid = ((Business)this.SearchResultsGrid.SelectedItem).BusinessID;
+            }
+
+            if (this.UserAcct != null)
+            {
+                uid = this.UserAcct.ID;
+            }
+
+            MonthlyHistograms wind = new MonthlyHistograms(uid, bid);
+            wind.Owner = this;
+            wind.Show();
         }
     }
 }
