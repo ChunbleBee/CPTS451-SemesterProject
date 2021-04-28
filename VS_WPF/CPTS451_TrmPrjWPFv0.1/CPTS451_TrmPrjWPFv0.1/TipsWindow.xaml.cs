@@ -303,15 +303,15 @@ namespace CPTS451_TrmPrjWPFv0._1
                         cmd.Connection = con;
                         int initialLikes = 0;
                         string likes = initialLikes.ToString();
-                        StringBuilder temp = new StringBuilder("INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'");
+                        StringBuilder temp = new StringBuilder("INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES('");
                         temp.Append(this.busi.BusinessID.ToString());
-                        temp.Append("\', \'");
+                        temp.Append("', '");
                         temp.Append(this.acct.ID.ToString()); // this is returning null... I think I have a solution.
-                        temp.Append("\', \'");
+                        temp.Append("', '");
                         temp.Append(DateTime.Now.ToString("MM-dd-yy HH:mm:ss"));
-                        temp.Append("\', 0, \'");
+                        temp.Append("', 0, '");
                         temp.Append(AddNewTipTextBox.Text.ToString());
-                        temp.Append("\');");
+                        temp.Append("');");
                         cmd.CommandText = temp.ToString();
                         string sqlstr = temp.ToString();
                             //"INSERT INTO Tips(BusinessID, UserID, Date, Likes, Text) VALUES(\'" + this.busi.BusinessID.ToString() + "\', \'" + this.acct.ID.ToString() + "\', \'" + DateTime.Now.ToString("MM-dd-yy HH:mm:ss") + "\', " + likes + ", \'" + AddNewTipTextBox.Text.ToString() + "\');";
